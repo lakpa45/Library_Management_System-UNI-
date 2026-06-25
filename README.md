@@ -1,2 +1,2 @@
-# SREDA
-Ministry Portal designed to aggregate data from solar consumers
+# Library Management System
+Libary Management System to manage the books.
