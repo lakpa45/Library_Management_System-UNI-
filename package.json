@@ -1,0 +1,32 @@
+{
+  "name": "library_management_system-uni-",
+  "version": "1.0.0",
+  "description": "Libary Management System to manage the books.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "css": "tailwindcss -i ./src/input.css -o ./public/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lakpa45/Library_Management_System-UNI-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lakpa45/Library_Management_System-UNI-/issues"
+  },
+  "homepage": "https://github.com/lakpa45/Library_Management_System-UNI-#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "tailwindcss": "^3.4.19"
+  }
+}
