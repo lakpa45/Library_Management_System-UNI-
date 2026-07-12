@@ -10,4 +10,22 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model member {
+  member_id Int @id @default(autoincrement())
+  name  String @db.VarChar(100)
+  email String @unique @db.VarChar(100)
+  password String @db.VarChar(255)
+  phone String? @db.VarChar(20)
+}
+
+model librarian {
+  librarian_id Int     @id @default(autoincrement())
+  name         String  @db.VarChar(100)
+  email        String  @unique @db.VarChar(100)
+  password     String  @db.VarChar(255)
+  phone        String? @db.VarChar(20)
 }
