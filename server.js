@@ -1,6 +1,8 @@
+import 'dotenv/config';
+
 import express from 'express';
 import path from 'path';
-
+import authRoutes from './routes/authRoutes.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,6 +12,9 @@ const PORT = process.env.PORT || 3000;
 
 
 const app = express();
+
+app.use(express.json())
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
