@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-96">
+        <h2 class="text-3xl font-bold text-center mb-6">Student Login</h2>
+        <input
+        id="username"
+        type="text"
+        placeholder="Student ID or Email" class="w-full border p-3 rounded-lg mb-4">
+
+        <input
+        id="password"
+        type="password"
+        placeholder="Password" class="w-full border p-3 rounded-lg mb-6">
+
+        <button onclick="login()" class="w-full bg-blue-700 text-white p-3 rounded-lg hover:bg-blue-800">Login</button>
+    </div>
+    <script>
+    function login() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    if (username === "student123" && password === "12345") {
+        window.location.href = "studentdashboard.html";
+    } else {
+        alert("Invalid Login");
+    }
+}
+
+    function togglePassword() {
+        const password = document.getElementById("password");
+
+        if (password.type === "password") {
+            password.type = "text";
+        } else {
+            password.type = "password";
+        }
+    }
+</script>
+    
+</body>
+</html>
