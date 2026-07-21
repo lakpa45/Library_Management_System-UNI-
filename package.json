@@ -4,7 +4,7 @@
   "description": "Libary Management System to manage the books.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    
     "dev": "nodemon server.js",
     "css": "tailwindcss -i ./src/input.css -o ./public/output.css --watch"
   },
