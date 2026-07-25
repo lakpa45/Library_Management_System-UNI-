@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue & Return Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
+
+    <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">
+        📚 Book Issue & Return
+    </h1>
+
+    <div class="grid md:grid-cols-2 gap-8">
+
+        <!-- Issue Book -->
+        <div class="border rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4 text-green-600">
+                Issue Book
+            </h2>
+
+            <form class="space-y-4">
+
+                <input type="text" placeholder="Student Enrollment Number"
+                    class="w-full border rounded-lg p-2">
+
+                <input type="text" placeholder="Book ID"
+                    class="w-full border rounded-lg p-2">
+
+                <input type="date"
+                    class="w-full border rounded-lg p-2">
+
+                <button
+                    class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                    Issue Book
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Return Book -->
+        <div class="border rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4 text-red-600">
+                Return Book
+            </h2>
+
+            <form class="space-y-4">
+
+                <input type="text" placeholder="Student Enrollment Number"
+                    class="w-full border rounded-lg p-2">
+
+                <input type="text" placeholder="Book ID"
+                    class="w-full border rounded-lg p-2">
+
+                <input type="date"
+                    class="w-full border rounded-lg p-2">
+
+                <button
+                    class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">
+                    Return Book
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
