@@ -25,28 +25,11 @@
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
         <h1 class="text-3xl font-bold text-gray-900">
-            Library Management System
+            Library Management System 📚
         </h1>
-
-        <div class="flex items-center gap-3">
-
-            <input
-                id="search"
-                type="text"
-                placeholder="Search books..."
-                onkeyup="searchBook()"
-                class="px-4 py-2 w-64 rounded-full border border-gray-300">
-
-            <select
-                id="categorySearch"
-                onchange="searchBook()"
-                class="px-4 py-2 rounded-full border border-gray-300">
-
-                <option value="">All Categories</option>
-                <option value="Programming">Programming</option>
-                <option value="Web Development">Web Development</option>
-
-            </select>
+        
+        
+        <div>
 
             <button
                 onclick="openAdminLogin()"
@@ -66,6 +49,26 @@
                 Admin Mode Active
             </span>
 
+        </div>
+
+        <div class="relative">
+            <!--Menu Button-->
+            <button id="menuButton"
+            class="bg-blue-600 text-white px-5 py rounded-lg hover: focus:outline-none">
+            ☰ 
+        </button>
+        <!--Dropdown Menu-->
+        <div id="dropdownMenu"
+        class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border">
+        <a href="login.html"
+        class="block px-4 py-2 text-gray-700 hover:bg-blue-100">
+    Login
+    </a>
+    <a href="register.html"
+    class="block px-4 py-2 text-gray-700 hover:bg-blue-100">
+    Register
+    </a>
+    </div>
         </div>
 
     </div>
@@ -157,6 +160,27 @@
 </div>
       
         <!--Table-->
+
+        <div class="flex items-center gap-3">
+
+            <input
+                id="search"
+                type="text"
+                placeholder="Search books..."
+                onkeyup="searchBook()"
+                class="px-4 py-2 w-64 rounded-full border border-gray-300">
+
+            <select
+                id="categorySearch"
+                onchange="searchBook()"
+                class="px-4 py-2 rounded-full border border-gray-300">
+
+                <option value="">All Categories</option>
+                <option value="Programming">Programming</option>
+                <option value="Web Development">Web Development</option>
+
+            </select>
+        </div>
     
 <table class="w-full text-left">
 
@@ -174,7 +198,68 @@
 
 </table>
     </div>
+    <!-- Footer -->
+<footer class="bg-gray-900 text-gray-300 mt-10">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+            <!-- About -->
+            <div>
+                <h2 class="text-2xl font-bold text-white">Library Management System</h2>
+                <p class="mt-3 text-sm text-gray-400">
+                    A digital platform for managing books, members, borrowing,
+                    and returning books efficiently.
+                </p>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="index.html" class="hover:text-blue-400">Home</a></li>
+                    <li><a href="books.html" class="hover:text-blue-400">Books</a></li>
+                    <li><a href="about.html" class="hover:text-blue-400">About</a></li>
+                    <li><a href="contact.html" class="hover:text-blue-400">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="text-lg font-semibold text-white mb-3">Contact Us</h3>
+                <p>Email: library@example.com</p>
+                <p>Phone: +91 98765 43210</p>
+                <p>Address: Gangtok, Sikkim, India</p>
+
+               
+            </div>
+
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
+            © 2026 Library Management System. All Rights Reserved.
+        </div>
+
+    </div>
+</footer>
     <script>
+
+        const menuButton = document.getElementById("menuButton");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+
+        menuButton.addEventListener("click", () => {
+            dropdownMenu.classList.toggle("hidden");
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!menuButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.add("hidden");
+            }
+        });
+
+
         let books = [
     {
         title: "Java Programming",
