@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
         res.status(201).json({
             message: 'Sign up successful',
             member: {
-                id: newMember.member_id,
+                id: newMember.memberId,
                 first_name: newMember.first_name,
                 last_name: newMember.last_name,
                 email: newMember.email,
