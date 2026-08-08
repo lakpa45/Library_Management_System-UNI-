@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-emerald-700 text-white">
+        <div class="p-6 text-2xl font-bold border-b border-emerald-600">
+            Library Admin
+        </div>
+        <nav class="mt-6">
+            <a href="#" class="block px-6 py-3 hover:bg-emerald-600">Dashboard</a>
+            <a href="#" class="block px-6 py-3 hover:bg-emerald-600">Books</a>
+            <a href="f3library.html" class="block px-6 py-3 hover:bg-emerald-600">Members</a>
+            <a href="f4library.html" class="block px-6 py-3 hover:bg-emerald-600">Issue Books</a>
+            <a href="f5library.html" class="block px-6 py-3 hover:bg-emerald-600">Return Books</a>
+            <a href="#" class="block px-6 py-3 hover:bg-emerald-600">Reports</a>
+            <a href="#" class="block px-6 py-3 hover:bg-emerald-600">Settings</a>
+        </nav>
+    </aside>
+   <!-- Main Content -->
+<main class="flex-1 p-8">
+    <!-- Top Row -->
+    <div class="flex justify-between items-center mb-8">
+        <!-- Welcome Section (Left) -->
+        <div>
+            <h1 id="welcomeUser" class="text-3xl font-bold text-gray-800">
+                Welcome, Admin
+            </h1>
+            <p class="text-gray-600 mt-2">
+                Manage books, members, borrowing records, 
+                and reports from one place.
+            </p>
+        </div>
+        <!-- Right Side Controls -->
+        <header class="flex items-center gap-5">
+            <!-- Search Bar + Button -->
+            <div class="flex items-center gap-2">
+                <input
+                id="search"
+                type="text"
+                placeholder="Search books..."
+                class="w-72 px-5 py-3 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                <button
+                    class="bg-emerald-600 text-white px-5 py-2 rounded-full 
+                    hover:bg-emerald-700">
+                    Search
+                </button>
+            </div>
+            <!-- Date & Time -->
+            <div id="datetime"
+                class="text-sm text-gray-600 text-right whitespace-nowrap">
+            </div>
+            <!-- Admin Button -->
+            <div class="relative">
+                <button
+                    onclick="toggleMenu()"
+                    class="flex items-center gap-2 bg-emerald-600 text-white 
+                    px-5 py-2 rounded-full hover:bg-emerald-700">
+                    <span id="adminName">Admin</span>
+                </button>
+                <!-- Admin Dropdown -->
+                <div id="adminMenu"
+                    class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl border z-50">
+                    <a href="#" 
+                    class="block px-4 py-3 hover:bg-gray-100">
+                        Profile
+                    </a>
+                    <button onclick="openSettings()"
+                    class="w-full text-left px-4 py-3 hover:bg-gray-100">
+                        Settings
+                    </button>
+                    <button onclick="changePassword()"
+                    class="w-full text-left px-4 py-3 hover:bg-gray-100">
+                        Change Password
+                    </button>
+                    <hr>
+                    <button onclick="logout()"
+                    class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+    </div>
+    <!-- Dashboard Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+            <h3 class="text-gray-500 text-lg">Total Books</h3>
+            <p class="text-4xl font-bold text-gray-900 mt-3">0</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+            <h3 class="text-gray-500 text-lg">Members</h3>
+            <p class="text-4xl font-bold text-gray-900 mt-3">0</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+            <h3 class="text-gray-500 text-lg">Issued Books</h3>
+            <p class="text-4xl font-bold text-gray-900 mt-3">0</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+            <h3 class="text-gray-500 text-lg">Overdue</h3>
+            <p class="text-4xl font-bold text-gray-900 mt-3">0</p>
+        </div>
+    </div>
+    <!-- Quick Actions -->
+    <div class="mt-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button class="bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700">
+                Add New Book
+            </button>
+            <button class="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                Register Member
+            </button>
+            <button class="bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600">
+                Issue Book
+            </button>
+            <button class="bg-red-500 text-white py-3 rounded-lg hover:bg-red-600">
+                View Reports
+            </button>
+        </div>
+    </div>
+    <!-- Monthly Stats -->
+    <div class="mt-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Monthly Stats</h3>
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+            <h4 class="text-gray-500 text-lg">Books Issued</h4>
+            <p class="text-2xl font-bold text-black-700 mt-2">0</p>
+        </div>
+    </div>
+    <!-- Book Categories -->
+    <div class="mt-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Book Categories</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                <h4 class="text-gray-500 text-lg">Fiction</h4>
+                <p class="text-2xl font-bold text-black-700 mt-2">0</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                <h4 class="text-gray-500 text-lg">Non-Fiction</h4>
+                <p class="text-2xl font-bold text-black-600 mt-2">0</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                <h4 class="text-gray-500 text-lg">Science</h4>
+                <p class="text-2xl font-bold text-black-500 mt-2">0</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                <h4 class="text-gray-500 text-lg">History</h4>
+                <p class="text-2xl font-bold text-black-500 mt-2">0</p>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Most Borrowed Books -->
+        <table class="w-full">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="p-3 text-left">Book</th>
+            <th class="p-3 text-left">Borrowed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="border-b">
+            <td class="p-3">Java Programming</td>
+            <td class="p-3">45</td>
+        </tr>
+        <tr class="border-b">
+            <td class="p-3">Python Basics</td>
+            <td class="p-3">38</td>
+        </tr>
+    </tbody>
+</table>
+<!-- Footer -->
+<footer id="contact" class="bg-stone-800 text-white py-10">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- About -->
+            <div>
+                <h3 class="text-lg font-bold">
+                    Library Management System
+                </h3>
+                <p class="mt-2 text-sm text-gray-300">
+                    Managing your library records make easy.
+                    Search, issue, and track books efficiently.
+                </p>
+            </div>
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-bold">Quick Links</h3>
+                <ul class="mt-3 space-y-2 text-sm text-gray-300">
+                    <li><a href="#home" class="hover:text-yellow-300 transition">Home</a></li>
+                    <li><a href="#books" class="hover:text-yellow-300 transition">Books</a></li>
+                    <li><a href="f3library.html" class="hover:text-yellow-300 transition">Members</a></li>
+                    <li><a href="#contact" class="hover:text-yellow-300 transition">Contact</a></li>
+                </ul>
+            </div>
+            <!-- Contact -->
+            <div>
+                <h3 class="text-lg font-bold">Contact Us</h3>
+                <div class="mt-3 text-sm text-gray-300 space-y-2">
+                    <p>Gangtok, Sikkim, India</p>
+                    <p>Pin Code: 737102</p>
+                    <p>Email: </p>
+                    <p>Phone: </p>
+                </div>
+            </div>
+        </div>
+        <!-- Bottom Copyright -->
+        <div class="border-t border-gray-600 mt-8 pt-5 text-center">
+            <p class="text-sm text-gray-400">&copy; 2026 Library Management System. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+</main>
+<script>
+    const admin = {
+    email: "admin@library.com",
+    password: "admin123"
+};
+if(localStorage.getItem("loggedIn") !== "true"){
+    window.location.href = "flibrary.html";
+}
+const currentUser = JSON.parse(
+    localStorage.getItem("loggedInUser")
+);
+let libraryData = JSON.parse(localStorage.getItem("libraryData")) || {
+    books: [
+        { title: "Java Programming", category: "Science", issued: 45 },
+        { title: "Python Basics", category: "Science", issued: 38 }
+    ],
+    members: [],
+    issuedBooks: 0,
+    overdue: 0
+};
+function saveData() {
+    localStorage.setItem("libraryData", JSON.stringify(libraryData));
+}
+function openSettings() {
+    let settings = JSON.parse(localStorage.getItem("librarySettings")) || {
+        libraryName: "Library Management System",
+        address: "Gangtok, Sikkim",
+        phone: "",
+        email: "",
+        finePerDay: 5
+    };
+    const libraryName = prompt(
+        "Library Name:",
+        settings.libraryName
+    );
+    if (libraryName === null) return;
+    const address = prompt(
+        "Library Address:",
+        settings.address
+    );
+    if (address === null) return;
+    const phone = prompt(
+        "Phone Number:",
+        settings.phone
+    );
+    if (phone === null) return;
+    const email = prompt(
+        "Email Address:",
+        settings.email
+    );
+    if (email === null) return;
+    const fine = prompt(
+        "Fine Per Day (₹):",
+        settings.finePerDay
+    );
+    if (fine === null) return;
+    settings = {
+        libraryName,
+        address,
+        phone,
+        email,
+        finePerDay: Number(fine)
+    };
+    localStorage.setItem(
+        "librarySettings",
+        JSON.stringify(settings)
+    );
+    alert("Settings saved successfully.");
+}
+function loadSettings() {
+    const settings = JSON.parse(
+        localStorage.getItem("librarySettings")
+    );
+    if (!settings) return;
+    document.title = settings.libraryName;
+    document.querySelector("aside .text-2xl").textContent =
+        settings.libraryName;
+    const contact = document.querySelectorAll("#contact p");
+    if (contact.length >= 5) {
+        contact[0].textContent = settings.address;
+        contact[2].textContent = "Email: " + settings.email;
+        contact[3].textContent = "Phone: " + settings.phone;
+    }
+}
+function changePassword() {
+    const currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!currentUser) {
+        alert("No user is logged in.");
+        return;
+    }
+    const currentPassword = prompt("Enter your current password:");
+    if (currentPassword === null) return;
+    if (currentPassword !== currentUser.password) {
+        alert("Current password is incorrect.");
+        return;
+    }
+    const newPassword = prompt("Enter your new password:");
+    if (newPassword === null) return;
+    if (newPassword.length < 4) {
+        alert("Password must be at least 4 characters.");
+        return;
+    }
+    const confirmPassword = prompt("Confirm your new password:");
+    if (confirmPassword === null) return;
+    if (newPassword !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+    let users = JSON.parse(localStorage.getItem("libraryUsers")) || [];
+    const index = users.findIndex(user => user.email === currentUser.email);
+    if (index === -1) {
+        alert("User not found.");
+        return;
+    }
+    users[index].password = newPassword;
+    localStorage.setItem("libraryUsers", JSON.stringify(users));
+    currentUser.password = newPassword;
+    localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
+    alert("Password changed successfully.");
+}
+function updateDashboard() {
+    const cards = document.querySelectorAll(".grid .bg-white p.text-4xl");
+    if (cards.length >= 4) {
+        cards[0].textContent = libraryData.books.length;
+        cards[1].textContent = libraryData.members.length;
+        cards[2].textContent = libraryData.issuedBooks;
+        cards[3].textContent = libraryData.overdue;
+    }
+    const monthlyStat = document.querySelector(".mt-8 .bg-white p.text-2xl");
+    if (monthlyStat) {
+        monthlyStat.textContent = libraryData.issuedBooks;
+    }
+    updateCategories();
+}
+function updateCategories() {
+    let fiction = 0;
+    let nonfiction = 0;
+    let science = 0;
+    let history = 0;
+    libraryData.books.forEach(book => {
+        switch (book.category) {
+            case "Fiction":
+                fiction++;
+                break;
+            case "Non-Fiction":
+                nonfiction++;
+                break;
+            case "Science":
+                science++;
+                break;
+            case "History":
+                history++;
+                break;
+        }
+    });
+    const categoryCards = document.querySelectorAll(".grid .bg-white p.text-2xl");
+    if (categoryCards.length >= 5) {
+        categoryCards[1].textContent = fiction;
+        categoryCards[2].textContent = nonfiction;
+        categoryCards[3].textContent = science;
+        categoryCards[4].textContent = history;
+    }
+}
+function addBook() {
+    const title = prompt("Enter Book Name:");
+    if (!title) return;
+    const category = prompt(
+        "Enter Category:\nFiction\nNon-Fiction\nScience\nHistory"
+    );
+    if (!category) return;
+    libraryData.books.push({
+        title,
+        category,
+        issued: 0
+    });
+    saveData();
+    updateDashboard();
+    alert("Book added successfully.");
+}
+function registerMember() {
+    const name = prompt("Enter Member Name:");
+    if (!name) return;
+    libraryData.members.push({
+        name
+    });
+    saveData();
+    updateDashboard();
+    alert("Member registered.");
+}
+function issueBook() {
+    if (libraryData.books.length === 0) {
+        alert("No books available.");
+        return;
+    }
+    libraryData.issuedBooks++;
+    saveData();
+    updateDashboard();
+    alert("Book issued successfully.");
+}
+function viewReport() {
+    alert(
+`Library Report
+Books : ${libraryData.books.length}
+Members : ${libraryData.members.length}
+Issued Books : ${libraryData.issuedBooks}
+Overdue : ${libraryData.overdue}`
+    );
+}
+function searchLibrary() {
+    const input = document.querySelector("input");
+    const keyword = input.value.toLowerCase();
+    if (keyword === "") {
+        alert("Enter a book or member name.");
+        return;
+    }
+    const book = libraryData.books.find(b =>
+        b.title.toLowerCase().includes(keyword)
+    );
+    const member = libraryData.members.find(m =>
+        m.name.toLowerCase().includes(keyword)
+    );
+    if (book) {
+        alert(`Book Found\n\n${book.title}\nCategory: ${book.category}`);
+        return;
+    }
+    if (member) {
+        alert(`Member Found\n\n${member.name}`);
+        return;
+    }
+    alert("No record found.");
+}
+function logout(){
+    if(confirm("Are you sure you want to logout?")){
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("loggedInUser");
+        alert("Logged out successfully!");
+        window.location.href="flibrary.html";
+    }
+}
+function toggleMenu() {
+    document
+        .getElementById("adminMenu")
+        .classList.toggle("hidden");
+}
+window.onclick = function(event) {
+    if (!event.target.closest(".relative")) {
+        document
+            .getElementById("adminMenu")
+            .classList.add("hidden");
+    }
+};
+function updateTime() {
+    const now = new Date();
+    document.getElementById("datetime").innerHTML =
+        now.toLocaleDateString() +
+        "<br>" +
+        now.toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+const buttons = document.querySelectorAll("button");
+buttons.forEach(btn => {
+    if (btn.textContent.includes("Add New Book"))
+        btn.onclick = addBook;
+    if (btn.textContent.includes("Register Member"))
+        btn.onclick = registerMember;
+    if (btn.textContent.includes("Issue Book"))
+        btn.onclick = issueBook;
+    if (btn.textContent.includes("View Reports"))
+        btn.onclick = viewReport;
+    if (btn.textContent.includes("Search"))
+        btn.onclick = searchLibrary;
+});
+if(currentUser){
+    document.getElementById("adminName").innerHTML =
+    currentUser.email;
+    document.getElementById("welcomeUser").innerHTML =
+    "Welcome, " + currentUser.firstName;
+}
+loadSettings();
+updateDashboard();
+</script>
+</body>
+</html>
+<header class="flex justify-end items-center mb-8"></header>

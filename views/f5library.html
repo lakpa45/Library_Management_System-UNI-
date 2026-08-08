@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Return Book</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<div class="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-xl shadow">
+<h1 class="text-3xl font-bold mb-6">Return Books</h1>
+<table class="w-full border">
+<thead class="bg-gray-200">
+<tr>
+<th class="p-3">Member</th>
+<th class="p-3">Book</th>
+<th class="p-3">Issue Date</th>
+<th class="p-3">Action</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
+<script>
+let libraryData=JSON.parse(localStorage.getItem("libraryData"))||{
+books:[],
+members:[],
+issuedBooks:0,
+overdue:0,
+issuedList:[]
+};
+libraryData.issuedList=libraryData.issuedList||[];
+function save(){
+localStorage.setItem("libraryData",JSON.stringify(libraryData));
+}
+function loadTable(){
+const table=document.getElementById("table");
+table.innerHTML="";
+if(libraryData.issuedList.length==0){
+table.innerHTML=`
+<tr>
+<td colspan="4" class="text-center p-5">
+No Issued Books
+</td>
+</tr>`;
+return;
+}
+libraryData.issuedList.forEach((item,index)=>{
+table.innerHTML+=`
+<tr class="border-b">
+<td class="p-3">${item.member}</td>
+<td class="p-3">${item.book}</td>
+<td class="p-3">${item.date}</td>
+<td class="p-3">
+<button
+onclick="returnBook(${index})"
+class="bg-red-600 text-white px-4 py-2 rounded">
+Return
+</button>
+</td>
+</tr>
+`;
+});
+}
+function returnBook(index){
+if(confirm("Return this book?")){
+libraryData.issuedList.splice(index,1);
+if(libraryData.issuedBooks>0)
+libraryData.issuedBooks--;
+save();
+loadTable();
+alert("Book Returned Successfully");
+}
+}
+loadTable();
+</script>
+</body>
+</html>
