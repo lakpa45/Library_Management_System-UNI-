@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Fees</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'inter', sans-serif;}
+        .font-serif-display { font-family: 'Fraunces', serif;}
+        .paper-texture{
+            background-color: #faf6ee;
+            background-size: 16px 16px;
+        }
+        .card-flip {transition: transform 0.6s; transform-style: preserve-3d;}
+        .card-face {backface-visibility: hidden;}
+        .card-back {transform: rotateY(180deg);}
+        input:focus {outline: none;}
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #a9834f;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="paper-texture min-h-screen text-stone-800">
+    <!-- Header-->
+<header class="bg-[#1e3a5f] text-[#f3ead a] border-b-4 border-[#a9834f]">
+    <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+        </div>
+        <h1 class="absolute left-1/2 -translate-x-1/2 font-serif-display text-2xl text-white tracking-wide">Library Fees</h1>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 text-sm text-white">
+        <span id="studentNameHeader" class="font-medium">Student Account</span>
+    </div>
+</header>   
+<!-- Main Content -->
+ <main class="max-w-5xl mx-auto px-6 py-10">
+<!-- Left: Fee Summary -->
+<div class="md:col-span-2 space-y-6">
+    <div class="bg-white/80 border rounded-lg shadow-sm p-6 h-full">
+        <h2 class="font-serif-display text-lg text-[#2d4a2b] mb-4">
+            Fee Summary
+        </h2>
+        <div id="feeList"
+             class="divide-y divide-[#ece2c6] text-sm">
+        </div>
+        <div class="flex items-center justify-between pt-4 mt-2 border-t-2 border-[#2d4a2b]">
+            <span class="font-serif-display text-lg text-[#2d4a2b]">
+                Total Due
+            </span>
+            <span id="totalDue"
+                  class="font-serif-display text-2xl text-[#a9834f]">
+            </span>
+        </div>
+    </div>
+</div>
+<!-- Right: Payment Options -->
+<div class="md:col-span-1">
+    <div class="bg-white border border-stone-200 rounded-lg shadow-sm p-6 h-full">
+        <div class="text-center">
+            <h2 class="text-xl font-semibold text-stone-800 mb-2">
+                Pay Your Library Fees Online
+            </h2>
+            <p class="text-sm text-stone-600 mb-4">
+                Choose your preferred payment method below.
+            </p>
+            <div class="space-y-4">
+                <!-- Credit/Debit Card -->
+                <button
+                    onclick="openPaymentModal('card')"
+                    class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 px-4 rounded-lg shadow-md transition duration-300">
+                    Credit/Debit Card
+                </button>
+                <!-- UPI -->
+                <button
+                    onclick="openPaymentModal('upi')"
+                    class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 px-4 rounded-lg shadow-md transition duration-300">
+                    Pay UPI
+                </button>
+                <!-- Bank Transfer -->
+                <button
+                    onclick="openPaymentModal('bank')"
+                    class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 px-4 rounded-lg shadow-md transition duration-300">
+                    Bank Transfer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Payment Modal -->
+<div id="paymentModal"
+     class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
+        <!-- Close Button -->
+        <button
+            onclick="closePaymentModal()"
+            class="absolute top-3 right-4 text-2xl text-stone-500 hover:text-red-600">
+            &times;
+        </button>
+        <!-- Modal Title -->
+        <h2 id="modalTitle"
+            class="font-serif-display text-2xl text-[#1e3a5f] mb-5">
+            Payment
+        </h2>
+        <!-- Credit/Debit Card Form -->
+        <form id="cardForm" class="space-y-4 hidden">
+            <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">
+                    Cardholder Name
+                </label>
+                <input
+                    type="text"
+                    placeholder="Enter cardholder name"
+                    class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">
+                    Card Number
+                </label>
+                <input
+                    type="text"
+                    maxlength="19"
+                    placeholder="1234 5678 9012 3456"
+                    class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-stone-700 mb-1">
+                        Expiry Date
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="MM/YY"
+                        maxlength="5"
+                        class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-stone-700 mb-1">
+                        CVV
+                    </label>
+                    <input
+                        type="password"
+                        placeholder="***"
+                        maxlength="3"
+                        class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+                </div>
+            </div>
+            <button
+                type="button"
+                onclick="processPayment('Credit/Debit Card')"
+                class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 rounded-lg font-medium transition">
+                Pay Now
+            </button>
+        </form>
+        <!-- UPI Form -->
+        <form id="upiForm" class="space-y-4 hidden">
+            <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">
+                    UPI ID
+                </label>
+                <input
+                    type="text"
+                    placeholder="example@upi"
+                    class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+            </div>
+            <div class="bg-[#f5f1e8] rounded-lg p-4 text-sm text-stone-600">
+                Enter your UPI ID and proceed with the payment through your
+                preferred UPI application.
+            </div>
+            <button
+                type="button"
+                onclick="processPayment('UPI')"
+                class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 rounded-lg font-medium transition">
+                Pay with UPI
+            </button>
+        </form>
+        <!-- Bank Transfer Form -->
+        <form id="bankForm" class="space-y-4 hidden">
+            <div class="bg-[#f5f1e8] rounded-lg p-4 space-y-3">
+                <div>
+                    <p class="text-xs text-stone-500">Bank Name</p>
+                    <p class="font-medium text-stone-800">
+                        Library Bank
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs text-stone-500">Account Name</p>
+                    <p class="font-medium text-stone-800">
+                        Library Fees Account
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs text-stone-500">Account Number</p>
+                    <p class="font-medium text-stone-800">
+                        123456789012
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs text-stone-500">IFSC Code</p>
+                    <p class="font-medium text-stone-800">
+                        LIBR0001234
+                    </p>
+                </div>
+            </div>
+            <p class="text-sm text-stone-600">
+                Transfer the required amount to the account above and keep
+                your transaction reference number.
+            </p>
+            <input
+                type="text"
+                placeholder="Transaction Reference Number"
+                class="w-full border border-stone-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-[#1e3a5f]">
+            <button
+                type="button"
+                onclick="processPayment('Bank Transfer')"
+                class="w-full bg-[#1e3a5f] hover:bg-[#2d4a2b] text-white py-3 rounded-lg font-medium transition">
+                Submit Payment Details
+            </button>
+        </form>
+    </div>
+</div>
+<!-- Payment JavaScript -->
+<script>
+    function openPaymentModal(type) {
+        const modal = document.getElementById("paymentModal");
+        const cardForm = document.getElementById("cardForm");
+        const upiForm = document.getElementById("upiForm");
+        const bankForm = document.getElementById("bankForm");
+        const modalTitle = document.getElementById("modalTitle");
+        cardForm.classList.add("hidden");
+        upiForm.classList.add("hidden");
+        bankForm.classList.add("hidden");
+        if (type === "card") {
+            modalTitle.textContent = "Credit/Debit Card";
+            cardForm.classList.remove("hidden");
+        }
+        else if (type === "upi") {
+            modalTitle.textContent = "Pay with UPI";
+            upiForm.classList.remove("hidden");
+        }
+        else if (type === "bank") {
+            modalTitle.textContent = "Bank Transfer";
+            bankForm.classList.remove("hidden");
+        }
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+    function closePaymentModal() {
+        const modal = document.getElementById("paymentModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+    function processPayment(method) {
+        alert(
+            "Payment selected: " + method +
+            "\n\nConnect this button to your payment gateway to process the payment."
+        );
+    }
+    document.getElementById("paymentModal").addEventListener("click", function(event) {
+        if (event.target === this) {
+            closePaymentModal();
+        }
+    });
+</script>
+ </main>
+</body>
+</html>
