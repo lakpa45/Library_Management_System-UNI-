@@ -94,7 +94,7 @@ function handleLogin(event){
             "loggedInUser",
             JSON.stringify(user)
         );
-        window.location.href="f2library.html";
+        window.location.href="f1library.html";
     }
     else{
         loginError.textContent =
