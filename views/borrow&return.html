@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrow &amp; Return</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          forest: { DEFAULT:'#1B4332', dark:'#122B21', light:'#2D5F48' },
+          brass: { DEFAULT:'#C9A227', light:'#E0BF5C', dark:'#9C7D1A' },
+          paper: { DEFAULT:'#F5EFE2', dark:'#EAE1CC', card:'#FBF8F1' },
+          ink: { DEFAULT:'#2B2118', light:'#5C5142' },
+          sage: '#7A8B77',
+          clay: '#B5533C',
+        },
+        fontFamily: {
+          display: ['Fraunces','serif'],
+          body: ['Inter','sans-serif'],
+          mono: ['JetBrains Mono','monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body { background-color:#F5EFE2; background-image: radial-gradient(#00000008 1px, transparent 1px); background-size: 22px 22px; }
+  .card-edge { box-shadow: 0 1px 3px rgba(27,67,50,0.08), 0 1px 2px rgba(27,67,50,0.06); }
+  .stamp { box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset; }
+  .tab.active { background:#1B4332; color:#F5EFE2; }
+  .field-err { border-color:#B5533C !important; }
+  .field-err-msg { color:#B5533C; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #C9A227aa; border-radius: 4px; }
+  .toast { transition: all .35s cubic-bezier(.4,0,.2,1); }
+  tr.fade-row { animation: fadeIn .3s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
+  .suggest-item:hover { background:#F5EFE2; }
+</style>
+</head>
+<body class="font-body text-ink min-h-screen">
+<div class="max-w-6xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation Desk</p>
+      <h1 class="font-display text-3xl text-forest">Borrow &amp; Return</h1>
+    </div>
+    <a href="adminlibrary.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Dashboard
+    </a>
+  </div>
+  <!-- Stat strip -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Books Out</p>
+      <p class="font-display text-2xl text-forest mt-1" id="stat-out">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Due Today</p>
+      <p class="font-display text-2xl text-brass-dark mt-1" id="stat-today">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Overdue</p>
+      <p class="font-display text-2xl text-clay mt-1" id="stat-overdue">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Fines Pending</p>
+      <p class="font-display text-2xl text-clay mt-1" id="stat-fines">₹0</p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <!-- LEFT: Issue / Return tabs -->
+    <div class="lg:col-span-1 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+      <div class="flex p-1.5 gap-1.5 m-4 mb-0 bg-paper rounded-full border border-ink/10">
+        <button id="tab-issue" class="tab active flex-1 rounded-full py-2 text-sm font-semibold transition">Issue Book</button>
+        <button id="tab-return" class="tab flex-1 rounded-full py-2 text-sm font-semibold transition text-ink-light">Return Book</button>
+      </div>
+      <!-- ISSUE PANEL -->
+      <form id="issue-form" class="p-5 space-y-4" novalidate>
+        <div class="relative">
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Member — search by name or card no. *</label>
+          <input type="text" id="i-member-search" autocomplete="off" placeholder="Start typing a name…"
+            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <div id="i-member-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-48 overflow-y-auto"></div>
+          <input type="hidden" id="i-member-id">
+          <p class="field-err-msg text-xs mt-1 hidden" data-err="i-member-search">Select a registered member.</p>
+        </div>
+        <div class="relative">
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Book — search by title or ISBN *</label>
+          <input type="text" id="i-book-search" autocomplete="off" placeholder="Start typing a title…"
+            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <div id="i-book-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-48 overflow-y-auto"></div>
+          <input type="hidden" id="i-book-id">
+          <p class="field-err-msg text-xs mt-1 hidden" data-err="i-book-search">Select an available book.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-ink-light mb-1.5">Issue Date</label>
+            <input type="date" id="i-issue-date" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-light mb-1.5">Loan Period</label>
+            <select id="i-period" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+              <option value="7">7 days</option>
+              <option value="14" selected>14 days</option>
+              <option value="21">21 days</option>
+              <option value="30">30 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="bg-paper rounded-lg px-4 py-3 text-xs text-ink-light border border-ink/10">
+          Due date: <span id="i-due-preview" class="font-mono text-ink font-medium">—</span>
+        </div>
+        <button type="submit" class="w-full bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full py-2.5 transition">Issue Book</button>
+      </form>
+      <!-- RETURN PANEL -->
+      <form id="return-form" class="p-5 space-y-4 hidden" novalidate>
+        <div class="relative">
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Active Loan — search by member or title *</label>
+          <input type="text" id="r-loan-search" autocomplete="off" placeholder="Start typing…"
+            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <div id="r-loan-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-56 overflow-y-auto"></div>
+          <input type="hidden" id="r-loan-id">
+          <p class="field-err-msg text-xs mt-1 hidden" data-err="r-loan-search">Select the loan being returned.</p>
+        </div>
+        <div id="r-loan-detail" class="hidden bg-paper rounded-lg px-4 py-3 text-sm border border-ink/10 space-y-1.5">
+          <p class="font-medium" id="r-d-title">—</p>
+          <p class="text-xs text-ink-light">Borrowed by <span id="r-d-member" class="text-ink font-medium">—</span></p>
+          <div class="flex justify-between text-xs pt-1">
+            <span class="text-ink-light">Due date</span>
+            <span id="r-d-due" class="font-mono">—</span>
+          </div>
+          <div class="flex justify-between text-xs">
+            <span class="text-ink-light">Fine</span>
+            <span id="r-d-fine" class="font-mono font-semibold">₹0</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Return Date</label>
+          <input type="date" id="r-return-date" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Condition</label>
+          <select id="r-condition" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+            <option>Good</option>
+            <option>Minor wear</option>
+            <option>Damaged</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full py-2.5 transition">Confirm Return</button>
+      </form>
+    </div>
+    <!-- RIGHT: Active loans table -->
+    <div class="lg:col-span-2 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-ink/10">
+        <h2 class="font-display text-lg text-forest">Active Loans</h2>
+        <div class="flex items-center gap-2">
+          <input type="text" id="loan-filter" placeholder="Filter loans…"
+            class="bg-paper border border-ink/15 rounded-full px-3.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition w-40">
+          <select id="loan-status-filter" class="bg-paper border border-ink/15 rounded-full px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50">
+            <option value="all">All</option>
+            <option value="active">On time</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-[11px] uppercase tracking-wider text-ink-light border-b border-ink/10">
+            <th class="px-5 py-3 font-medium">Book</th>
+            <th class="px-5 py-3 font-medium">Member</th>
+            <th class="px-5 py-3 font-medium">Issued</th>
+            <th class="px-5 py-3 font-medium">Due</th>
+            <th class="px-5 py-3 font-medium">Status</th>
+          </tr>
+        </thead>
+        <tbody id="loans-body" class="divide-y divide-ink/5"></tbody>
+      </table>
+      <div id="loans-empty" class="hidden px-5 py-16 text-center">
+        <p class="font-display text-lg text-forest mb-1">No active loans</p>
+        <p class="text-sm text-ink-light">Issue a book from the panel on the left to see it here.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Toast -->
+<div id="toast" class="toast fixed bottom-6 right-6 translate-y-24 opacity-0 bg-forest text-paper rounded-xl px-5 py-4 card-edge flex items-center gap-3 max-w-sm">
+  <svg class="w-5 h-5 text-brass-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  <div class="text-sm">
+    <p class="font-semibold" id="toast-title">Done</p>
+    <p class="text-paper/70 text-xs" id="toast-body"></p>
+  </div>
+</div>
+<script>
+  const FINE_PER_DAY = 5; 
+  const seedMembers = [
+    { cardNo:'STU-2026-0001', name:'sahil', type:'Student', department:'Computer Science' },
+    { cardNo:'FAC-2026-0002', name:'pihang', type:'Faculty', department:'Computer Science' },
+    { cardNo:'STU-2026-0003', name:'donge', type:'Student', department:'Computer Science' },
+    { cardNo:'STF-2026-0004', name:'hibu', type:'Staff', department:'Computer Science' },
+    { cardNo:'STU-2026-0005', name:'kisan', type:'Student', department:'Computer Science' },
+  ];
+  const seedBooks = [
+    { id:'BK-1001', title:'Design Patterns', author:'Gamma, Helm, Johnson, Vlissides', isbn:'9780201633610', copies:3 },
+    { id:'BK-1002', title:'Clean Architecture', author:'Robert C. Martin', isbn:'9780134494166', copies:2 },
+    { id:'BK-1003', title:'The Pragmatic Programmer', author:'Hunt & Thomas', isbn:'9780135957059', copies:4 },
+    { id:'BK-1004', title:'Database System Concepts', author:'Silberschatz, Korth, Sudarshan', isbn:'9780078022159', copies:2 },
+    { id:'BK-1005', title:'Introduction to Algorithms', author:'Cormen, Leiserson, Rivest, Stein', isbn:'9780262046305', copies:3 },
+    { id:'BK-1006', title:'Operating System Concepts', author:'Silberschatz, Galvin, Gagne', isbn:'9781119800361', copies:2 },
+    { id:'BK-1007', title:'Compiler Design', author:'Aho, Lam, Sethi, Ullman', isbn:'9788131720095', copies:2 },
+    { id:'BK-1008', title:'Computer Networks', author:'Andrew S. Tanenbaum', isbn:'9780132126953', copies:3 },
+  ];
+
+  let members = JSON.parse(localStorage.getItem('library_members') || 'null');
+  if (!members || members.length === 0) { members = seedMembers; localStorage.setItem('library_members', JSON.stringify(members)); }
+
+  let books = JSON.parse(localStorage.getItem('library_catalog') || 'null');
+  if (!books || books.length === 0) { books = seedBooks; localStorage.setItem('library_catalog', JSON.stringify(books)); }
+
+  let loans = JSON.parse(localStorage.getItem('library_loans') || 'null');
+  if (!loans) {
+    const today = new Date();
+    const d = (n) => new Date(today.getTime() + n*86400000).toISOString().slice(0,10);
+    loans = [
+      { id:'LN-0001', bookId:'BK-1004', bookTitle:'Database System Concepts', memberCard:'STU-2026-0005', memberName:'hibu', issueDate:d(-19), dueDate:d(-8), returnDate:null },
+      { id:'LN-0002', bookId:'BK-1007', bookTitle:'Compiler Design', memberCard:'STU-2026-0003', memberName:'kishan', issueDate:d(-13), dueDate:d(1), returnDate:null },
+      { id:'LN-0003', bookId:'BK-1005', bookTitle:'Introduction to Algorithms', memberCard:'STU-2026-0001', memberName:'lakpa', issueDate:d(-4), dueDate:d(10), returnDate:null },
+    ];
+    localStorage.setItem('library_loans', JSON.stringify(loans));
+  }
+
+  function persistLoans() { localStorage.setItem('library_loans', JSON.stringify(loans)); }
+  function persistBooks() { localStorage.setItem('library_catalog', JSON.stringify(books)); }
+
+  function todayISO() { return new Date().toISOString().slice(0,10); }
+  function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
+  function fmtDate(iso) { return iso ? new Date(iso).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—'; }
+
+  function copiesOnLoan(bookId) { return loans.filter(l => l.bookId === bookId && !l.returnDate).length; }
+  function availableCopies(book) { return book.copies - copiesOnLoan(book.id); }
+
+  const tabIssue = document.getElementById('tab-issue');
+  const tabReturn = document.getElementById('tab-return');
+  const issueForm = document.getElementById('issue-form');
+  const returnForm = document.getElementById('return-form');
+  tabIssue.addEventListener('click', () => {
+    tabIssue.classList.add('active'); tabReturn.classList.remove('active');
+    tabReturn.classList.add('text-ink-light'); tabIssue.classList.remove('text-ink-light');
+    issueForm.classList.remove('hidden'); returnForm.classList.add('hidden');
+  });
+  tabReturn.addEventListener('click', () => {
+    tabReturn.classList.add('active'); tabIssue.classList.remove('active');
+    tabIssue.classList.add('text-ink-light'); tabReturn.classList.remove('text-ink-light');
+    returnForm.classList.remove('hidden'); issueForm.classList.add('hidden');
+  });
+  function wireAutocomplete({ inputId, suggestId, hiddenId, getItems, renderItem, onSelect }) {
+    const input = document.getElementById(inputId);
+    const box = document.getElementById(suggestId);
+    const hidden = document.getElementById(hiddenId);
+
+    input.addEventListener('input', () => {
+      hidden.value = '';
+      const q = input.value.trim().toLowerCase();
+      if (!q) { box.classList.add('hidden'); box.innerHTML=''; return; }
+      const items = getItems(q).slice(0, 8);
+      if (items.length === 0) {
+        box.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-ink-light">No matches</div>`;
+      } else {
+        box.innerHTML = items.map((it, idx) => `<div class="suggest-item px-3.5 py-2.5 text-sm cursor-pointer" data-idx="${idx}">${renderItem(it)}</div>`).join('');
+      }
+      box.classList.remove('hidden');
+      box.dataset.items = JSON.stringify(items);
+    });
+
+    box.addEventListener('click', (e) => {
+      const row = e.target.closest('[data-idx]');
+      if (!row) return;
+      const items = JSON.parse(box.dataset.items || '[]');
+      const item = items[Number(row.dataset.idx)];
+      onSelect(item);
+      box.classList.add('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!box.contains(e.target) && e.target !== input) box.classList.add('hidden');
+    });
+  }
+
+  wireAutocomplete({
+    inputId: 'i-member-search', suggestId: 'i-member-suggest', hiddenId: 'i-member-id',
+    getItems: (q) => members.filter(m => m.name.toLowerCase().includes(q) || m.cardNo.toLowerCase().includes(q)),
+    renderItem: (m) => `<span class="font-medium">${m.name}</span> <span class="text-ink-light text-xs font-mono">· ${m.cardNo}</span>`,
+    onSelect: (m) => { document.getElementById('i-member-search').value = `${m.name} (${m.cardNo})`; document.getElementById('i-member-id').value = m.cardNo; showError('i-member-search', false); }
+  });
+
+  wireAutocomplete({
+    inputId: 'i-book-search', suggestId: 'i-book-suggest', hiddenId: 'i-book-id',
+    getItems: (q) => books.filter(b => b.title.toLowerCase().includes(q) || b.isbn.includes(q)),
+    renderItem: (b) => {
+      const avail = availableCopies(b);
+      return `<span class="font-medium">${b.title}</span> <span class="text-xs ${avail>0?'text-sage':'text-clay'}">· ${avail>0? avail+' available' : 'none available'}</span>`;
+    },
+    onSelect: (b) => { document.getElementById('i-book-search').value = b.title; document.getElementById('i-book-id').value = b.id; showError('i-book-search', false); }
+  });
+
+  wireAutocomplete({
+    inputId: 'r-loan-search', suggestId: 'r-loan-suggest', hiddenId: 'r-loan-id',
+    getItems: (q) => loans.filter(l => !l.returnDate && (l.memberName.toLowerCase().includes(q) || l.bookTitle.toLowerCase().includes(q))),
+    renderItem: (l) => `<span class="font-medium">${l.bookTitle}</span> <span class="text-ink-light text-xs">· ${l.memberName}</span>`,
+    onSelect: (l) => {
+      document.getElementById('r-loan-search').value = `${l.bookTitle} — ${l.memberName}`;
+      document.getElementById('r-loan-id').value = l.id;
+      showError('r-loan-search', false);
+      const detail = document.getElementById('r-loan-detail');
+      detail.classList.remove('hidden');
+      document.getElementById('r-d-title').textContent = l.bookTitle;
+      document.getElementById('r-d-member').textContent = l.memberName;
+      document.getElementById('r-d-due').textContent = fmtDate(l.dueDate);
+      const overdueDays = Math.max(0, daysBetween(l.dueDate, todayISO()));
+      const fine = overdueDays * FINE_PER_DAY;
+      const fineEl = document.getElementById('r-d-fine');
+      fineEl.textContent = `₹${fine}`;
+      fineEl.className = 'font-mono font-semibold ' + (fine > 0 ? 'text-clay' : 'text-sage');
+    }
+  });
+
+  const issueDate = document.getElementById('i-issue-date');
+  const periodSel = document.getElementById('i-period');
+  issueDate.value = todayISO();
+
+  function updateDuePreview() {
+    const period = Number(periodSel.value);
+    const base = issueDate.value || todayISO();
+    const due = new Date(new Date(base).getTime() + period * 86400000);
+    document.getElementById('i-due-preview').textContent = fmtDate(due.toISOString().slice(0,10));
+  }
+  issueDate.addEventListener('change', updateDuePreview);
+  periodSel.addEventListener('change', updateDuePreview);
+  updateDuePreview();
+
+  function showError(id, show) {
+    const input = document.getElementById(id);
+    const msg = document.querySelector(`[data-err="${id}"]`);
+    if (input) input.classList.toggle('field-err', show);
+    if (msg) msg.classList.toggle('hidden', !show);
+  }
+
+  function showToast(title, body) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-body').textContent = body;
+    toast.classList.remove('translate-y-24', 'opacity-0');
+    setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3200);
+  }
+
+  issueForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const memberCard = document.getElementById('i-member-id').value;
+    const bookId = document.getElementById('i-book-id').value;
+    let valid = true;
+    if (!memberCard) { showError('i-member-search', true); valid = false; }
+    if (!bookId) { showError('i-book-search', true); valid = false; }
+    if (!valid) return;
+
+    const book = books.find(b => b.id === bookId);
+    if (availableCopies(book) <= 0) {
+      showError('i-book-search', true);
+      document.querySelector('[data-err="i-book-search"]').textContent = 'No copies available for this title.';
+      document.querySelector('[data-err="i-book-search"]').classList.remove('hidden');
+      return;
+    }
+
+    const member = members.find(m => m.cardNo === memberCard);
+    const period = Number(periodSel.value);
+    const base = issueDate.value || todayISO();
+    const due = new Date(new Date(base).getTime() + period * 86400000).toISOString().slice(0,10);
+
+    const loan = {
+      id: 'LN-' + String(loans.length + 1).padStart(4, '0') + '-' + Date.now().toString().slice(-4),
+      bookId: book.id,
+      bookTitle: book.title,
+      memberCard: member.cardNo,
+      memberName: member.name,
+      issueDate: base,
+      dueDate: due,
+      returnDate: null,
+    };
+    loans.push(loan);
+    persistLoans();
+
+    showToast('Book issued', `${book.title} → ${member.name}, due ${fmtDate(due)}`);
+    issueForm.reset();
+    document.getElementById('i-member-id').value = '';
+    document.getElementById('i-book-id').value = '';
+    issueDate.value = todayISO();
+    periodSel.value = '14';
+    updateDuePreview();
+    renderLoans();
+  });
+
+  const returnDate = document.getElementById('r-return-date');
+  returnDate.value = todayISO();
+
+  returnForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const loanId = document.getElementById('r-loan-id').value;
+    if (!loanId) { showError('r-loan-search', true); return; }
+
+    const loan = loans.find(l => l.id === loanId);
+    const retDate = returnDate.value || todayISO();
+    const overdueDays = Math.max(0, daysBetween(loan.dueDate, retDate));
+    const fine = overdueDays * FINE_PER_DAY;
+
+    loan.returnDate = retDate;
+    loan.fine = fine;
+    loan.condition = document.getElementById('r-condition').value;
+    persistLoans();
+
+    showToast('Book returned', fine > 0 ? `${loan.bookTitle} — fine of ₹${fine} recorded` : `${loan.bookTitle} returned on time`);
+    returnForm.reset();
+    document.getElementById('r-loan-id').value = '';
+    document.getElementById('r-loan-detail').classList.add('hidden');
+    returnDate.value = todayISO();
+    renderLoans();
+  });
+
+  let loanFilterState = { text:'', status:'all' };
+
+  function renderLoans() {
+    const activeLoans = loans.filter(l => !l.returnDate);
+    let list = activeLoans;
+
+    if (loanFilterState.text.trim()) {
+      const q = loanFilterState.text.trim().toLowerCase();
+      list = list.filter(l => l.bookTitle.toLowerCase().includes(q) || l.memberName.toLowerCase().includes(q));
+    }
+    if (loanFilterState.status === 'overdue') list = list.filter(l => daysBetween(l.dueDate, todayISO()) > 0);
+    if (loanFilterState.status === 'active') list = list.filter(l => daysBetween(l.dueDate, todayISO()) <= 0);
+
+    list.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+    const body = document.getElementById('loans-body');
+    const empty = document.getElementById('loans-empty');
+
+    if (list.length === 0) {
+      body.innerHTML = '';
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      body.innerHTML = list.map(l => {
+        const overdueDays = daysBetween(l.dueDate, todayISO());
+        const isOverdue = overdueDays > 0;
+        const isDueToday = overdueDays === 0;
+        const statusLabel = isOverdue ? `Overdue · ₹${overdueDays * FINE_PER_DAY}` : (isDueToday ? 'Due today' : 'On time');
+        const statusClass = isOverdue ? 'bg-clay/10 text-clay' : (isDueToday ? 'bg-brass/15 text-brass-dark' : 'bg-forest/10 text-forest');
+        return `
+        <tr class="fade-row hover:bg-paper/60 transition">
+          <td class="px-5 py-3 font-medium">${l.bookTitle}</td>
+          <td class="px-5 py-3 text-ink-light">${l.memberName}</td>
+          <td class="px-5 py-3 font-mono text-xs text-ink-light">${fmtDate(l.issueDate)}</td>
+          <td class="px-5 py-3 font-mono text-xs">${fmtDate(l.dueDate)}</td>
+          <td class="px-5 py-3">
+            <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold stamp ${statusClass}">${statusLabel}</span>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    document.getElementById('stat-out').textContent = activeLoans.length;
+    document.getElementById('stat-today').textContent = activeLoans.filter(l => daysBetween(l.dueDate, todayISO()) === 0).length;
+    const overdueLoans = activeLoans.filter(l => daysBetween(l.dueDate, todayISO()) > 0);
+    document.getElementById('stat-overdue').textContent = overdueLoans.length;
+    const pendingFines = overdueLoans.reduce((sum, l) => sum + daysBetween(l.dueDate, todayISO()) * FINE_PER_DAY, 0);
+    document.getElementById('stat-fines').textContent = `₹${pendingFines}`;
+  }
+
+  document.getElementById('loan-filter').addEventListener('input', (e) => { loanFilterState.text = e.target.value; renderLoans(); });
+  document.getElementById('loan-status-filter').addEventListener('change', (e) => { loanFilterState.status = e.target.value; renderLoans(); });
+
+  renderLoans();
+</script>
+</body>
+</html>

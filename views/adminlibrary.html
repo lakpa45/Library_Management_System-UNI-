@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            DEFAULT: '#1B4332',
+                            dark: '#163A29',
+                            light: '#3E6B56'
+                        },
+
+                        brass: {
+                            DEFAULT: '#C9972F',
+                            light: '#D9AE4A',
+                            dark: '#B6862A'
+                        },
+
+                        paper: {
+                            DEFAULT: '#F5EFE6',
+                            dark: '#EDE3D2',
+                            card: '#FFFFFF'
+                        },
+
+                        ink: {
+                            DEFAULT: '#1B2A22',
+                            light: '#4A5A50'
+                        },
+
+                        muted: '#8A7B5C',
+                        border: '#E4D9C4',
+                        clay: '#9E4A4A'
+                    },
+
+                    fontFamily: {
+                        display: ['Fraunces', 'Georgia', 'serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F5EFE6;
+            background-image:
+                radial-gradient(
+                    circle at 1px 1px,
+                    rgba(27, 67, 50, 0.05) 1px,
+                    transparent 0
+                );
+            background-size: 22px 22px;
+        }
+        .card-edge {
+            box-shadow:
+                0 1px 3px rgba(27, 67, 50, 0.08),
+                0 1px 2px rgba(27, 67, 50, 0.06);
+        }
+        .drawer-tab.active {
+            background: #F5EFE6;
+            color: #1B4332;
+        }
+        .drawer-tab.active::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #C9972F;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C9972F;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5EFE6;
+        }
+    </style>
+</head>
+<body class="font-body text-ink min-h-screen flex">
+    <!-- SIDEBAR -->
+    <aside class="w-64 shrink-0 min-h-screen bg-[#1e3a5f] text-[#F3EADA] flex flex-col border-r-4 border-[#A9834F]">
+        <!-- Brand -->
+        <div class="px-6 py-7 border-b border-white/10">
+            <p class="font-display text-2xl tracking-tight text-white">
+                Library
+            </p>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-[#C9D9CF] mt-1">
+                Admin Register
+            </p>
+        </div>
+        <!-- Navigation -->
+        <nav class="flex-1 py-5">
+            <!-- Overview -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mb-2">Overview</p>
+            <a href="#"
+               class="drawer-tab active relative flex items-center gap-3 px-6 py-3 text-sm font-medium transition">
+                Dashboard
+            </a>
+            <!-- Catalog -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mt-6 mb-2">Catalog</p>
+            <a href="bcategory.html"
+               class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Books
+            </a>
+            <!-- Circulation -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mt-6 mb-2">Circulation</p>
+            <a href="borrow&return.html"
+               class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Borrow / Return
+            </a>
+            <a href="overdue&fine.html"
+               class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Overdue &amp; Fines
+            </a>
+            <a href="members.html"
+               class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Members
+            </a>
+        </nav>
+        <!-- Sidebar Footer -->
+        <div class="px-6 py-4 border-t border-white/10">
+            <p class="font-mono text-xs text-[#C9D9CF]/60">Term catalog · Aug 2026</p>
+            <p class="text-[10px] text-white/30 mt-1">Secure Administration Portal</p>
+        </div>
+    </aside>
+    <!--  MAIN AREA  -->
+    <main class="flex-1 flex flex-col min-w-0 min-h-screen">
+        <!-- TOP BAR -->
+        <header class="bg-white border-b border-[#E4D9C4] px-8 py-4 flex items-center justify-between card-edge">
+            <!-- Page Title -->
+            <div>
+                <h1 class="font-display text-2xl text-forest">
+                    Reading Room Overview
+                </h1>
+                <p
+                    id="today-date"
+                    class="text-xs text-ink-light mt-0.5">
+                </p>
+            </div>
+            <!-- Header Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Search -->
+                <div class="relative">
+                    <input
+                        type="text"
+                        placeholder="Search catalog, member, or ID…"
+                        class="w-72 bg-paper border border-[#E4D9C4] rounded-full pl-9 pr-4 py-2 text-sm placeholder:text-[#8A7B5C]/70 focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass"
+                    >
+                    <svg
+                        class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A7B5C]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                    </svg>
+                </div>
+                <!-- Admin Profile -->
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-ink">Administrator</p>
+                        <p class="text-[10px] text-ink-light">Library Staff</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-forest text-white flex items-center justify-center font-display">A</div>
+                </div>
+            </div>
+        </header>
+        <!-- CONTENT -->
+        <div class="p-8 space-y-6 overflow-y-auto">
+    <!-- STAT CARDS -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 fade-in">
+      <!-- Total Books -->
+      <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Total Books</p>
+            <p class="font-display text-3xl text-[#8A7B5C] mt-1"id="stat-books">0</p>
+          </div>
+        </div>
+        <p class="text-xs text-[#8A7B5C] mt-3">+12 added this term</p>
+      </div>
+      <!-- Active Borrowers -->
+      <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Active Borrowers</p>
+            <p class="font-display text-3xl text-[#8A7B5C] mt-1"id="stat-borrowers">0</p>
+          </div>
+        </div>
+        <p class="text-xs text-[#8A7B5C] mt-3">Across 6 departments</p>
+      </div>
+      <!-- Overdue -->
+      <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Overdue Items</p>
+            <p class="font-display text-3xl text-[#8A7B5C] mt-1"id="stat-overdue">0</p>
+          </div>
+        </div>
+        <p class="text-xs text-[#8A7B5C] mt-3">Needs follow-up</p>
+      </div>
+      <!-- Fines -->
+      <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Fines Collected</p>
+            <p class="font-display text-3xl text-[#8A7B5C] mt-1"id="stat-fines">₹0</p>
+          </div>
+        </div>
+        <p class="text-xs text-[#8A7B5C] mt-3">This month</p>
+      </div>
+    </section>
+    <!-- ACTIVITY + DUE -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Recent Activity -->
+      <div class="lg:col-span-2 bg-white rounded-xl card-edge border border-[#E4D9C4] overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-[#E4D9C4]">
+          <h2 class="font-display text-lg text-forest">Recent Circulation Activity</h2>
+          <button class="text-xs font-medium text-[#B6862A] hover:text-[#C9972F] border border-[#C9972F]/40 hover:border-[#C9972F] rounded-full px-3 py-1 transition">View ledger</button>
+        </div>
+        <table class="w-full text-sm">
+          <thead>
+            <tr
+              class="text-left text-[11px] uppercase tracking-wider text-[#8A7B5C] border-b border-[#E4D9C4]">
+              <th class="px-5 py-3 font-medium">Member</th>
+              <th class="px-5 py-3 font-medium">Title</th>
+              <th class="px-5 py-3 font-medium">Action</th>
+              <th class="px-5 py-3 font-medium">Date</th>
+              <th class="px-5 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody id="activity-body"class="divide-y divide-[#E4D9C4]"></tbody>
+        </table>
+      </div>
+      <!-- Due Soon -->
+      <div class="bg-white rounded-xl card-edge border border-[#E4D9C4] overflow-hidden flex flex-col">
+        <div class="px-5 py-4 border-b border-[#E4D9C4]">
+          <h2 class="font-display text-lg text-forest">Due for Return</h2>
+          <p class="text-xs text-[#8A7B5C]">Sorted by urgency</p>
+        </div>
+        <ul id="due-list"class="divide-y divide-[#E4D9C4] overflow-y-auto max-h-[420px]"></ul>
+      </div>
+    </section>
+        <!-- QUICK ACTIONS -->
+<section class="bg-[#1e3a5f] rounded-xl px-6 py-5 flex flex-wrap items-center gap-3 card-edge border border-[#A9834F]/40">
+    <!-- Title -->
+    <span class="font-display text-[#F3EADA] text-lg mr-2">Quick Actions</span>
+    <!-- Add New Book -->
+    <a href="bcategory.html"
+       class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+        + Add New Book
+    </a>
+    <!-- Register Member -->
+    <a href="registermemb.html"
+       class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+        Register Member
+    </a>
+    <!-- Issue Book -->
+    <a href="borrow&return.html"
+       class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+        Issue Book
+    </a>
+    <!-- Process Return -->
+    <button type="button"
+        class="bg-white/10 hover:bg-white/20 text-[#F3EADA] font-medium text-sm rounded-full px-4 py-2 transition duration-200">
+        Process Return
+    </button>
+    <!-- Export Report -->
+    <button type="button"
+        class="bg-white/10 hover:bg-white/20 text-[#F3EADA] font-medium text-sm rounded-full px-4 py-2 transition duration-200 ml-auto">
+        Export Report
+    </button>
+</section>
+    </main>
+    <script>
+        const dateElement = document.getElementById("today-date");
+        const today = new Date();
+        dateElement.textContent = today.toLocaleDateString("en-IN", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+  document.getElementById('today-date').textContent =
+    new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  const seedActivity = [
+    {
+      member: 'Kishan',
+      title: 'Applied math',
+      action: 'Borrowed',
+      date: 'Aug 12',
+      status: 'active'
+    },
+    {
+      member: 'samim',
+      title: 'software engineering',
+      action: 'Returned',
+      date: 'Aug 12',
+      status: 'returned'
+    },
+    {
+      member: 'pihang',
+      title: 'C programing',
+      action: 'Borrowed',
+      date: 'Aug 11',
+      status: 'active'
+    },
+    {
+      member: 'sahil',
+      title: 'Database management system',
+      action: 'Overdue',
+      date: 'Aug 05',
+      status: 'overdue'
+    },
+    {
+      member: 'lakpa',
+      title: 'Introduction to Psychology',
+      action: 'Returned',
+      date: 'Aug 10',
+      status: 'returned'
+    },
+    {
+      member: 'hibu',
+      title: 'Data base management system',
+      action: 'Borrowed',
+      date: 'Aug 09',
+      status: 'active'
+    }
+  ];
+  const seedDue = [
+    {
+      member: 'Sahil',
+      title: 'Database System Concepts',
+      due: 'Overdue by 8 days',
+      level: 'overdue'
+    },
+    {
+      member: 'Napa',
+      title: 'Compiler Design',
+      due: 'Due tomorrow',
+      level: 'urgent'
+    },
+    {
+      member: 'kena',
+      title: 'Discrete Mathematics',
+      due: 'Due in 2 days',
+      level: 'soon'
+    },
+    {
+      member: 'prabash',
+      title: 'Computer Networks',
+      due: 'Due in 4 days',
+      level: 'ok'
+    },
+    {
+      member: 'sangay',
+      title: 'Data Structures in C',
+      due: 'Due in 6 days',
+      level: 'ok'
+    }
+  ];
+  const activity =
+    JSON.parse(
+      localStorage.getItem('library_activity') || 'null'
+    ) || seedActivity;
+  const dueItems =
+    JSON.parse(
+      localStorage.getItem('library_due') || 'null'
+    ) || seedDue;
+  localStorage.setItem(
+    'library_activity',
+    JSON.stringify(activity)
+  );
+  localStorage.setItem(
+    'library_due',
+    JSON.stringify(dueItems)
+  );
+  const stats = {
+    books: 100,
+    borrowers:
+      activity.filter(
+        a => a.status === 'active'
+      ).length + 3,
+    overdue:
+      dueItems.filter(
+        d => d.level === 'overdue'
+      ).length + 7,
+    fines: 60
+  };
+  animateCount(
+    'stat-books',
+    stats.books
+  );
+  animateCount(
+    'stat-borrowers',
+    stats.borrowers
+  );
+  animateCount(
+    'stat-overdue',
+    stats.overdue
+  );
+  animateCount(
+    'stat-fines',
+    stats.fines,
+    '₹'
+  );
+  function animateCount(
+    id,
+    target,
+    prefix = ''
+  ) {
+    const el =
+      document.getElementById(id);
+    let cur = 0;
+    const step =
+      Math.max(
+        1,
+        Math.ceil(target / 40)
+      );
+    const t =
+      setInterval(() => {
+        cur += step;
+        if (cur >= target) {
+          cur = target;
+          clearInterval(t);
+        }
+        el.textContent =
+          prefix +
+          cur.toLocaleString('en-IN');
+      }, 20);
+  }
+  const statusStyles = {
+    active:
+      'bg-[#1B4332]/10 text-[#1B4332]',
+    returned:
+      'bg-[#3E6B56]/15 text-[#3E6B56]',
+    overdue:
+      'bg-[#9E4A4A]/10 text-[#9E4A4A]'
+  };
+  const activityBody =
+    document.getElementById(
+      'activity-body'
+    );
+  activityBody.innerHTML =
+    activity.map(a => `
+      <tr class="hover:bg-[#F5EFE6]/70 transition">
+        <td class="px-5 py-3 font-medium">
+          ${a.member}
+        </td>
+        <td class="px-5 py-3 text-[#4A5A50]">
+          ${a.title}
+        </td>
+        <td class="px-5 py-3">
+          ${a.action}
+        </td>
+        <td class="px-5 py-3 font-mono text-xs text-[#8A7B5C]">
+          ${a.date}
+        </td>
+        <td class="px-5 py-3">
+          <span
+            class="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold capitalize stamp ${statusStyles[a.status]}"
+          >
+            ${a.status}
+          </span>
+        </td>
+      </tr>
+    `).join('');
+  const dueDot = {
+    overdue:
+      'bg-[#9E4A4A]',
+    urgent:
+      'bg-[#B6862A]',
+    soon:
+      'bg-[#C9972F]',
+    ok:
+      'bg-[#3E6B56]'
+  };
+  const dueText = {
+    overdue:
+      'text-[#9E4A4A]',
+    urgent:
+      'text-[#B6862A]',
+    soon:
+      'text-[#B6862A]',
+    ok:
+      'text-[#4A5A50]'
+  };
+  const dueList =
+    document.getElementById(
+      'due-list'
+    );
+  dueList.innerHTML =
+    dueItems.map(d => `
+      <li
+        class="flex items-center gap-3 px-5 py-3 hover:bg-[#F5EFE6]/60 transition"
+      >
+        <span
+          class="w-2.5 h-2.5 rounded-full status-dot ${dueDot[d.level]} shrink-0"
+        ></span>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium truncate">
+            ${d.title}
+          </p>
+          <p class="text-xs text-[#8A7B5C] truncate">
+            ${d.member}
+          </p>
+        </div>
+        <span
+          class="text-xs font-medium ${dueText[d.level]} shrink-0"
+        >
+          ${d.due}
+        </span>
+      </li>
+    `).join('');
+</script>
+</body>
+</html>
