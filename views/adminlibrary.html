@@ -95,7 +95,7 @@
         <!-- Brand -->
         <div class="px-6 py-7 border-b border-white/10">
             <p class="font-display text-2xl tracking-tight text-white">
-                Library
+                ICFAI
             </p>
             <p class="text-[11px] uppercase tracking-[0.2em] text-[#C9D9CF] mt-1">
                 Admin Register
@@ -172,16 +172,107 @@
                         />
                     </svg>
                 </div>
-                <!-- Admin Profile -->
-                <div class="flex items-center gap-3">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-medium text-ink">Administrator</p>
-                        <p class="text-[10px] text-ink-light">Library Staff</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-forest text-white flex items-center justify-center font-display">A</div>
-                </div>
+               <!-- Admin Profile -->
+              <div class="relative">
+               <button type="button"
+               onclick="toggleAdminMenu()"
+               class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition duration-200">
+        <div class="text-right hidden sm:block">
+            <p class="text-sm font-medium text-ink">Administrator</p>
+            <p class="text-[10px] text-ink-light">Library Staff</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-forest text-white flex items-center justify-center font-display">
+            A
+        </div>
+    </button>
+     <!-- Admin Dropdown -->
+    <div id="adminMenu"
+        class="hidden absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg border border-[#A9834F]/30 py-2 z-50">
+        <a href="admin-profile.html"class="block px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">My Profile</a>
+        <!-- Change Password -->
+<button type="button"
+    onclick="openPasswordModal()"
+    class="w-full text-left px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">
+     Change Password
+</button>
+        <div class="border-t border-gray-200 my-1"></div>
+        <a href="#"class="block px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">Logout</a>
+    </div>
+</div>
             </div>
         </header>
+        <!-- Change Password Modal -->
+<div id="passwordModal"
+    class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
+
+    <div class="bg-white w-[90%] max-w-md rounded-xl shadow-2xl p-6">
+
+        <div class="flex items-center justify-between mb-5">
+            <h2 class="text-xl font-bold text-[#1B2A22]">
+                Change Password
+            </h2>
+
+            <button onclick="closePasswordModal()"
+                class="text-gray-500 hover:text-red-600 text-xl">
+                &times;
+            </button>
+        </div>
+
+        <form onsubmit="changePassword(event)">
+
+            <!-- Current Password -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Current Password
+            </label>
+
+            <input id="currentPassword"
+                type="password"
+                required
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                placeholder="Enter current password">
+
+            <!-- New Password -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                New Password
+            </label>
+
+            <input id="newPassword"
+                type="password"
+                required
+                minlength="6"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                placeholder="Enter new password">
+
+            <!-- Confirm Password -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+                Confirm New Password
+            </label>
+
+            <input id="confirmPassword"
+                type="password"
+                required
+                minlength="6"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                placeholder="Confirm new password">
+
+            <p id="passwordMessage" class="text-sm mb-4"></p>
+
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                    onclick="closePasswordModal()"
+                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                    class="px-4 py-2 rounded-lg bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold">
+                    Change Password
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
         <!-- CONTENT -->
         <div class="p-8 space-y-6 overflow-y-auto">
     <!-- STAT CARDS -->
@@ -426,6 +517,82 @@
     stats.fines,
     '₹'
   );
+  function toggleAdminMenu() {
+    document.getElementById("adminMenu").classList.toggle("hidden");
+}
+
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        window.location.href = "login.html";
+    }
+}
+function openPasswordModal() {
+    document.getElementById("passwordModal").classList.remove("hidden");
+}
+
+function closePasswordModal() {
+    document.getElementById("passwordModal").classList.add("hidden");
+
+    document.getElementById("currentPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+    document.getElementById("passwordMessage").textContent = "";
+}
+
+function changePassword(event) {
+    event.preventDefault();
+
+    const currentPassword =
+        document.getElementById("currentPassword").value;
+
+    const newPassword =
+        document.getElementById("newPassword").value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+    const message =
+        document.getElementById("passwordMessage");
+
+    // Get the stored password
+    const storedPassword =
+        localStorage.getItem("adminPassword") || "admin123";
+
+    // Check current password
+    if (currentPassword !== storedPassword) {
+        message.textContent = "Current password is incorrect.";
+        message.className = "text-sm mb-4 text-red-600";
+        return;
+    }
+
+    // Check new password
+    if (newPassword.length < 6) {
+        message.textContent =
+            "New password must be at least 6 characters.";
+        message.className = "text-sm mb-4 text-red-600";
+        return;
+    }
+
+    // Check confirmation
+    if (newPassword !== confirmPassword) {
+        message.textContent =
+            "New passwords do not match.";
+        message.className = "text-sm mb-4 text-red-600";
+        return;
+    }
+
+    // Save new password
+    localStorage.setItem("adminPassword", newPassword);
+
+    message.textContent =
+        "Password changed successfully!";
+    message.className = "text-sm mb-4 text-green-600";
+
+    setTimeout(() => {
+        closePasswordModal();
+    }, 1500);
+}
+
   function animateCount(
     id,
     target,
