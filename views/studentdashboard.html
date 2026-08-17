@@ -1,212 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-     <style>
-          body {
-    background: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
-        .glass {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-   <!--Header-->
-   <header class="glass shadow-lg">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-gray-900"> Student Dashboard</h1>
-        <div class="flex items-center gap-3">
-            <input 
-            id="search"
-            type="text"
-            placeholder="Search Books..."
-            class="px-4 py-2 w-64 rounded-full border border-gray-300"
-            onkeyup="searchBook()">
-            <button
-    onclick="logout()"
-    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full">
-    Logout
-</button>
-        </div>
+
+<body class="bg-gray-50 text-gray-700">
+
+<!-- Sidebar -->
+<aside class="fixed h-screen w-60 bg-[#174d3b] text-white p-5 hidden md:block">
+  <h2 class="text-lg font-bold mb-8">📚 Library System</h2>
+
+  <nav class="space-y-2 text-sm">
+    <a class="block rounded-lg bg-[#2f8f68] p-3" href="#">🏠 Dashboard</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">🔍 Search Books</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">📚 My Books</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">🔄 History</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">📖 Book Request</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">🔔 Notifications</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">👤 Profile</a>
+    <a class="block p-3 hover:bg-[#216b4e] rounded-lg" href="#">🚪 Logout</a>
+  </nav>
+</aside>
+
+
+<!-- Main -->
+<main class="md:ml-60">
+
+  <!-- Header -->
+  <header class="bg-white border-b p-5 flex justify-between">
+    <div>
+      <h1 class="font-bold text-lg text-[#174d3b]">Student Dashboard</h1>
+      <p class="text-xs text-gray-500">Library Management System</p>
     </div>
-   </header>
-   <!--Welcome-->
-   <div class="text-center py-10">
-    <h1 class="text-5xl font-bold text-gray-900">Welcome, Students</h1>
-    <p class="text-gray-600 mt-3 text-lg">Manage your books, renew them, check fines and update your profile.</p>
-</div>
- <!-- Dashboard Cards -->
-<div class="max-w-7xl mx-auto px-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
-        <div class="glass rounded-xl shadow p-6 text-center">
-            <h3 class="text-xl font-semibold text-gray-900">Borrowed Books</h3>
-            <p id="borrowedCount" class="text-5xl text-gray-900 mt-3">0</p>
-        </div>
+  </header>
 
-        <div class="glass rounded-xl shadow p-6 text-center">
-            <h3 class="text-xl font-semibold text-gray-900">Due Soon</h3>
-            <p id="dueCount" class="text-5xl text-gray-900 mt-3">0</p>
-        </div>
 
-        <div class="glass rounded-xl shadow p-6 text-center">
-            <h3 class="text-xl font-semibold text-gray-900">Returned</h3>
-            <p id="returnedCount" class="text-5xl text-gray-900 mt-3">0</p>
-        </div>
+  <section class="p-5 lg:p-8">
 
-        <div class="glass rounded-xl shadow p-6 text-center">
-            <h3 class="text-xl font-semibold text-gray-900">Fine</h3>
-            <p id="fineCount" class="text-5xl text-gray-900 mt-3">₹0</p>
-        </div>
+    <!-- Welcome -->
+    <div class="rounded-xl p-6 text-white mb-6
+                bg-gradient-to-r from-[#216b4e] to-[#2f8f68]">
+
+      <h2 class="text-2xl font-bold">Hello Friend Welcome! 👋</h2>
+
+      <p class="text-sm mt-2 text-green-50">
+        Manage your books, transactions and library activities.
+      </p>
+
+    <a href="exploreBook.html"
+   class="inline-block mt-4 bg-white text-[#216b4e]
+          px-4 py-2 rounded-lg text-sm hover:bg-green-50">
+    Explore Books →
+</a>
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <p class="text-xs text-gray-500">Issued Books</p>
+        <h2 class="text-2xl font-bold text-[#174d3b]">3</h2>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <p class="text-xs text-gray-500">Due Soon</p>
+        <h2 class="text-2xl font-bold text-[#174d3b]">1</h2>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <p class="text-xs text-gray-500">Overdue</p>
+        <h2 class="text-2xl font-bold text-[#174d3b]">0</h2>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <p class="text-xs text-gray-500">Total Borrowed</p>
+        <h2 class="text-2xl font-bold text-[#174d3b]">18</h2>
+      </div>
 
     </div>
-</div>
-<!--Borrowed Books-->
-<div class="max-w-7xl mx-auto mt-10">
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <h2 class="text-2xl font-bold mb-5">Borrowed Books</h2>
+
+
+    <!-- Search -->
+    <div class="bg-white p-5 rounded-xl shadow-sm mb-6">
+
+      <h3 class="font-bold text-sm text-[#174d3b] mb-3">
+        🔍 Search Books
+      </h3>
+
+      <div class="flex gap-2">
+
+        <input
+          type="text"
+          placeholder="Search title, author or ISBN..."
+          class="flex-1 border rounded-lg px-4 py-2 text-sm outline-none">
+
+        <button
+          class="bg-[#2f8f68] text-white px-5 rounded-lg text-sm">
+          Search
+        </button>
+
+      </div>
+    </div>
+
+
+    <!-- Books + Notifications -->
+    <div class="grid lg:grid-cols-3 gap-6">
+
+      <!-- Issued Books -->
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-sm overflow-hidden">
+
+        <div class="p-5 border-b">
+          <h3 class="font-bold text-sm text-[#174d3b]">
+            📚 Currently Issued Books
+          </h3>
+        </div>
+
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-white text-gray-600">
-                    <tr>
-                        <th class="p-3 text-left">Books</th>
-                        <th class="p-3 text-left">Author</th>
-                        <th class="p-3 text-left">Due Date</th>
-                        <th class="p-3 text-left">Status</th>
-                        <th class="p-3 text-left">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="bookTable"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<!-- Profile -->
- <div class="max-w-7xl mx-auto mt-10 mb-10">
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <h2 class="text-2xl font-bold mb-6">Update Profile</h2>
-        <div class="grid md:grid-cols-2 gap-5">
-            <input
-            id="name"
-            class="border p-3 rounded-lg"
-            placeholder="Student Name">
-            <input
-            id="email"
-            class="border p-3 rounded-lg"
-            placeholder="Email">
-            <input
-            id="phone"
-            class="border p-3 rounded-lg"
-            placeholder="Phone">
-            <input
-            id="department"
-            class="border p-3 rounded-lg"
-            placeholder="Department">
-        </div>
-        <button 
-        onclick="updateProfile()"
-        class="mt-6 bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-lg">Save Profile</button>
-    </div>
- </div>
-<script>
-    let books=[
-        {
-            title:"Java Programming",
-            author:"James Gosling",
-            due:"15 July 2026",
-            status:"Borrowed",
-            fine:0
-        },
-        {
-            title:"HTML & CSS",
-            author:"Jon Duckett",
-            due:"20 July 2026",
-            status:"Borrowed",
-            fine:20
-        },
-        {
-            title:"JavaScript",
-            author:"Brendan Eich",
-            due:"28 July 2026",
-            status:"Returned",
-            fine:0
-        }
-    ];
-   function displayBooks(data) {
-    let table = document.getElementById("bookTable");
-    table.innerHTML = "";
 
-    data.forEach((book, index) => {
-        table.innerHTML += `
-        <tr class="border-b hover:bg-gray-100">
-            <td class="p-3">${book.title}</td>
-            <td>${book.author}</td>
-            <td>${book.due}</td>
-            <td>
-                <span class="px-3 py-1 rounded-full text-white ${
-                    book.status == "Borrowed"
-                        ? "bg-orange-500"
-                        : "bg-green-600"
-                }">
-                    ${book.status}
-                </span>
-            </td>
-            <td>
-                ${
-                    book.status == "Borrowed"
-                    ? `
-                    <button
-                        onclick="renewBook(${index})"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                        Renew
-                    </button>
-                    `
-                    : "-"
-                }
-            </td>
-        </tr>
-        `;
-    });
+          <table class="w-full text-sm">
 
-    updateDashboard();
-}
-function updateDashboard(){
-    let borrowed=books.filter(b=>b.status=="Borrowed").length;
-    let returned=books.filter(b=>b.status=="Returned").length;
-    let fine=books.reduce((sum,b)=>sum+b.fine,0);
-    document.getElementById("borrowedCount").innerHTML=borrowed;
-    document.getElementById("returnedCount").innerHTML=returned;
-    document.getElementById("dueCount").innerHTML=borrowed;
-    document.getElementById("fineCount").innerHTML = "₹" + fine;
-    }
-    function searchBook(){
-        let value=document.getElementById("search").value.toLowerCase();
-        let filtered=books.filter(book=>
-            book.title.toLowerCase().include(value) || book.author.toLowerCase().includes(value)
-        );
-        displayBooks(filtered);
-    }
-    function renewBook(index){
-        if(books[index].status=="Borrowed"){
-            alert("Book renewed successfully!\nNew due date will be assiged by the librarian.");
-        }
-    }
-    function updateProfile(){
-        alert("Profile Updated Successfully!");
-    }
-    function logout() {
-    window.location.href = "library.html";
-}
-    displayBooks(books);
-</script>
+            <thead class="bg-gray-50 text-xs text-gray-500">
+              <tr>
+                <th class="p-4 text-left">Book</th>
+                <th class="p-4">Issue Date</th>
+                <th class="p-4">Due Date</th>
+                <th class="p-4">Status</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-y">
+
+              <tr>
+                <td class="p-4 font-medium">📘 Java Programming</td>
+                <td class="p-4">01 Aug</td>
+                <td class="p-4">15 Aug</td>
+                <td class="p-4 text-green-600">Active</td>
+              </tr>
+
+              <tr>
+                <td class="p-4 font-medium">📗 Database Systems</td>
+                <td class="p-4">03 Aug</td>
+                <td class="p-4">17 Aug</td>
+                <td class="p-4 text-yellow-600">Due Soon</td>
+              </tr>
+
+              <tr>
+                <td class="p-4 font-medium">📕 Computer Networks</td>
+                <td class="p-4">05 Aug</td>
+                <td class="p-4">20 Aug</td>
+                <td class="p-4 text-green-600">Active</td>
+              </tr>
+
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+
+      <!-- Notifications -->
+      <div class="bg-white rounded-xl shadow-sm">
+
+        <div class="p-5 border-b">
+          <h3 class="font-bold text-sm text-[#174d3b]">
+            🔔 Notifications
+          </h3>
+        </div>
+
+        <div class="p-5 space-y-5 text-sm">
+
+          <div>
+            <b>📅 Due Date Reminder</b>
+            <p class="text-xs text-gray-500 mt-1">
+              Database Systems is due soon.
+            </p>
+          </div>
+
+          <div>
+            <b>📚 New Books Added</b>
+            <p class="text-xs text-gray-500 mt-1">
+              New programming books are available.
+            </p>
+          </div>
+
+          <div>
+            <b>✅ Book Returned</b>
+            <p class="text-xs text-gray-500 mt-1">
+              Your book was successfully returned.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Bottom Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mt-6">
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <h3 class="font-bold text-sm text-[#174d3b]">💰 Fines</h3>
+        <p class="mt-4 text-2xl font-bold">₹0.00</p>
+        <p class="text-xs text-gray-500">No pending dues</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <h3 class="font-bold text-sm text-[#174d3b]">📢 Announcements</h3>
+        <p class="text-sm mt-4">New books have been added.</p>
+        <p class="text-xs text-gray-500 mt-2">
+          Check the library for new arrivals.
+        </p>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-sm">
+        <h3 class="font-bold text-sm text-[#174d3b]">⚡ Quick Actions</h3>
+
+        <button class="block mt-4 text-sm text-[#2f8f68]">
+          🔍 Search Books
+        </button>
+
+        <button class="block mt-3 text-sm text-[#2f8f68]">
+          📖 Request Book
+        </button>
+
+        <button class="block mt-3 text-sm text-[#2f8f68]">
+          🔄 View History
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
 </body>
 </html>
