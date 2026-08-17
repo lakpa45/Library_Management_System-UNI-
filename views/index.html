@@ -1,516 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
-    <link rel="stylesheet" href="/output.css">
-    <style>
-      body {
-    background: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
-}
-        .glass {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <!--header-->
-   <header class="glass shadow-lg">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
-        <h1 class="text-3xl font-bold text-gray-900">
-            Library Management System 📚
-        </h1>
-        
-        
-        <div>
+<body class="bg-gray-50 text-gray-700">
 
-            <button
-                onclick="openAdminLogin()"
-                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-full">
-                Admin
-            </button>
+<!-- Navbar -->
+<nav class="bg-[#174d3b] text-white px-6 py-4">
+  <div class="max-w-6xl mx-auto flex justify-between items-center">
 
-            <button
-                onclick="logoutAdmin()"
-                class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full">
-                Logout
-            </button>
+    <h1 class="font-bold text-lg">📚 Library System</h1>
 
-            <span
-                id="adminStatus"
-                class="hidden text-green-600 font-semibold">
-                Admin Mode Active
-            </span>
+    <div class="flex gap-5 items-center text-sm">
+      <a href="#home">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="#about">About</a>
+      <a href="student-login.html"
+         class="bg-white text-[#174d3b] px-4 py-2 rounded-lg">
+        Login
+      </a>
+    </div>
 
-        </div>
+  </div>
+</nav>
 
-        <div class="relative">
-            <!--Menu Button-->
-            <button id="menuButton"
-            class="bg-blue-600 text-white px-5 py rounded-lg hover: focus:outline-none">
-            ☰ 
-        </button>
-        <!--Dropdown Menu-->
-        <div id="dropdownMenu"
-        class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border">
-        <a href="login.html"
-        class="block px-4 py-2 text-gray-700 hover:bg-blue-100">
-    Login
+
+<!-- Hero -->
+<section id="home" class="bg-[#174d3b] text-white py-20">
+
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2
+              items-center gap-10">
+
+    <div>
+      <p class="text-green-300 text-sm font-semibold">
+        WELCOME TO OUR LIBRARY
+      </p>
+
+      <h2 class="text-4xl font-bold mt-3">
+        Discover. Read. Learn.
+      </h2>
+
+      <p class="text-green-100 text-sm mt-4 leading-6">
+        Explore books, manage your borrowing activities
+        and access library services from one place.
+      </p>
+
+      <div class="mt-6 flex gap-3">
+
+        <a href="exploreBook.html"
+           class="bg-white text-[#174d3b]
+                  px-5 py-3 rounded-lg text-sm font-semibold">
+          Explore Books →
+        </a>
+
+        <a href="student-login.html"
+           class="border border-white/40
+                  px-5 py-3 rounded-lg text-sm">
+          Student Login
+        </a>
+
+      </div>
+    </div>
+
+    <div class="hidden md:flex justify-center">
+      <div class="w-64 h-64 rounded-full bg-[#2f8f68]
+                  flex items-center justify-center text-8xl">
+        📚
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- Search -->
+<section class="max-w-4xl mx-auto px-6 -mt-7">
+
+  <div class="bg-white p-4 rounded-xl shadow-lg flex gap-3">
+
+    <input type="text"
+           placeholder="Search books, authors or ISBN..."
+           class="flex-1 border rounded-lg px-4 py-3
+                  text-sm outline-none">
+
+    <a href="exploreBook.html"
+       class="bg-[#2f8f68] text-white
+              px-5 py-3 rounded-lg text-sm">
+      Search
     </a>
-    <a href="register.html"
-    class="block px-4 py-2 text-gray-700 hover:bg-blue-100">
-    Register
-    </a>
+
+  </div>
+
+</section>
+
+
+<!-- Stats -->
+<section class="py-12 bg-white">
+
+  <div class="max-w-5xl mx-auto px-6
+              grid grid-cols-2 md:grid-cols-4
+              text-center gap-6">
+
+    <div>
+      <b class="text-2xl text-[#174d3b]">1,250+</b>
+      <p class="text-xs text-gray-500">Books</p>
     </div>
-        </div>
 
+    <div>
+      <b class="text-2xl text-[#174d3b]">500+</b>
+      <p class="text-xs text-gray-500">Students</p>
     </div>
-</header>
-    <div class="text-center py-10">
-    <h1 class="text-5xl font-bold text-gray-900">Welcome to the Library</h1>
-    <p class="text-gray-600 mt-3 text-lg">Manage books quickly and efficiently</p>
-</div>
-    <div class="max-w-7xl mx-auto p-6">
-        
-        <!--Dashboard-->
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="glass rounded-xl shadow p-6 text-center">
-               <h2 class="text-xl font-semibold text-gray-900">Total Books</h2>
-               <p id="totalBooks" class="text-5xl text-gray-900 mt-3">0</p>
-            </div>
-            <div class="glass rounded-xl shadow p-6 text-center">
-               <h2 class="text-xl font-semibold text-gray-900">Available</h2>
-               <p id="availableBooks" class="text-5xl text-gray-900 mt-3">0</p>
-            </div>
-            <div class="glass rounded-xl shadow p-6 text-center">
-                <h2 class="text-xl font-semibold text-gray-900">Issued</h2>
-               <p id="issuedBooks" class="text-5xl text-gray-900 mt-3">0</p>
-            </div>
-        </div>
 
-        <!--Add Books-->
-        <div class="glass rounded-xl shadow p-6 mb-8">
-    <h2 class="text-2xl font-bold text-gray-900 mb-4"></h2>Add New Book</h2>
-
-    <div class="grid md:grid-cols-5 gap-4">
-
-        <input id="title"
-            class="border border-gray-300 text-black bg-white p-3 rounded-xl"
-            placeholder="Title">
-
-        <input id="author"
-            class="border border-gray-300 text-black bg-white p-3 rounded-xl"
-            placeholder="Author">
-
-        <input id="category"
-            class="border border-gray-300 text-black bg-white p-3 rounded-xl"
-            placeholder="Category">
-
-        <select id="status"
-            class="bg-white/20 border border-white/30 text-black p-3 rounded-xl">
-            <option>Available</option>
-            <option>Issued</option>
-        </select>
-
-       <button
-    id="addBtn"
-    onclick="addBook()"
-    disabled
-    class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl opacity-50 cursor-not-allowed">
-    Add Book
-</button>
-
+    <div>
+      <b class="text-2xl text-[#174d3b]">50+</b>
+      <p class="text-xs text-gray-500">Categories</p>
     </div>
-</div>
 
-         <!--admin login-->
-        <div id="adminModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center">
-    <div class="glass p-6 rounded-xl w-80 text-gray-900">
+    <div>
+      <b class="text-2xl text-[#174d3b]">24/7</b>
+      <p class="text-xs text-gray-500">Access</p>
+    </div>
 
-        <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+  </div>
 
-        <input
-            id="adminPass"
-            type="password"
-            placeholder="Enter password"
-            class="w-full p-3 rounded-lg border border-gray-300 mb-4 text-black"
-        >
+</section>
 
-        <button
-            onclick="checkAdmin()"
-            class="bg-green-600 hover:bg-green-700 text-white w-full py-2 rounded-lg">
-            Login
-        </button>
 
-        <button
-            onclick="closeAdminLogin()"
-            class="mt-3 w-full text-gray-600">
-            Cancel
-        </button>
+<!-- Categories -->
+<section id="categories" class="py-14">
+
+  <div class="max-w-6xl mx-auto px-6">
+
+    <h2 class="text-2xl font-bold text-[#174d3b]">
+      Explore Categories
+    </h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4
+                gap-4 mt-6">
+
+      <a href="explore-books.html"
+         class="bg-white p-5 rounded-xl shadow-sm
+                hover:shadow-md">
+        💻 <b>Programming</b>
+        <p class="text-xs text-gray-500 mt-1">240 Books</p>
+      </a>
+
+      <a href="explore-books.html"
+         class="bg-white p-5 rounded-xl shadow-sm">
+        🗄️ <b>Database</b>
+        <p class="text-xs text-gray-500 mt-1">125 Books</p>
+      </a>
+
+      <a href="explore-books.html"
+         class="bg-white p-5 rounded-xl shadow-sm">
+        🌐 <b>Networking</b>
+        <p class="text-xs text-gray-500 mt-1">98 Books</p>
+      </a>
+
+      <a href="explore-books.html"
+         class="bg-white p-5 rounded-xl shadow-sm">
+        📊 <b>Management</b>
+        <p class="text-xs text-gray-500 mt-1">180 Books</p>
+      </a>
 
     </div>
-</div>
-</div>
-      
-        <!--Table-->
 
-        <div class="flex items-center gap-3">
+  </div>
 
-            <input
-                id="search"
-                type="text"
-                placeholder="Search books..."
-                onkeyup="searchBook()"
-                class="px-4 py-2 w-64 rounded-full border border-gray-300">
+</section>
 
-            <select
-                id="categorySearch"
-                onchange="searchBook()"
-                class="px-4 py-2 rounded-full border border-gray-300">
 
-                <option value="">All Categories</option>
-                <option value="Programming">Programming</option>
-                <option value="Web Development">Web Development</option>
+<!-- Features -->
+<section id="about" class="bg-[#e9f6ef] py-14">
 
-            </select>
-        </div>
-    
-<table class="w-full text-left">
+  <div class="max-w-6xl mx-auto px-6">
 
-<thead class="bg-blue-900/40 text-white">
-<tr>
-    <th class="p-3">Book</th>
-    <th class="p-3">Author</th>
-    <th class="p-3">Category</th>
-    <th class="p-3">Status</th>
-    <th class="p-3">Action</th>
-</tr>
-</thead>
+    <h2 class="text-2xl font-bold text-[#174d3b] text-center">
+      Library Services
+    </h2>
 
-<tbody id="bookTable"></tbody>
+    <div class="grid md:grid-cols-3 gap-5 mt-8">
 
-</table>
-    </div>
-    <!-- Footer -->
-<footer class="bg-gray-900 text-gray-300 mt-10">
-    <div class="max-w-7xl mx-auto px-6 py-10">
+      <div class="bg-white p-6 rounded-xl text-center">
+        <div class="text-3xl">🔍</div>
+        <h3 class="font-bold mt-3">Search Books</h3>
+        <p class="text-xs text-gray-500 mt-2">
+          Quickly find books by title, author or ISBN.
+        </p>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="bg-white p-6 rounded-xl text-center">
+        <div class="text-3xl">📚</div>
+        <h3 class="font-bold mt-3">Manage Borrowing</h3>
+        <p class="text-xs text-gray-500 mt-2">
+          Track issued books and return dates.
+        </p>
+      </div>
 
-            <!-- About -->
-            <div>
-                <h2 class="text-2xl font-bold text-white">Library Management System</h2>
-                <p class="mt-3 text-sm text-gray-400">
-                    A digital platform for managing books, members, borrowing,
-                    and returning books efficiently.
-                </p>
-            </div>
-
-            <!-- Quick Links -->
-            <div>
-                <h3 class="text-lg font-semibold text-white mb-3">Quick Links</h3>
-                <ul class="space-y-2">
-                    <li><a href="index.html" class="hover:text-blue-400">Home</a></li>
-                    <li><a href="books.html" class="hover:text-blue-400">Books</a></li>
-                    <li><a href="about.html" class="hover:text-blue-400">About</a></li>
-                    <li><a href="contact.html" class="hover:text-blue-400">Contact</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact -->
-            <div>
-                <h3 class="text-lg font-semibold text-white mb-3">Contact Us</h3>
-                <p>Email: library@example.com</p>
-                <p>Phone: +91 98765 43210</p>
-                <p>Address: Gangtok, Sikkim, India</p>
-
-               
-            </div>
-
-        </div>
-
-        <!-- Bottom Footer -->
-        <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
-            © 2026 Library Management System. All Rights Reserved.
-        </div>
+      <div class="bg-white p-6 rounded-xl text-center">
+        <div class="text-3xl">🔔</div>
+        <h3 class="font-bold mt-3">Notifications</h3>
+        <p class="text-xs text-gray-500 mt-2">
+          Stay updated about due dates and requests.
+        </p>
+      </div>
 
     </div>
+
+  </div>
+
+</section>
+
+
+<!-- Footer -->
+<footer class="bg-[#174d3b] text-white text-center py-5">
+  <p class="text-xs text-green-200">
+    © 2026 Library Management System
+  </p>
 </footer>
-    <script>
 
-        const menuButton = document.getElementById("menuButton");
-        const dropdownMenu = document.getElementById("dropdownMenu");
-
-        menuButton.addEventListener("click", () => {
-            dropdownMenu.classList.toggle("hidden");
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", (e) => {
-            if (!menuButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.add("hidden");
-            }
-        });
-
-
-        let books = [
-    {
-        title: "Java Programming",
-        author: "James Gosling",
-        category: "Programming",
-        status: "Available"
-    },
-    {
-        title: "HTML & CSS",
-        author: "Jon Duckett",
-        category: "Web Development",
-        status: "Issued"
-    },
-    {
-        title: "JavaScript",
-        author: "Brendan Eich",
-        category: "Programming",
-        status: "Available"
-    }
-];
-       function displayBooks(data) {
-       
-        updateCategoryFilter();
-    let table = document.getElementById("bookTable");
-    table.innerHTML = "";
-
-    data.forEach((book, index) => {
-
-        table.innerHTML += `
-        <tr class="border-b border-gray-200 text-gray-900 hover:bg-gray-100">
-
-            <td class="p-3">${book.title}</td>
-
-            <td>${book.author}</td>
-
-            <td>${book.category}</td>
-
-            <td>
-                <span class="px-3 py-1 rounded-full text-white ${
-                    book.status === "Available"
-                    ? "bg-emerald-500"
-                    : "bg-rose-500"
-                }">
-                    ${book.status}
-                </span>
-            </td>
-
-            <td class="space-x-2">
-
-    ${
-        isAdmin
-        ? `
-        <button
-            onclick="toggleStatus(${index})"
-            class="${
-                book.status === "Available"
-                ? "bg-yellow-500 hover:bg-yellow-600"
-                : "bg-green-600 hover:bg-green-700"
-            } text-white px-3 py-2 rounded-lg">
-
-            ${
-                book.status === "Available"
-                ? "Issue"
-                : "Return"
-            }
-
-        </button>
-
-        <button
-            onclick="deleteBook(${index})"
-            class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg">
-            Delete
-        </button>
-        `
-        : `<span class="text-gray-400">Admin only</span>`
-    }
-
-</td>
-
-        </tr>
-        `;
-    });
-
-    updateDashboard();
-}
-           
-    let isAdmin = false;
-const ADMIN_PASSWORD = "admin123";
-
-// Open modal
-function openAdminLogin() {
-    document.getElementById("adminModal").classList.remove("hidden");
-}
-
-// Close modal
-function closeAdminLogin() {
-    document.getElementById("adminModal").classList.add("hidden");
-    document.getElementById("adminPass").value = "";
-}
-
-// Login check
-function checkAdmin() {
-
-    const pass = document.getElementById("adminPass").value;
-
-    if (pass === ADMIN_PASSWORD) {
-
-        isAdmin = true;
-
-        document.getElementById("adminStatus").classList.remove("hidden");
-
-        document.getElementById("addBtn").disabled = false;
-        document.getElementById("addBtn").classList.remove("opacity-50", "cursor-not-allowed");
-
-        closeAdminLogin();
-
-        displayBooks(books);
-
-        alert("Admin Login Successful");
-
-    } else {
-
-        alert("Wrong Password");
-
-        document.getElementById("adminPass").value = "";
-        document.getElementById("adminPass").focus();
-
-    }
-
-}
-function logoutAdmin() {
-    isAdmin = false;
-
-    document.getElementById("adminStatus").classList.add("hidden");
-
-    displayBooks(books);
-
-    alert("Logged out of admin mode");
-    document.getElementById("addBtn").disabled = true;
-document.getElementById("addBtn").classList.add("opacity-50", "cursor-not-allowed");
-}
-      function addBook() {
-
-    if (!isAdmin) {
-        alert("Admin access required!");
-        return;
-    }
-
-    let title = document.getElementById("title").value.trim();
-    let author = document.getElementById("author").value.trim();
-    let category = document.getElementById("category").value.trim();
-    let status = document.getElementById("status").value;
-
-    if (title === "" || author === "" || category === "") {
-        alert("Please fill all fields.");
-        return;
-    }
-
-    books.push({
-        title,
-        author,
-        category,
-        status
-    });
-
-    document.getElementById("title").value = "";
-    document.getElementById("author").value = "";
-    document.getElementById("category").value = "";
-    document.getElementById("status").value = "Available";
-
-    displayBooks(books);
-}
-        function deleteBook(index) {
-    if (!isAdmin) {
-        alert("Admin access required!");
-        return;
-    }
-    books.splice(index, 1);
-    displayBooks(books);
-}
-function toggleStatus(index) {
-
-    if (!isAdmin) {
-        alert("Admin access required!");
-        return;
-    }
-
-    if (books[index].status === "Available") {
-        books[index].status = "Issued";
-    } else {
-        books[index].status = "Available";
-    }
-
-    displayBooks(books);
-}
-        function searchBook() {
-
-    let search = document.getElementById("search").value.toLowerCase();
-
-    let category = document.getElementById("categorySearch").value;
-
-    let filtered = books.filter(book => {
-
-        let textMatch =
-            book.title.toLowerCase().includes(search) ||
-            book.author.toLowerCase().includes(search) ||
-            book.category.toLowerCase().includes(search);
-
-        let categoryMatch =
-            category === "" || book.category === category;
-
-        return textMatch && categoryMatch;
-    });
-
-    displayBooks(filtered);
-}
-function updateCategoryFilter() {
-
-    let select = document.getElementById("categorySearch");
-
-    let current = select.value;
-
-    let categories = [...new Set(books.map(book => book.category))];
-
-    select.innerHTML = `<option value="">All Categories</option>`;
-
-    categories.forEach(cat => {
-
-        select.innerHTML += `<option value="${cat}">${cat}</option>`;
-
-    });
-
-    select.value = current;
-}
-        function updateDashboard(){
-            document.getElementById("totalBooks").innerHTML=books.length;
-            let available=books.filter(book=>book.status==="Available").length;
-            let issued=books.filter(book=>book.status==="Issued").length;
-            document.getElementById("availableBooks").innerHTML=available;
-            document.getElementById("issuedBooks").innerHTML=issued;
-        }
-        displayBooks(books);
-        
-        document.getElementById("adminPass").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-        checkAdmin();
-    }
-    
-});
-
-    </script>
-    
 </body>
 </html>
