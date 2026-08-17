@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Admin</title>
     <link href="/css/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin_style.css">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <script>
         tailwind.config = {
@@ -48,47 +49,7 @@
             }
         }
     </script>
-    <style>
-        body {
-            background-color: #F5EFE6;
-            background-image:
-                radial-gradient(
-                    circle at 1px 1px,
-                    rgba(27, 67, 50, 0.05) 1px,
-                    transparent 0
-                );
-            background-size: 22px 22px;
-        }
-        .card-edge {
-            box-shadow:
-                0 1px 3px rgba(27, 67, 50, 0.08),
-                0 1px 2px rgba(27, 67, 50, 0.06);
-        }
-        .drawer-tab.active {
-            background: #F5EFE6;
-            color: #1B4332;
-        }
-        .drawer-tab.active::before {
-            content: '';
-            position: absolute;
-            left: -4px;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: #C9972F;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #C9972F;
-            border-radius: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #F5EFE6;
-        }
-    </style>
+    
 </head>
 <body class="font-body text-ink min-h-screen flex">
     <!-- SIDEBAR -->

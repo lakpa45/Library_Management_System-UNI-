@@ -69,10 +69,7 @@ input {
     font-family: inherit;
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
     font-family: 'Chakra Petch', sans-serif;
     font-weight: 700;
     line-height: 1.08;
@@ -741,6 +738,7 @@ section {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
     align-items: start;
+    
 }
 
 .style-card {
