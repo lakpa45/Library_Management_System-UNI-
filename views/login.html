@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --ink: #15171A;
+    --accent: #5B6CFF;
+    --line: #E5E7EB;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  .font-display {
+    font-family: 'Fraunces', serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: #15171A !important;
+    caret-color: #15171A;
+  }
+  @keyframes blink {
+    0%, 49% {
+      opacity: 1;
+    }
+    50%, 100% {
+      opacity: 0;
+    }
+  }
+  .cursor {
+    animation: blink 1s step-end infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor {
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body class="bg-gradient-to-br from-amber-100 to-stone-200 flex items-center justify-center min-h-screen">
+<div class="min-h-screen flex items-center justify-center p-5 sm:p-8">
+  <!-- Sign-in Card -->
+  <div class="w-full max-w-sm bg-white border border-[#E5E7EB] rounded-2xl shadow-lg p-8 sm:p-10">
+    <!-- Header -->
+    <div class="mb-9">
+      <h2 class="font-display text-3xl text-[#15171A]">Sign in</h2>
+      </p>
+    </div>
+    <!-- Form -->
+    <form id="login-form" novalidate>
+      <!-- Email -->
+      <div class="mb-5">
+        <label for="email" class="font-mono text-[11px] tracking-widest uppercase text-[#6B7280]">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          autocomplete="email"
+          placeholder="you@gmail.com"
+          class="mt-2 w-full bg-white border border-[#D1D5DB] rounded-lg focus:border-[#5B6CFF] focus:ring-2 focus:ring-[#5B6CFF]/10 outline-none px-3.5 py-3 text-sm text-[#15171A] placeholder-[#9CA3AF] transition-all"
+        >
+        <p class="text-xs text-[#E2685A] mt-1.5 hidden" data-error-for="email" >Enter a valid email address.</p>
+      </div>
+      <!-- Password -->
+      <div class="mb-2">
+        <div class="flex items-center justify-between">
+          <label for="password" class="font-mono text-[11px] tracking-widest uppercase text-[#6B7280]">Password</label>
+          <a href="#" class="text-xs text-[#6B7280] hover:text-[#5B6CFF] transition-colors">Forgot?</a>
+        </div>
+        <div class="relative mt-2">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            placeholder="••••••••••"
+            class="w-full bg-white border border-[#D1D5DB] rounded-lg focus:border-[#5B6CFF] focus:ring-2 focus:ring-[#5B6CFF]/10 outline-none px-3.5 py-3 pr-11 text-sm text-[#15171A] placeholder-[#9CA3AF] transition-all"
+          >
+          <!-- Password Toggle -->
+          <button
+            type="button"
+            id="toggle-password"
+            aria-label="Show password"
+            class="absolute right-0 top-0 h-full w-11 flex items-center justify-center text-[#6B7280] hover:text-[#15171A] transition-colors"
+          >
+            <!-- Eye Open -->
+            <svg
+              id="eye-open"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <!-- Eye Closed -->
+            <svg
+              id="eye-closed"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 hidden"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M3 3l18 18M10.6 10.6a3 3 0 004.24 4.24M9.9 5.1A10.9 10.9 0 0112 4.5c6.5 0 10.5 7.5 10.5 7.5a17.6 17.6 0 01-3.2 4.2M6.4 6.4C3.6 8.1 1.5 12 1.5 12a17.6 17.6 0 004.9 5.6c1.6 1.1 3.5 1.9 5.6 1.9 1 0 2-.2 2.9-.5"/>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-[#E2685A] mt-1.5 hidden" data-error-for="password">Password must be at least 8 characters.</p>
+      </div>
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        id="submit-btn"
+        class="w-full bg-[#5B6CFF] hover:bg-[#4F5FE8] active:bg-[#4656D6] rounded-lg text-white font-medium text-sm py-3 transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <span id="submit-label">
+          Sign in
+        </span>
+        <!-- Spinner -->
+        <svg
+          id="submit-spinner"
+          class="hidden animate-spin w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+      </button>
+      <!-- Status -->
+      <p id="form-status" class="font-mono text-xs text-center mt-5 h-4"></p>
+    </form>
+  </div>
+</div>
+<script>
+  const form = document.getElementById('login-form');
+  const emailInput =
+    document.getElementById('email');
+  const passwordInput =
+    document.getElementById('password');
+  const toggleBtn =
+    document.getElementById('toggle-password');
+  const eyeOpen =
+    document.getElementById('eye-open');
+  const eyeClosed =
+    document.getElementById('eye-closed');
+  const submitBtn =
+    document.getElementById('submit-btn');
+  const submitLabel =
+    document.getElementById('submit-label');
+  const submitSpinner =
+    document.getElementById('submit-spinner');
+  const statusEl =
+    document.getElementById('form-status');
+  toggleBtn.addEventListener('click', () => {
+    const isPassword =
+      passwordInput.type === 'password';
+    passwordInput.type =
+      isPassword ? 'text' : 'password';
+    eyeOpen.classList.toggle(
+      'hidden',
+      isPassword
+    );
+    eyeClosed.classList.toggle(
+      'hidden',
+      !isPassword
+    );
+    toggleBtn.setAttribute(
+      'aria-label',
+      isPassword
+        ? 'Hide password'
+        : 'Show password'
+    );
+  });
+  function setFieldError(input, show) {
+    const err =
+      document.querySelector(
+        `[data-error-for="${input.id}"]`
+      );
+    input.classList.toggle(
+      'border-[#E2685A]',
+      show
+    );
+    input.classList.toggle(
+      'focus:border-[#E2685A]',
+      show
+    );
+    if (!show) {
+      input.classList.remove(
+        'border-[#E2685A]',
+        'focus:border-[#E2685A]'
+      );
+    }
+    err.classList.toggle(
+      'hidden',
+      !show
+    );
+  }
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+  function validate() {
+    const emailOk =
+      isValidEmail(
+        emailInput.value.trim()
+      );
+    const passwordOk =
+      passwordInput.value.length >= 8;
+    setFieldError(
+      emailInput,
+      !emailOk
+    );
+    setFieldError(
+      passwordInput,
+      !passwordOk
+    );
+    return emailOk && passwordOk;
+  }
+  [emailInput, passwordInput].forEach(input => {
+    input.addEventListener(
+      'input',
+      () => {
+        setFieldError(
+          input,
+          false
+        );
+        statusEl.textContent = '';
+      }
+    );
+  });
+  form.addEventListener(
+    'submit',
+    (e) => {
+      e.preventDefault();
+      statusEl.textContent = '';
+      statusEl.classList.remove(
+        'text-[#5B6CFF]',
+        'text-[#E2685A]'
+      );
+      if (!validate()) {
+        statusEl.textContent =
+          '> validation failed';
+        statusEl.classList.add(
+          'text-[#E2685A]'
+        );
+        return;
+      }
+      submitBtn.disabled = true;
+      submitLabel.textContent =
+        'Verifying';
+      submitSpinner.classList.remove(
+        'hidden'
+      );
+      statusEl.textContent =
+        '> checking credentials...';
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitLabel.textContent =
+          'Sign in';
+        submitSpinner.classList.add(
+          'hidden'
+        );
+        statusEl.textContent =
+          '> access granted — redirecting';
+        statusEl.classList.add(
+          'text-[#5B6CFF]'
+        );
+      }, 1200);
+    }
+  );
+</script>
+</body>
+</html>
