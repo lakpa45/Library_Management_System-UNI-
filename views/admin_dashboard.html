@@ -7,7 +7,7 @@
     <link href="/css/output.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/admin_style.css">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <script>
+    <!-- <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -48,7 +48,7 @@
                 }
             }
         }
-    </script>
+    </script> -->
     
 </head>
 <body class="font-body text-ink min-h-screen flex">
@@ -80,15 +80,15 @@
             </a>
             <!-- Circulation -->
             <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mt-6 mb-2">Circulation</p>
-            <a href="borrow&return.html"
+            <a href="/borrow&return.html"
                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
                 Borrow / Return
             </a>
-            <a href="overdue&fine.html"
+            <a href="/overdue&fine.html"
                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
                 Overdue &amp; Fines
             </a>
-            <a href="members.html"
+            <a href="/members.html"
                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
                 Members
             </a>
@@ -338,327 +338,6 @@
     </a>
 </section>
     </main>
-    <script>
-        const dateElement = document.getElementById("today-date");
-        const today = new Date();
-        dateElement.textContent = today.toLocaleDateString("en-IN", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  const seedActivity = [
-    {
-      member: 'Kishan',
-      title: 'Applied math',
-      action: 'Borrowed',
-      date: 'Aug 12',
-      status: 'active'
-    },
-    {
-      member: 'samim',
-      title: 'software engineering',
-      action: 'Returned',
-      date: 'Aug 12',
-      status: 'returned'
-    },
-    {
-      member: 'pihang',
-      title: 'C programing',
-      action: 'Borrowed',
-      date: 'Aug 11',
-      status: 'active'
-    },
-    {
-      member: 'sahil',
-      title: 'Database management system',
-      action: 'Overdue',
-      date: 'Aug 05',
-      status: 'overdue'
-    },
-    {
-      member: 'lakpa',
-      title: 'Introduction to Psychology',
-      action: 'Returned',
-      date: 'Aug 10',
-      status: 'returned'
-    },
-    {
-      member: 'hibu',
-      title: 'Data base management system',
-      action: 'Borrowed',
-      date: 'Aug 09',
-      status: 'active'
-    }
-  ];
-  const seedDue = [
-    {
-      member: 'Sahil',
-      title: 'Database System Concepts',
-      due: 'Overdue by 8 days',
-      level: 'overdue'
-    },
-    {
-      member: 'Napa',
-      title: 'Compiler Design',
-      due: 'Due tomorrow',
-      level: 'urgent'
-    },
-    {
-      member: 'kena',
-      title: 'Discrete Mathematics',
-      due: 'Due in 2 days',
-      level: 'soon'
-    },
-    {
-      member: 'prabash',
-      title: 'Computer Networks',
-      due: 'Due in 4 days',
-      level: 'ok'
-    },
-    {
-      member: 'sangay',
-      title: 'Data Structures in C',
-      due: 'Due in 6 days',
-      level: 'ok'
-    }
-  ];
-  const activity =
-    JSON.parse(
-      localStorage.getItem('library_activity') || 'null'
-    ) || seedActivity;
-  const dueItems =
-    JSON.parse(
-      localStorage.getItem('library_due') || 'null'
-    ) || seedDue;
-  localStorage.setItem(
-    'library_activity',
-    JSON.stringify(activity)
-  );
-  localStorage.setItem(
-    'library_due',
-    JSON.stringify(dueItems)
-  );
-  const stats = {
-    books: 100,
-    borrowers:
-      activity.filter(
-        a => a.status === 'active'
-      ).length + 3,
-    overdue:
-      dueItems.filter(
-        d => d.level === 'overdue'
-      ).length + 7,
-    fines: 60
-  };
-  animateCount(
-    'stat-books',
-    stats.books
-  );
-  animateCount(
-    'stat-borrowers',
-    stats.borrowers
-  );
-  animateCount(
-    'stat-overdue',
-    stats.overdue
-  );
-  animateCount(
-    'stat-fines',
-    stats.fines,
-    '₹'
-  );
-  function toggleAdminMenu() {
-    document.getElementById("adminMenu").classList.toggle("hidden");
-}
-
-function logout() {
-    if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "login.html";
-    }
-}
-function openPasswordModal() {
-    document.getElementById("passwordModal").classList.remove("hidden");
-}
-
-function closePasswordModal() {
-    document.getElementById("passwordModal").classList.add("hidden");
-
-    document.getElementById("currentPassword").value = "";
-    document.getElementById("newPassword").value = "";
-    document.getElementById("confirmPassword").value = "";
-    document.getElementById("passwordMessage").textContent = "";
-}
-
-function changePassword(event) {
-    event.preventDefault();
-
-    const currentPassword =
-        document.getElementById("currentPassword").value;
-
-    const newPassword =
-        document.getElementById("newPassword").value;
-
-    const confirmPassword =
-        document.getElementById("confirmPassword").value;
-
-    const message =
-        document.getElementById("passwordMessage");
-
-    // Get the stored password
-    const storedPassword =
-        localStorage.getItem("adminPassword") || "admin123";
-
-    // Check current password
-    if (currentPassword !== storedPassword) {
-        message.textContent = "Current password is incorrect.";
-        message.className = "text-sm mb-4 text-red-600";
-        return;
-    }
-
-    // Check new password
-    if (newPassword.length < 6) {
-        message.textContent =
-            "New password must be at least 6 characters.";
-        message.className = "text-sm mb-4 text-red-600";
-        return;
-    }
-
-    // Check confirmation
-    if (newPassword !== confirmPassword) {
-        message.textContent =
-            "New passwords do not match.";
-        message.className = "text-sm mb-4 text-red-600";
-        return;
-    }
-
-    // Save new password
-    localStorage.setItem("adminPassword", newPassword);
-
-    message.textContent =
-        "Password changed successfully!";
-    message.className = "text-sm mb-4 text-green-600";
-
-    setTimeout(() => {
-        closePasswordModal();
-    }, 1500);
-}
-
-  function animateCount(
-    id,
-    target,
-    prefix = ''
-  ) {
-    const el =
-      document.getElementById(id);
-    let cur = 0;
-    const step =
-      Math.max(
-        1,
-        Math.ceil(target / 40)
-      );
-    const t =
-      setInterval(() => {
-        cur += step;
-        if (cur >= target) {
-          cur = target;
-          clearInterval(t);
-        }
-        el.textContent =
-          prefix +
-          cur.toLocaleString('en-IN');
-      }, 20);
-  }
-  const statusStyles = {
-    active:
-      'bg-[#1B4332]/10 text-[#1B4332]',
-    returned:
-      'bg-[#3E6B56]/15 text-[#3E6B56]',
-    overdue:
-      'bg-[#9E4A4A]/10 text-[#9E4A4A]'
-  };
-  const activityBody =
-    document.getElementById(
-      'activity-body'
-    );
-  activityBody.innerHTML =
-    activity.map(a => `
-      <tr class="hover:bg-[#F5EFE6]/70 transition">
-        <td class="px-5 py-3 font-medium">
-          ${a.member}
-        </td>
-        <td class="px-5 py-3 text-[#4A5A50]">
-          ${a.title}
-        </td>
-        <td class="px-5 py-3">
-          ${a.action}
-        </td>
-        <td class="px-5 py-3 font-mono text-xs text-[#8A7B5C]">
-          ${a.date}
-        </td>
-        <td class="px-5 py-3">
-          <span
-            class="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold capitalize stamp ${statusStyles[a.status]}"
-          >
-            ${a.status}
-          </span>
-        </td>
-      </tr>
-    `).join('');
-  const dueDot = {
-    overdue:
-      'bg-[#9E4A4A]',
-    urgent:
-      'bg-[#B6862A]',
-    soon:
-      'bg-[#C9972F]',
-    ok:
-      'bg-[#3E6B56]'
-  };
-  const dueText = {
-    overdue:
-      'text-[#9E4A4A]',
-    urgent:
-      'text-[#B6862A]',
-    soon:
-      'text-[#B6862A]',
-    ok:
-      'text-[#4A5A50]'
-  };
-  const dueList =
-    document.getElementById(
-      'due-list'
-    );
-  dueList.innerHTML =
-    dueItems.map(d => `
-      <li
-        class="flex items-center gap-3 px-5 py-3 hover:bg-[#F5EFE6]/60 transition"
-      >
-        <span
-          class="w-2.5 h-2.5 rounded-full status-dot ${dueDot[d.level]} shrink-0"
-        ></span>
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium truncate">
-            ${d.title}
-          </p>
-          <p class="text-xs text-[#8A7B5C] truncate">
-            ${d.member}
-          </p>
-        </div>
-        <span
-          class="text-xs font-medium ${dueText[d.level]} shrink-0"
-        >
-          ${d.due}
-        </span>
-      </li>
-    `).join('');
-</script>
+    <script src="/js/admin_dashboard.js"></script>
 </body>
 </html>
