@@ -13,82 +13,11 @@
       month: 'long',
       day: 'numeric'
     });
-  const seedActivity = [
-    {
-      member: 'Kishan',
-      title: 'Applied math',
-      action: 'Borrowed',
-      date: 'Aug 12',
-      status: 'active'
-    },
-    {
-      member: 'samim',
-      title: 'software engineering',
-      action: 'Returned',
-      date: 'Aug 12',
-      status: 'returned'
-    },
-    {
-      member: 'pihang',
-      title: 'C programing',
-      action: 'Borrowed',
-      date: 'Aug 11',
-      status: 'active'
-    },
-    {
-      member: 'sahil',
-      title: 'Database management system',
-      action: 'Overdue',
-      date: 'Aug 05',
-      status: 'overdue'
-    },
-    {
-      member: 'lakpa',
-      title: 'Introduction to Psychology',
-      action: 'Returned',
-      date: 'Aug 10',
-      status: 'returned'
-    },
-    {
-      member: 'hibu',
-      title: 'Data base management system',
-      action: 'Borrowed',
-      date: 'Aug 09',
-      status: 'active'
-    }
-  ];
-  const seedDue = [
-    {
-      member: 'Sahil',
-      title: 'Database System Concepts',
-      due: 'Overdue by 8 days',
-      level: 'overdue'
-    },
-    {
-      member: 'Napa',
-      title: 'Compiler Design',
-      due: 'Due tomorrow',
-      level: 'urgent'
-    },
-    {
-      member: 'kena',
-      title: 'Discrete Mathematics',
-      due: 'Due in 2 days',
-      level: 'soon'
-    },
-    {
-      member: 'prabash',
-      title: 'Computer Networks',
-      due: 'Due in 4 days',
-      level: 'ok'
-    },
-    {
-      member: 'sangay',
-      title: 'Data Structures in C',
-      due: 'Due in 6 days',
-      level: 'ok'
-    }
-  ];
+
+  // Recent Circulation Activity
+  const seedActivity = [];
+  const seedDue = [];
+
   const activity =
     JSON.parse(
       localStorage.getItem('library_activity') || 'null'
@@ -105,18 +34,18 @@
     'library_due',
     JSON.stringify(dueItems)
   );
-  const stats = {
-    books: 100,
+ const stats = {
+    books: 0,
     borrowers:
       activity.filter(
         a => a.status === 'active'
-      ).length + 3,
+      ).length,
     overdue:
       dueItems.filter(
         d => d.level === 'overdue'
-      ).length + 7,
-    fines: 60
-  };
+      ).length,
+    fines: 0
+};
   animateCount(
     'stat-books',
     stats.books
