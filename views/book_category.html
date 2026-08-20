@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Categories</title>
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+    
+    <link rel="stylesheet" href="/css/book_category.css">
+</head>
+<body>
+<!-- HEADER-->
+<header class="header">
+    <input type="checkbox" id="menu-btn" class="menu-btn">
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar__inner">
+            <div class="topbar__left">
+                <a href="#">
+                    <i class="fa-solid fa-phone"></i>
+                    +91-123-1234
+                </a>
+                <a href="#">
+                    <i class="fa-regular fa-envelope"></i>
+                    library@icfaiuniversity.edu
+                </a>
+            </div>
+            <div class="topbar__right">
+                <span>
+                    <i class="fa-solid fa-globe"></i>
+                    English
+                </span>
+                <span>
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    INR
+                </span>
+                <a href="#">
+                    <i class="fa-regular fa-circle-question"></i>
+                    Need Help?
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- NAVBAR -->
+    <div class="navbar-bar">
+        <div class="navbar">
+            <label for="menu-btn" class="menu-icon">
+                <i class="fa-solid fa-bars"></i>
+            </label>
+            <a href="index.html" class="brand">
+                ICFAI
+            </a>
+            <nav class="nav">
+                <label for="menu-btn" class="nav-close">
+                    <i class="fa-solid fa-mark"></i>
+                </label>
+                <ul class="menu">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="book_category.html">Categories</a>
+                    </li>
+                    <li>
+                        <a href="#popular">Popular</a>
+                    </li>
+                    <li>
+                        <a href="#recent">New Arrivals</a>
+                    </li>
+                    <li>
+                        <a href="#about">About</a>
+                    </li>
+                    <li>
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="navbar__actions">
+                <form class="search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        type="search"
+                        id="navSearch"
+                        placeholder="Search books..."
+                    >
+                </form>
+                <a href="#" class="navbar__ic">
+                    <i class="fa-regular fa-heart"></i>
+                </a>
+                <a href="#" class="navbar__ic">
+                    <i class="fa-solid fa-bookmark"></i>
+                </a>
+                <div class="navbar__auth">
+                    <a href="register_member.html"
+                       class="navbar__auth-link">
+                        <i class="fa-regular fa-user"></i>
+                        Login
+                    </a>
+                    <a href="register_member.html"
+                       class="navbar__auth-link navbar__auth-link--accent">
+                        Register
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <label for="menu-btn" class="nav-overlay"></label>
+</header>
+<!-- HERO -->
+<section class="hero">
+    <div class="hero__inner">
+        <div class="hero__copy">
+            <span class="hero__eyebrow">
+                ICFAI UNIVERSITY LIBRARY
+            </span>
+            <h1>
+                Explore Our
+                <span class="hero__accent">
+                    Book Categories
+                </span>
+            </h1>
+            <p>
+                Discover thousands of academic books, reference materials,
+                journals and learning resources organized for every field
+                of study.
+            </p>
+            <div class="hero__search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    id="categorySearch"
+                    placeholder="Search a category..."
+                >
+                <button onclick="searchCategory()">
+                    Search
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="hero__meta">
+                <div>
+                    <div class="hero__stat">25K+</div>
+                    <small>Books Available</small>
+                </div>
+                <div>
+                    <div class="hero__stat">12</div>
+                    <small>Categories</small>
+                </div>
+                <div>
+                    <div class="hero__stat">5K+</div>
+                    <small>Students</small>
+                </div>
+            </div>
+        </div>
+        <!-- HERO CATEGORY CARDS -->
+        <div class="hero__cards">
+            <a href="#computer" class="cat-card cat-card--g1">
+                <span class="cat-card__go">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+                <i class="fa-solid fa-laptop-code hero-icon"></i>
+                <span class="cat-card__label">
+                    Computer Science
+                </span>
+                <span class="cat-card__count">
+                    4,850 Books
+                </span>
+            </a>
+            <a href="#business" class="cat-card cat-card--g2">
+                <span class="cat-card__go">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+                <i class="fa-solid fa-chart-line hero-icon"></i>
+                <span class="cat-card__label">
+                    Management
+                </span>
+                <span class="cat-card__count">
+                    3,420 Books
+                </span>
+            </a>
+            <a href="#science" class="cat-card cat-card--g3">
+                <span class="cat-card__go">
+                    <i class="fa-solid fa-flask hero-icon"></i>
+                </span>
+                <span class="cat-card__label">
+                    Science
+                </span>
+                <span class="cat-card__count">
+                    2,960 Books
+                </span>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- MARQUEE -->
+<div class="marquee">
+    <div class="marquee__track">
+        <div class="marquee__group">
+            <span>ACADEMIC BOOKS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>REFERENCE MATERIAL</span>
+            <i class="fa-solid fa-star"></i>
+            <span>JOURNALS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>E-BOOKS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>RESEARCH MATERIAL</span>
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="marquee__group">
+            <span>ACADEMIC BOOKS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>REFERENCE MATERIAL</span>
+            <i class="fa-solid fa-star"></i>
+            <span>JOURNALS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>E-BOOKS</span>
+            <i class="fa-solid fa-star"></i>
+            <span>RESEARCH MATERIAL</span>
+            <i class="fa-solid fa-star"></i>
+        </div>
+    </div>
+</div>
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+    <div class="container">
+        <div class="sec-head">
+            <span class="eyebrow">
+                BROWSE LIBRARY
+            </span>
+            <h2>
+                Find Books By Category
+            </h2>
+            <p>
+                Select your area of study to explore the available
+                books and learning resources.
+            </p>
+        </div>
+        <div class="category__grid" id="categoryGrid">
+            <!-- COMPUTER SCIENCE -->
+            <a href="computerscinece.html"
+               class="category-card"
+               id="computer">
+                <div class="category-icon">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        01
+                    </span>
+                    <h3>
+                        Computer Science
+                    </h3>
+                    <p>
+                        Programming, software development,
+                        databases, AI and networking.
+                    </p>
+                    <strong>
+                        4,850 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- MANAGEMENT -->
+            <a href="management.html"
+               class="category-card"
+               id="business">
+                <div class="category-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        02
+                    </span>
+                    <h3>
+                        Management
+                    </h3>
+                    <p>
+                        Business management, marketing,
+                        finance and entrepreneurship.
+                    </p>
+                    <strong>
+                        3,420 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- SCIENCE -->
+            <a href="science.html"
+               class="category-card"
+               id="science">
+                <div class="category-icon">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        03
+                    </span>
+                    <h3>
+                        Science
+                    </h3>
+                    <p>
+                        Physics, chemistry, biology and
+                        general science resources.
+                    </p>
+                    <strong>
+                        2,960 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- MATHEMATICS -->
+            <a href="mathematics.html"
+               class="category-card">
+                <div class="category-icon">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        04
+                    </span>
+                    <h3>
+                        Mathematics
+                    </h3>
+                    <p>
+                        Algebra, calculus, statistics,
+                        geometry and applied mathematics.
+                    </p>
+                    <strong>
+                        2,180 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- NOVELS -->
+<a href="novels.html"
+   class="category-card">
+    <div class="category-icon">
+        <i class="fa-solid fa-book-open"></i>
+    </div>
+    <div class="category-content">
+        <span class="category-number">
+            05
+        </span>
+        <h3>
+            Novels
+        </h3>
+        <p>
+            Fiction, romance, mystery, adventure
+            and classic novels from around the world.
+        </p>
+        <strong>
+            3,750 Books
+        </strong>
+    </div>
+    <span class="category-arrow">
+        <i class="fa-solid fa-arrow-right"></i>
+    </span>
+</a>
+            <!-- LITERATURE -->
+            <a href="literature.html"
+               class="category-card">
+                <div class="category-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        06
+                    </span>
+                    <h3>
+                        Literature
+                    </h3>
+                    <p>
+                        English literature, novels,
+                        poetry and literary criticism.
+                    </p>
+                    <strong>
+                        2,640 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- SOCIAL SCIENCE -->
+            <a href="socialscience.html"
+               class="category-card">
+                <div class="category-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        07
+                    </span>
+                    <h3>
+                        Social Science
+                    </h3>
+                    <p>
+                        Sociology, psychology, economics,
+                        politics and social studies.
+                    </p>
+                    <strong>
+                        2,310 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- LAW -->
+            <a href="law.html"
+               class="category-card">
+                <div class="category-icon">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        08
+                    </span>
+                    <h3>
+                        Law
+                    </h3>
+                    <p>
+                        Constitutional law, criminal law,
+                        civil law and legal studies.
+                    </p>
+                    <strong>
+                        1,850 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+            <!-- COMMERCE -->
+            <a href="commerce.html"
+               class="category-card">
+                <div class="category-icon">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="category-content">
+                    <span class="category-number">
+                        09
+                    </span>
+                    <h3>
+                        Commerce
+                    </h3>
+                    <p>
+                        Accounting, taxation, economics
+                        and financial studies.
+                    </p>
+                    <strong>
+                        2,240 Books
+                    </strong>
+                </div>
+                <span class="category-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- POPULAR CATEGORIES -->
+<section class="popular" id="popular">
+    <div class="container">
+        <div class="sec-head sec-head--row">
+            <div>
+                <span class="eyebrow">
+                    STUDENTS' CHOICE
+                </span>
+                <h2>
+                    Popular Categories
+                </h2>
+            </div>
+            <a href="#categories" class="link-more">
+                View All
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+        <div class="popular-grid">
+            <div class="popular-card">
+                <div class="popular-icon">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div>
+                    <h3>Programming</h3>
+                    <p>1,240 books available</p>
+                </div>
+                <span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </div>
+            <div class="popular-card">
+                <div class="popular-icon">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <h3>Database</h3>
+                    <p> 820 books available</p>
+                </div>
+                <span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </div>
+            <div class="popular-card">
+                <div class="popular-icon">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <h3>Artificial Intelligence</h3>
+                    <p>650 books available</p>
+                </div>
+                <span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </div>
+            <div class="popular-card">
+                <div class="popular-icon">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div>
+                    <h3>Networking</h3>
+                    <p>540 books available</p>
+                </div>
+                <span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- RECENT BOOKS -->
+<section class="recent" id="recent">
+    <div class="container">
+        <div class="sec-head sec-head--row">
+            <div>
+                <span class="eyebrow">NEW ARRIVALS </span>
+                <h2> Recently Added Books</h2>
+            </div>
+            <a href="#" class="link-more">
+                View Library
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-cover">
+                    <span class="book-tag">NEW</span>
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="book-info">
+                    <span>Computer Science</span>
+                    <h3>Introduction to Algorithms</h3>
+                    <p>Academic Reference</p>
+                    <button>
+                        View Book
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover cover-two">
+                    <span class="book-tag">NEW</span>
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+                <div class="book-info">
+                    <span>Management</span>
+                    <h3>Principles of Management</h3>
+                    <p>Business Studies</p>
+                    <button>
+                        View Book
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover cover-three">
+                    <span class="book-tag">NEW</span>
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <div class="book-info">
+                    <span>Science</span>
+                    <h3>Fundamentals of Physics</h3>
+                    <p>Science Reference</p>
+                    <button>
+                        View Book
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover cover-four">
+                    <span class="book-tag">NEW</span>
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="book-info">
+                    <span>
+                        Mathematics
+                    </span>
+                    <h3>Engineering Mathematics</h3>
+                    <p>Academic Reference</p>
+                    <button>
+                        View Book
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- CTA -->
+<section class="library-cta" id="about">
+    <div class="container cta-inner">
+        <div>
+            <span class="eyebrow eyebrow--light">
+                ICFAI LIBRARY
+            </span>
+            <h2>
+                Can't find the book you're looking for?
+            </h2>
+            <p>
+                Search our complete library collection or contact
+                the librarian for assistance.
+            </p>
+        </div>
+        <div class="cta-buttons">
+            <a href="#" class="btn btn--accent">
+                Search Library
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+            <a href="#contact" class="btn btn--dark">
+                Contact Librarian
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+    <div class="container footer-grid">
+        <div>
+            <h2 class="footer-brand">ICFAI</h2>
+            <p>
+                ICFAI University Library provides students and
+                faculty with access to academic books, journals,
+                research materials and digital resources.
+            </p>
+        </div>
+        <div>
+            <h3>Library</h3>
+            <a href="#categories">Categories</a>
+            <a href="#popular">Popular Books</a>
+            <a href="#recent">New Arrivals</a>
+            <a href="#">Digital Library</a>
+        </div>
+        <div>
+            <h3>Support</h3>
+            <a href="#">Library Rules</a>
+            <a href="#">Borrowing Policy</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact Librarian</a>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p><i class="fa-solid fa-location-dot"></i>ICFAI University Sikkim</p>
+            <p><i class="fa-solid fa-phone"></i>+91-123-1234</p>
+            <p><i class="fa-solid fa-envelope"></i>library@icfaiuniversity.edu</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 ICFAI University Library. All Rights Reserved.</p>
+    </div>
+</footer>
+<script src="/js/book_category.js"></script>
+</body>
+</html>
