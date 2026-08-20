@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Members</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          forest: { DEFAULT:'#1B4332', dark:'#122B21', light:'#2D5F48' },
+          brass: { DEFAULT:'#C9A227', light:'#E0BF5C', dark:'#9C7D1A' },
+          paper: { DEFAULT:'#F5EFE2', dark:'#EAE1CC', card:'#FBF8F1' },
+          ink: { DEFAULT:'#2B2118', light:'#5C5142' },
+          sage: '#7A8B77',
+          clay: '#B5533C',
+        },
+        fontFamily: {
+          display: ['Fraunces','serif'],
+          body: ['Inter','sans-serif'],
+          mono: ['JetBrains Mono','monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body { background-color:#F5EFE2; background-image: radial-gradient(#00000008 1px, transparent 1px); background-size: 22px 22px; }
+  .card-edge { box-shadow: 0 1px 3px rgba(27,67,50,0.08), 0 1px 2px rgba(27,67,50,0.06); }
+  .stamp { box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset; }
+  .chip.active { background:#1B4332; color:#F5EFE2; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #C9A227aa; border-radius: 4px; }
+  .toast { transition: all .35s cubic-bezier(.4,0,.2,1); }
+  tr.fade-row { animation: fadeIn .3s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body class="font-body text-ink min-h-screen">
+
+<div class="max-w-6xl mx-auto px-6 py-10">
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation · Directory</p>
+      <h1 class="font-display text-3xl text-forest">Members</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="adminlibrary.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Dashboard
+      </a>
+      <a href="registermemb.html" class="bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Register Member
+      </a>
+    </div>
+  </div>
+
+  <!-- Stat strip -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Total Members</p>
+      <p class="font-display text-2xl text-forest mt-1" id="stat-total">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Students</p>
+      <p class="font-display text-2xl text-forest mt-1" id="stat-student">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Faculty</p>
+      <p class="font-display text-2xl text-forest mt-1" id="stat-faculty">0</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+      <p class="text-[11px] uppercase tracking-wider text-ink-light">Expired Cards</p>
+      <p class="font-display text-2xl text-clay mt-1" id="stat-expired">0</p>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="bg-paper-card rounded-xl card-edge border border-ink/5 p-4 mb-4 flex flex-wrap items-center gap-3">
+    <div class="relative flex-1 min-w-[220px]">
+      <input type="text" id="search" placeholder="Search by name, card no., or ID…"
+        class="w-full bg-paper border border-ink/15 rounded-full pl-9 pr-4 py-2.5 text-sm placeholder:text-ink-light/60 focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass">
+      <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </div>
+    <div class="flex gap-2" id="type-chips">
+      <button data-type="all" class="chip active px-3.5 py-2 rounded-full text-xs font-medium border border-ink/15 transition">All</button>
+      <button data-type="Student" class="chip px-3.5 py-2 rounded-full text-xs font-medium border border-ink/15 transition hover:border-forest">Student</button>
+      <button data-type="Faculty" class="chip px-3.5 py-2 rounded-full text-xs font-medium border border-ink/15 transition hover:border-forest">Faculty</button>
+      <button data-type="Staff" class="chip px-3.5 py-2 rounded-full text-xs font-medium border border-ink/15 transition hover:border-forest">Staff</button>
+    </div>
+    <select id="sort" class="bg-paper border border-ink/15 rounded-full px-3.5 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brass/50">
+      <option value="recent">Newest first</option>
+      <option value="name">Name A–Z</option>
+      <option value="expiry">Expiry soonest</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-[11px] uppercase tracking-wider text-ink-light border-b border-ink/10">
+          <th class="px-5 py-3 font-medium">Member</th>
+          <th class="px-5 py-3 font-medium">Card No.</th>
+          <th class="px-5 py-3 font-medium">Type</th>
+          <th class="px-5 py-3 font-medium">Department</th>
+          <th class="px-5 py-3 font-medium">Contact</th>
+          <th class="px-5 py-3 font-medium">Valid Till</th>
+          <th class="px-5 py-3 font-medium text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="members-body" class="divide-y divide-ink/5"></tbody>
+    </table>
+    <div id="empty-state" class="hidden px-5 py-16 text-center">
+      <p class="font-display text-lg text-forest mb-1">No members found</p>
+      <p class="text-sm text-ink-light mb-4">Adjust your search or register a new member to get started.</p>
+      <a href="register-member.html" class="inline-block bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition">Register Member</a>
+    </div>
+  </div>
+</div>
+
+<!-- Detail drawer -->
+<div id="drawer-backdrop" class="fixed inset-0 bg-ink/40 opacity-0 pointer-events-none transition-opacity z-40"></div>
+<aside id="drawer" class="fixed top-0 right-0 h-full w-full max-w-sm bg-paper-card translate-x-full transition-transform duration-300 z-50 card-edge overflow-y-auto">
+  <div class="p-6">
+    <button id="drawer-close" class="text-ink-light hover:text-ink mb-6 flex items-center gap-1 text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      Close
+    </button>
+    <div class="bg-forest rounded-xl p-5 text-paper mb-6">
+      <p class="text-[10px] uppercase tracking-[0.2em] text-brass-light">Member</p>
+      <p id="d-name" class="font-display text-xl mt-0.5 mb-3">—</p>
+      <div class="grid grid-cols-2 gap-y-2 text-xs">
+        <div><p class="text-paper/50 text-[10px] uppercase">Card No.</p><p id="d-card" class="font-mono">—</p></div>
+        <div><p class="text-paper/50 text-[10px] uppercase">Type</p><p id="d-type">—</p></div>
+      </div>
+    </div>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Department</dt><dd id="d-dept" class="font-medium">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Roll / Employee ID</dt><dd id="d-roll" class="font-medium">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Email</dt><dd id="d-email" class="font-medium truncate max-w-[60%] text-right">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Phone</dt><dd id="d-phone" class="font-medium">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Date of Birth</dt><dd id="d-dob" class="font-medium">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Registered On</dt><dd id="d-reg" class="font-medium">—</dd></div>
+      <div class="flex justify-between border-b border-ink/10 pb-2"><dt class="text-ink-light">Valid Till</dt><dd id="d-expiry" class="font-medium">—</dd></div>
+      <div>
+        <dt class="text-ink-light mb-1">Address</dt>
+        <dd id="d-address" class="font-medium">—</dd>
+      </div>
+    </dl>
+    <button id="drawer-delete" class="mt-6 w-full text-clay border border-clay/40 hover:bg-clay/10 rounded-full py-2.5 text-sm font-medium transition">Remove Member</button>
+  </div>
+</aside>
+
+<!-- Toast -->
+<div id="toast" class="toast fixed bottom-6 right-6 translate-y-24 opacity-0 bg-forest text-paper rounded-xl px-5 py-4 card-edge flex items-center gap-3 max-w-sm">
+  <svg class="w-5 h-5 text-brass-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  <p class="text-sm font-medium" id="toast-msg">Member removed</p>
+</div>
+
+<script>
+  let members = JSON.parse(localStorage.getItem('library_members') || 'null');
+  if (!members || members.length === 0) {
+    members = seedMembers;
+    localStorage.setItem('library_members', JSON.stringify(members));
+  }
+  let state = { search:'', type:'all', sort:'recent' };
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function isExpired(iso) {
+    if (!iso) return false;
+    return new Date(iso) < new Date();
+  }
+  function renderStats() {
+    document.getElementById('stat-total').textContent = members.length;
+    document.getElementById('stat-student').textContent = members.filter(m => m.type === 'Student').length;
+    document.getElementById('stat-faculty').textContent = members.filter(m => m.type === 'Faculty').length;
+    document.getElementById('stat-expired').textContent = members.filter(m => isExpired(m.expiry)).length;
+  }
+  function getFiltered() {
+    let list = [...members];
+    if (state.type !== 'all') list = list.filter(m => m.type === state.type);
+    if (state.search.trim()) {
+      const q = state.search.trim().toLowerCase();
+      list = list.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        m.cardNo.toLowerCase().includes(q) ||
+        (m.rollId || '').toLowerCase().includes(q)
+      );
+    }
+    if (state.sort === 'name') list.sort((a,b) => a.name.localeCompare(b.name));
+    else if (state.sort === 'expiry') list.sort((a,b) => new Date(a.expiry || '9999-12-31') - new Date(b.expiry || '9999-12-31'));
+    else list.sort((a,b) => new Date(b.registeredOn) - new Date(a.registeredOn));
+    return list;
+  }
+  function initials(name) {
+    return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+  }
+  function render() {
+    const list = getFiltered();
+    const body = document.getElementById('members-body');
+    const empty = document.getElementById('empty-state');
+    if (list.length === 0) {
+      body.innerHTML = '';
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      body.innerHTML = list.map(m => {
+        const expired = isExpired(m.expiry);
+        return `
+        <tr class="fade-row hover:bg-paper/60 transition cursor-pointer" data-card="${m.cardNo}">
+          <td class="px-5 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-forest/10 text-forest flex items-center justify-center font-display text-xs shrink-0">${initials(m.name)}</div>
+              <span class="font-medium">${m.name}</span>
+            </div>
+          </td>
+          <td class="px-5 py-3 font-mono text-xs text-ink-light">${m.cardNo}</td>
+          <td class="px-5 py-3">
+            <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold stamp bg-forest/10 text-forest">${m.type}</span>
+          </td>
+          <td class="px-5 py-3 text-ink-light">${m.department}</td>
+          <td class="px-5 py-3 text-ink-light text-xs">
+            <p>${m.phone}</p>
+          </td>
+          <td class="px-5 py-3">
+            <span class="text-xs font-medium ${expired ? 'text-clay' : 'text-ink-light'}">${fmtDate(m.expiry)}${expired ? ' · Expired' : ''}</span>
+          </td>
+          <td class="px-5 py-3 text-right">
+            <button class="text-xs font-medium text-brass-dark hover:text-brass" data-view="${m.cardNo}">View</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+    renderStats();
+  }
+  document.getElementById('search').addEventListener('input', (e) => { state.search = e.target.value; render(); });
+  document.getElementById('sort').addEventListener('change', (e) => { state.sort = e.target.value; render(); });
+  document.getElementById('type-chips').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-type]');
+    if (!btn) return;
+    state.type = btn.dataset.type;
+    document.querySelectorAll('#type-chips .chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('drawer-backdrop');
+  let activeCard = null;
+  function openDrawer(cardNo) {
+    const m = members.find(x => x.cardNo === cardNo);
+    if (!m) return;
+    activeCard = cardNo;
+    document.getElementById('d-name').textContent = m.name;
+    document.getElementById('d-card').textContent = m.cardNo;
+    document.getElementById('d-type').textContent = m.type;
+    document.getElementById('d-dept').textContent = m.department;
+    document.getElementById('d-roll').textContent = m.rollId || '—';
+    document.getElementById('d-email').textContent = m.email;
+    document.getElementById('d-phone').textContent = m.phone;
+    document.getElementById('d-dob').textContent = fmtDate(m.dob);
+    document.getElementById('d-reg').textContent = fmtDate(m.registeredOn);
+    document.getElementById('d-expiry').textContent = fmtDate(m.expiry);
+    document.getElementById('d-address').textContent = m.address || '—';
+    drawer.classList.remove('translate-x-full');
+    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+  }
+  function closeDrawer() {
+    drawer.classList.add('translate-x-full');
+    backdrop.classList.add('opacity-0', 'pointer-events-none');
+    activeCard = null;
+  }
+  document.getElementById('members-body').addEventListener('click', (e) => {
+    const row = e.target.closest('tr[data-card]');
+    if (row) openDrawer(row.dataset.card);
+  });
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+  document.getElementById('drawer-delete').addEventListener('click', () => {
+    if (!activeCard) return;
+    members = members.filter(m => m.cardNo !== activeCard);
+    localStorage.setItem('library_members', JSON.stringify(members));
+    closeDrawer();
+    render();
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = 'Member removed';
+    toast.classList.remove('translate-y-24', 'opacity-0');
+    setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 2500);
+  });
+  render();
+</script>
+</body>
+</html>

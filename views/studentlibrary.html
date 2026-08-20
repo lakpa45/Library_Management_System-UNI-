@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Library Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{
+  --bg:#f4f1e8;
+  --card:#fffdf8;
+  --ink:#1B2430;
+  --forest:#1F3B32;
+  --forest-2:#28503F;
+  --ivory:#FAF6EC;
+  --brass:#A9812F;
+  --brass-2:#C79A3E;
+  --line:rgba(27,36,48,.14);
+  --muted:#6c746f;
+}
+*{
+  box-sizing:border-box;
+}
+html{
+  scroll-behavior:smooth;
+}
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(208,163,75,.10),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(35,85,68,.08),
+      transparent 30rem
+    ),
+    var(--bg);
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  line-height:1.6;
+}
+button,
+input,
+select{
+  font:inherit;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline:3px solid rgba(208,163,75,.35);
+  outline-offset:2px;
+}
+.font-display{
+  font-family:'Fraunces',serif;
+  letter-spacing:-.025em;
+}
+.font-mono{
+  font-family:'JetBrains Mono',monospace;
+}
+.index-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px !important;
+  position:relative;
+  backdrop-filter:blur(8px);
+  box-shadow:
+    0 1px 2px rgba(23,33,29,.04),
+    0 12px 30px -18px rgba(23,33,29,.22);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+.index-card:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(23,33,29,.06),
+    0 18px 34px -20px rgba(23,33,29,.28);
+}
+.index-card::before{
+  content:"";
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--ivory);
+  box-shadow:inset 0 0 0 .75px var(--line);
+}
+.index-card-pad{
+  padding-left:34px;
+}
+.rule-dashed{
+  border-top:1px dashed var(--line);
+}
+.hero-rule{
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    var(--brass),
+    transparent
+  );
+}
+.section-kicker{
+  font:500 9px 'JetBrains Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.2em;
+  color:var(--brass);
+}
+.dashboard-divider{
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    var(--brass),
+    transparent
+  );
+  opacity:.45;
+}
+.catalog-card{
+  min-height:220px;
+}
+.quick-action{
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:12px;
+  padding:16px;
+  text-align:left;
+  transition:all .2s ease;
+}
+.quick-action:hover{
+  transform:translateY(-2px);
+  border-color:var(--brass-2);
+  box-shadow:0 12px 28px -18px rgba(23,33,29,.35);
+}
+.quick-icon{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:var(--ivory);
+  display:grid;
+  place-items:center;
+  font-size:18px;
+}
+.activity-item{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:13px 0;
+  border-bottom:1px dashed var(--line);
+}
+
+.activity-item:last-child{
+  border-bottom:0;
+}
+.activity-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--brass);
+  margin-top:7px;
+  flex:none;
+}
+.book-cover{
+  width:48px;
+  height:68px;
+  border-radius:5px;
+  background:
+    linear-gradient(
+      145deg,
+      var(--forest),
+      var(--forest-2)
+    );
+  color:white;
+  display:flex;
+  align-items:flex-end;
+  padding:6px;
+  font:600 8px 'JetBrains Mono',monospace;
+  letter-spacing:.04em;
+  box-shadow:0 5px 12px -8px rgba(0,0,0,.45);
+  flex:none;
+}
+.recommend-card{
+  display:flex;
+  gap:14px;
+  min-height:145px;
+}
+.availability-bar{
+  height:5px;
+  border-radius:99px;
+  background:var(--ivory);
+  overflow:hidden;
+  border:1px solid var(--line);
+}
+.availability-fill{
+  height:100%;
+  background:var(--forest-2);
+}
+.mini-badge{
+  font:500 8px 'JetBrains Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.filter-select{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:9px 12px;
+  font:500 10px 'JetBrains Mono',monospace;
+  outline:none;
+}
+.library-card{
+  background:
+    linear-gradient(
+      135deg,
+      var(--forest),
+      #102b24
+    );
+  color:white;
+  position:relative;
+  overflow:hidden;
+  min-height:300px;
+  cursor:pointer;
+}
+.library-card:after{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:50%;
+  right:-70px;
+  top:-80px;
+  box-shadow:
+    0 0 0 24px rgba(255,255,255,.025),
+    0 0 0 48px rgba(255,255,255,.018);
+}
+.progress-ring{
+  width:78px;
+  height:78px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    conic-gradient(
+      var(--brass-2) var(--progress),
+      rgba(255,255,255,.12) 0
+    );
+  position:relative;
+}
+.progress-ring:before{
+  content:"";
+  position:absolute;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  background:var(--forest);
+}
+.progress-ring span{
+  position:relative;
+  z-index:1;
+  font:700 14px 'JetBrains Mono',monospace;
+}
+.icon-btn{
+  width:38px;
+  height:38px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:9px;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  transition:.2s;
+  background:transparent;
+}
+.icon-btn:hover{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.28);
+}
+.modal-panel{
+  max-height:min(90vh,760px);
+  overflow:auto;
+}
+.modal-panel::-webkit-scrollbar{
+  width:5px;
+}
+.modal-panel::-webkit-scrollbar-thumb{
+  background:var(--line);
+  border-radius:9px;
+}
+.empty-state{
+  min-height:150px;
+  display:grid;
+  place-items:center;
+}
+.toast{
+  animation:toastIn .25s ease-out;
+}
+
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+@keyframes stampIn{
+  0%{
+    opacity:0;
+    transform:scale(1.3) rotate(-2deg);
+  }
+  60%{
+    opacity:1;
+  }
+  100%{
+    opacity:1;
+    transform:scale(1) rotate(-2deg);
+  }
+}
+@keyframes slideInUp{
+  0%{
+    opacity:0;
+    transform:translateY(8px);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.stamp-anim{
+  animation:stampIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+.animate-slide-in{
+  animation:slideInUp .3s ease-out;
+}
+.scrollbar-thin::-webkit-scrollbar{
+  height:4px;
+  width:4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track{
+  background:transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb{
+  background:var(--line);
+  border-radius:3px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover{
+  background:var(--brass);
+}
+[x-cloak]{
+  display:none;
+}
+@media(max-width:760px){
+  .catalog-card{
+    min-height:0;
+  }
+}
+@media(max-width:640px){
+  main{
+    padding-top:1.5rem !important;
+  }
+  h1{
+    font-size:2.4rem !important;
+  }
+  .toast{
+    left:16px;
+    right:16px;
+    bottom:16px;
+    max-width:none;
+  }
+  .icon-btn{
+    width:36px;
+    height:36px;
+  }
+}
+</style>
+</head>
+<body class="min-h-screen">
+<!-- HEADER -->
+<header class="bg-[#1e3a5f] text-[#F3EADA] border-b-4 border-[#A9834F]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div class="flex items-center justify-between gap-4">
+      <!-- Brand -->
+      <div class="flex items-center gap-4 min-w-0">
+        <div class="w-22 h-10 shrink-0 rounded-sm bg-red-600 flex items-center justify-center font-display font-bold text-white text-base tracking-wider">ICFAI</div>
+        <div class="min-w-0">
+          <p class="font-mono text-[12px] text-white tracking-[0.5em] uppercase truncate">Campus Library</p>
+          <p class="hidden sm:block text-white/60 text-[10px] mt-1">Student circulation dashboard</p>
+        </div>
+      </div>
+      <!-- Student -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- LOGOUT BUTTON -->
+        <button class="icon-btn"id="logout-btn"aria-label="Logout"title="Logout"> ⇥</button>
+        <div class="text-right hidden sm:block ml-2">
+          <p class="text-white font-display text-base font-medium"id="student-name">Lakpa Tsering</p>
+          <p class="font-mono text-[9px]text-white/50tracking-wider"id="student-id">CARD NO. 20481-B</p>
+        </div>
+        <button id="header-card-btn" class="w-10 h-10 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-display text-sm font-medium transition hover:bg-white/20"aria-label="Open library card">LT</button>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- MAIN-->
+<main
+  class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-10 sm:space-y-12">
+  <!-- Greeting -->
+  <section class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2">
+    <div>
+      <p class="font-mono text-[8px] uppercase tracking-[0.25em] text-[var(--brass)] font-semibold"> Circulation Desk</p>
+      <h1 class="font-display text-4xl sm:text-5xl font-semibold mt-3 leading-tight"> Welcome back, <span id="greet-name">Doko</span>. </h1>
+      <p class="text-[var(--ink)]/50 mt-2 text-sm" id="today-line"> Loading today's date… </p> 
+      <div class="hero-rule w-32 mt-5"></div>
+    </div>
+  </section>
+  <!-- STATS -->
+  <section
+    class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" id="stats-row">
+  </section>
+  <!-- BORROWED + SIDEBAR -->
+  <div
+    class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+    <!-- Borrowed -->
+    <section
+      class="lg:col-span-2 space-y-5">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="font-display text-2xl font-semibold"> Your Checked-Out Books </h2>
+        <p class="font-mono text-[10px] text-[var(--ink)]/40 tracking-wide shrink-0" id="borrowed-count-label"> </p>
+      </div>
+      <div class="index-card rounded-sm overflow-hidden" id="borrowed-list"></div>
+    </section>
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+      <!-- Reading goal -->
+      <div class="index-card index-card-pad rounded-sm p-6">
+        <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--brass)] font-medium"> Reading Goal · 2026 </p>
+        <div class="flex items-end justify-between mt-3">
+          <p class="font-display text-3xl font-bold" id="goal-count"> 0 / 24 </p>
+          <p class="text-sm text-[var(--ink)]/40 font-mono" id="goal-pct"> 0% </p>
+        </div>
+        <div class="w-full h-2.5 bg-[var(--ivory)] rounded-full mt-4 overflow-hidden border border-[var(--line)]">
+          <div
+            id="goal-bar"
+            class="h-full bg-[var(--forest-2)] rounded-full transition-all duration-700" style="width:0%"> </div>
+        </div>
+        <p class="text-xs text-[var(--ink)]/40 mt-3"> Books finished this year </p>
+      </div>
+      <!-- Notices -->
+      <div class="index-card index-card-pad rounded-sm p-6">
+        <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--brass)] font-medium"> Notices </p>
+        <ul class="mt-4 space-y-3 text-sm" id="notices-list"> </ul>
+      </div>
+    </aside>
+  </div>
+  <!-- QUICK ACTIONS -->
+  <section class="space-y-4">
+    <div class="flex items-end justify-between">
+      <div>
+        <p class="section-kicker">Library tools</p>
+        <h2
+          class="font-display text-2xl font-semibold mt-2">Quick Actions</h2>
+      </div>
+      <p class="text-xs text-[var(--ink)]/40 hidden sm:block"> Everything you need in one place </p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <button class="quick-action" id="browse-action">
+        <p class="font-display font-semibold mt-3"> Find a Book </p>
+        <p class="text-xs text-[var(--ink)]/45 mt-1">Search the catalog</p>
+      </button>
+      <button class="quick-action" id="holds-action">
+        <p class="font-display font-semibold mt-3"> My Holds </p>
+        <p class="text-xs text-[var(--ink)]/45 mt-1">Track reserved books </p>
+      </button>
+      <button class="quick-action" id="history-action">
+        <p class="font-display font-semibold mt-3"> Reading History </p>
+        <p class="text-xs text-[var(--ink)]/45 mt-1"> See completed books </p>
+      </button>
+      <button class="quick-action" id="card-action">
+        <p class="font-display font-semibold mt-3"> Library Card </p>
+        <p class="text-xs text-[var(--ink)]/45 mt-1"> View digital card </p>
+      </button>
+    </div>
+  </section>
+  <!-- ACTIVITY + CARD -->
+  <section
+    class="grid
+           grid-cols-1
+           lg:grid-cols-3
+           gap-6
+           items-start">
+    <!-- Activity -->
+    <div
+      class="index-card
+             index-card-pad
+             p-6
+             lg:col-span-2">
+      <div
+        class="flex items-center
+               justify-between">
+        <div>
+          <p class="section-kicker"> Account timeline </p>
+          <h2 class="font-display text-xl font-semibold mt-2"> Recent Activity </h2>
+        </div>
+        <button
+          id="clear-activity-btn"
+          class="font-mono text-[9px] uppercase tracking-wider text-[var(--ink)]/40 hover:text-[var(--brass)]"> Clear </button>
+      </div>
+      <div
+        id="activity-list"
+        class="mt-4">
+      </div>
+    </div>
+    <!-- Digital card -->
+    <div
+      class="library-card rounded-xl p-6 shadow-lg" id="digital-card">
+      <div class="relative z-10">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="font-mono text-[8px] uppercase tracking-[.25em] text-[var(--brass-2)]"> Digital Library Card </p>
+            <p class="font-display text-xl font-semibold mt-3"> ICFAI Campus Library </p>
+          </div>
+        </div>
+        <div class="mt-8">
+          <p class="font-mono text-[8px] uppercase tracking-widest text-white/45"> Card holder</p>
+          <p class="font-display text-lg mt-1" id="card-holder-name"> Lakpa Tsering </p>
+          <p class="font-mono text-[10px] text-white/55 mt-1" id="card-number-display"> 20481-B</p>
+        </div>
+        <div class="flex items-end justify-between mt-6">
+          <div>
+            <p class="font-mono text-[8px] uppercase tracking-widest text-white/45"> Status </p>
+            <p class="text-sm font-medium mt-1"> Active · Student </p>
+          </div>
+          <div class="progress-ring relative" id="card-progress-ring" style="--progress:58%">
+            <span id="card-progress-text"> 14/24 </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- RECOMMENDATIONS -->
+  <section class="space-y-5">
+    <div class="flex items-end justify-between">
+      <div>
+        <p class="section-kicker"> Curated for you </p>
+        <h2 class="font-display text-2xl font-semibold mt-2"> Recommended Reading </h2>
+      </div>
+      <button
+        id="refresh-recommendations"
+        class="font-mono text-[9px] uppercase tracking-wider border border-[var(--line)] rounded-full px-3 py-2 hover:border-[var(--brass-2)] hover:text-[var(--brass)]"> Refresh </button>
+    </div>
+    <div id="recommendations-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+  </section>
+  <!-- CATALOG -->
+  <section
+    class="space-y-5 pt-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h2 class="font-display text-2xl font-semibold"> Browse the Catalog </h2>
+        <p class="text-sm text-[var(--ink)]/50 font-light mt-1"> Search by title or author, filter by section, and check out or place holds.</p>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Search title or author…"
+          class="font-mono text-sm bg-[var(--card)] border border-[var(--line)] rounded-sm px-4 py-2.5 w-full sm:w-56 focus:outline-none focus:ring-2 focus:ring-[var(--brass-2)] focus:border-transparent transition" />
+        <select id="sort-select" class="filter-select" aria-label="Sort catalog">
+          <option value="title">A–Z</option>
+          <option value="author"> Author </option>
+          <option value="availability"> Availability </option>
+        </select>
+      </div>
+    </div>
+    <!-- Genres -->
+    <div class="flex gap-2 overflow-x-auto scrollbar-thin pb-1" id="genre-filters"></div>
+    <!-- Catalog -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="catalog-grid"></div>
+  </section>
+</main>
+<!-- INFO MODAL -->
+<div id="info-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+  <div class="modal-panel bg-[var(--card)] rounded-xl shadow-2xl max-w-lg w-full p-6 animate-slide-in">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <p class="section-kicker"> Account </p>
+        <h2 class="font-display text-2xl font-semibold mt-1" id="info-modal-title"> My Holds </h2>
+      </div>
+      <button id="close-info-modal" class="text-[var(--ink)]/40 hover:text-[var(--ink)] text-xl" aria-label="Close"> ✕ </button>
+    </div>
+    <div id="info-modal-body"></div>
+    <button id="close-info-bottom" class="w-full mt-5 bg-[var(--forest)] text-white rounded-sm px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider"> Done </button>
+  </div>
+</div>
+<!-- DIGITAL CARD MODAL -->
+<div id="card-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="card-modal-title">
+  <div class="bg-[var(--card)] rounded-xl shadow-2xl max-w-sm w-full p-6 animate-slide-in">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <p class="section-kicker"> Student identification </p>
+        <h2 id="card-modal-title" class="font-display text-2xl font-semibold mt-1">Library Card</h2>
+      </div>
+      <button id="close-card-modal" class="text-[var(--ink)]/40 hover:text-[var(--ink)] text-xl" aria-label="Close"> ✕ </button>
+    </div>
+    <div class="library-card rounded-xl p-6 cursor-default">
+      <p class="font-mono text-[8px] uppercase tracking-[.25em] text-[var(--brass-2)]"> ICFAI Campus Library </p>
+      <p class="font-display text-2xl mt-6" id="modal-card-name"> Lakpa Tsering </p>
+      <p class="font-mono text-xs text-white/55 mt-1" id="modal-card-id"> CARD NO. 20481-B </p>
+      <div class="mt-7 pt-4 border-t border-white/10 flex justify-between">
+        <span
+          class="text-xs text-white/55"> Student · Active </span>
+        <span class="font-mono text-[9px] text-[var(--brass-2)]"> VALID 2026 </span>
+      </div>
+    </div>
+    <button id="close-card-bottom" class="w-full mt-5 bg-[var(--forest)] text-white rounded-sm px-4 py-2.5 font-mono text-[10px] uppercase tracking-wider"> Done </button>
+  </div>
+</div>
+<!-- FOOTER -->
+<footer class="max-w-6xl mx-auto px-5 sm:px-8 py-10 text-xs text-[var(--ink)]/35 font-mono tracking-wide border-t border-[var(--line)]">Please return items by the date stamped on your card.</footer>
+<script>
+function showToast(title, message){
+  const old =
+    document.getElementById("app-toast");
+  if(old){
+    old.remove();
+  }
+  const el =
+    document.createElement("div");
+  el.id = "app-toast";
+  el.className =
+    "toast fixed bottom-5 right-5 z-[60] " +
+    "max-w-sm rounded-xl bg-[var(--forest)] " +
+    "text-white shadow-2xl p-4";
+  el.innerHTML = `
+    <p class="font-display font-semibold">
+      ${title}
+    </p>
+    <p class="text-xs text-white/70 mt-1">
+      ${message}
+    </p>
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => {
+    el.remove();
+  }, 3500);
+}
+function daysFromNow(n){
+  const d = new Date();
+  d.setDate(
+    d.getDate() + n
+  );
+  return d;
+}
+function fmtDate(d){
+  return new Date(d).toLocaleDateString(
+    undefined,
+    {
+      month:"short",
+      day:"numeric"
+    }
+  );
+}
+function daysUntil(d){
+  const target =
+    new Date(d);
+  const today =
+    new Date();
+  target.setHours(
+    0,0,0,0
+  );
+  today.setHours(
+    0,0,0,0
+  );
+  return Math.round(
+    (target - today) /
+    86400000
+  );
+}
+const student = {
+  name:"Lakpa Tsering",
+  id:"20481-B",
+  goal:24
+};
+const genres = [
+  "All",
+  "Fiction",
+  "Science",
+  "History",
+  "Poetry",
+  "Reference"
+];
+const defaultCatalog = [
+  {
+    id:1,
+    title:"The Sympathizer",
+    author:"Viet Thanh Nguyen",
+    genre:"Fiction",
+    copies:3
+  },
+  {
+    id:2,
+    title:"Braiding Sweetgrass",
+    author:"Robin Wall Kimmerer",
+    genre:"Science",
+    copies:0
+  },
+  {
+    id:3,
+    title:"The Wretched of the Earth",
+    author:"Frantz Fanon",
+    genre:"History",
+    copies:2
+  },
+  {
+    id:4,
+    title:"Citizen: An American Lyric",
+    author:"Claudia Rankine",
+    genre:"Poetry",
+    copies:1
+  },
+  {
+    id:5,
+    title:"A Brief History of Time",
+    author:"Stephen Hawking",
+    genre:"Science",
+    copies:4
+  },
+  {
+    id:6,
+    title:"The Elements of Style",
+    author:"Strunk & White",
+    genre:"Reference",
+    copies:6
+  },
+  {
+    id:7,
+    title:"Beloved",
+    author:"Toni Morrison",
+    genre:"Fiction",
+    copies:0
+  },
+  {
+    id:8,
+    title:"Sapiens",
+    author:"Yuval Noah Harari",
+    genre:"History",
+    copies:2
+  },
+  {
+    id:9,
+    title:"Postcolonial Love Poem",
+    author:"Natalie Diaz",
+    genre:"Poetry",
+    copies:3
+  }
+];
+const defaultBorrowed = [
+  {
+    id:101,
+    title:"Pale Fire",
+    author:"Vladimir Nabokov",
+    due:daysFromNow(2).toISOString(),
+    renewals:1
+  },
+  {
+    id:102,
+    title:"The Order of Time",
+    author:"Carlo Rovelli",
+    due:daysFromNow(-1).toISOString(),
+    renewals:0
+  },
+  {
+    id:103,
+    title:"Ways of Seeing",
+    author:"John Berger",
+    due:daysFromNow(9).toISOString(),
+    renewals:2
+  }
+];
+const STORAGE_KEY =
+  "icfai-library-dashboard-v3";
+function loadState(){
+  try{
+    return JSON.parse(
+      localStorage.getItem(
+        STORAGE_KEY
+      ) || "null"
+    );
+  }catch{
+    return null;
+  }
+}
+const savedState =
+  loadState();
+let catalog =
+  savedState?.catalog ||
+  structuredClone(
+    defaultCatalog
+  );
+let borrowed =
+  (
+    savedState?.borrowed ||
+    structuredClone(
+      defaultBorrowed
+    )
+  ).map(book => ({
+    ...book,
+    due:new Date(book.due)
+  }));
+let booksReadThisYear =
+  savedState?.booksReadThisYear ??
+  14;
+let holds =
+  savedState?.holds ||
+  [
+    {
+      id:7,
+      title:"Beloved",
+      author:"Toni Morrison",
+      position:2,
+      status:"Waiting"
+    }
+  ];
+let activity =
+  savedState?.activity ||
+  [
+    {
+      title:"Returned a library item",
+      detail:"Your account activity was updated.",
+      time:"Today"
+    },
+    {
+      title:"Renewal available",
+      detail:"Pale Fire has 1 renewal remaining.",
+      time:"Yesterday"
+    },
+    {
+      title:"Hold updated",
+      detail:"Beloved is currently 2nd in the queue.",
+      time:"Aug 12"
+    },
+    {
+      title:"Reading goal progress",
+      detail:"14 books completed toward your 2026 goal.",
+      time:"Aug 10"
+    }
+  ];
+const notices = [
+  {
+    text:"Reading Room B closed for renovation through Sept 3.",
+    tag:"Facilities"
+  },
+  {
+    text:"Your hold on “Beloved” — 2nd in queue.",
+    tag:"Holds"
+  },
+  {
+    text:"Fall library orientation begins Sept 15.",
+    tag:"Announcement"
+  }
+];
+const recommendations = [
+  {
+    title:"The Left Hand of Darkness",
+    author:"Ursula K. Le Guin",
+    genre:"Fiction",
+    reason:"A strong choice if you enjoy thoughtful fiction."
+  },
+  {
+    title:"Cosmos",
+    author:"Carl Sagan",
+    genre:"Science",
+    reason:"Explore science through clear, engaging storytelling."
+  },
+  {
+    title:"The Silk Roads",
+    author:"Peter Frankopan",
+    genre:"History",
+    reason:"A broad historical perspective across regions and eras."
+  }
+];
+function saveState(){
+  try{
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        catalog,
+        borrowed:
+          borrowed.map(book => ({
+            ...book,
+            due:
+              new Date(
+                book.due
+              ).toISOString()
+          })),
+        booksReadThisYear,
+        activity,
+        holds
+      })
+    );
+  }catch(e){}
+}
+document.getElementById(
+  "student-name"
+).textContent =
+  student.name;
+document.getElementById(
+  "student-id"
+).textContent =
+  "CARD NO. " +
+  student.id;
+document.getElementById(
+  "greet-name"
+).textContent =
+  student.name.split(" ")[0];
+document.getElementById(
+  "today-line"
+).textContent =
+  new Date().toLocaleDateString(
+    undefined,
+    {
+      weekday:"long",
+      month:"long",
+      day:"numeric",
+      year:"numeric"
+    }
+  );
+document.getElementById(
+  "logout-btn"
+).addEventListener(
+  "click",
+  () => {
+    if(
+      confirm(
+        "Are you sure you want to logout?"
+      )
+    ){
+      showToast(
+        "Logged out",
+        "You have been logged out successfully."
+      );
+      setTimeout(
+        () => {
+          window.location.href =
+            "login.html";
+        },
+        1000
+      );
+    }
+  }
+);
+function renderStats(){
+  const dueSoon =
+    borrowed.filter(
+      book =>
+        daysUntil(book.due) <= 3
+    ).length;
+  const overdue =
+    borrowed.filter(
+      book =>
+        daysUntil(book.due) < 0
+    ).length;
+  const stats = [
+    {
+      label:"Checked Out",
+      value:borrowed.length,
+      sub:"of 5 allowed"
+    },
+    {
+      label:"Due Soon",
+      value:dueSoon,
+      sub:"within 3 days"
+    },
+    {
+      label:"Overdue",
+      value:overdue,
+      sub:
+        overdue === 1
+          ? "item needs attention"
+          : "items need attention"
+    },
+    {
+      label:"Read This Year",
+      value:booksReadThisYear,
+      sub:
+        "toward goal of " +
+        student.goal
+    }
+  ];
+  document.getElementById(
+    "stats-row"
+  ).innerHTML =
+    stats.map(stat => `
+      <div class="index-card index-card-pad rounded-sm p-5 hover:shadow-md transition">
+        <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--brass)] font-medium"> ${stat.label} </p>
+        <p class="font-display text-2xl font-bold mt-3"> ${stat.value} </p>
+        <p class="text-xs text-[var(--ink)]/40 mt-2"> ${stat.sub} </p>
+      </div>
+    `).join("");
+}
+function renderBorrowed(){
+  document.getElementById(
+    "borrowed-count-label"
+  ).textContent =
+    borrowed.length +
+    " item" +
+    (
+      borrowed.length === 1
+        ? ""
+        : "s"
+    );
+  const list =
+    document.getElementById(
+      "borrowed-list"
+    );
+  if(
+    borrowed.length === 0
+  ){
+    list.innerHTML = `
+      <div class="index-card-pad p-8 text-sm text-[var(--ink)]/50 text-center">
+        Nothing checked out —
+        browse the catalog below
+        to find your next read.
+      </div>
+    `;
+    return;
+  }
+  list.innerHTML =
+    borrowed.map(
+      (book,index) => {
+        const remaining =
+          daysUntil(book.due);
+        const overdue =
+          remaining < 0;
+        const soon =
+          remaining >= 0 &&
+          remaining <= 3;
+        const statusColor =
+          overdue
+            ? "text-red-700"
+            : soon
+              ? "text-[var(--brass)]"
+              : "text-[var(--forest-2)]";
+        const statusText =
+          overdue
+            ? `${Math.abs(remaining)}d overdue`
+            : remaining === 0
+              ? "due today"
+              : `${remaining}d left`;
+        return `
+          <div class=" index-card-pad p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${index > 0 ? "rule-dashed" : ""} hover:bg-[var(--ivory)]/30 transition">
+            <div class="min-w-0">
+              <p class="font-display font-semibold text-base leading-snug"> ${book.title} </p>
+              <p class="text-xs text-[var(--ink)]/50 mt-0.5"> ${book.author} </p>
+              <p class="font-mono text-[9px] mt-2 ${statusColor}"> DUE ${fmtDate(book.due).toUpperCase()} · ${statusText.toUpperCase()} </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button
+                data-id="${book.id}"
+                class="
+                  renew-btn
+                  font-mono
+                  text-[10px]
+                  uppercase
+                  tracking-wider
+                  font-medium
+                  border
+                  border-[var(--line)]
+                  rounded-sm
+                  px-3 py-1.5
+                  hover:border-[var(--brass-2)]
+                  hover:text-[var(--brass)]
+                  active:scale-95
+                  transition
+                  ${
+                    book.renewals >= 2
+                      ? "opacity-30 cursor-not-allowed"
+                      : ""
+                  }"
+                ${
+                  book.renewals >= 2
+                    ? "disabled"
+                    : ""
+                }>
+                Renew (${2 - book.renewals} left)
+              </button>
+              <button
+                data-id="${book.id}"
+                class="
+                  return-btn
+                  font-mono
+                  text-[10px]
+                  uppercase
+                  tracking-wider
+                  font-medium
+                  text-[var(--ink)]/40
+                  hover:text-red-600
+                  active:scale-95
+                  transition">
+                Return
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    ).join("");
+  list.querySelectorAll(
+    ".renew-btn"
+  ).forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        const id =
+          Number(
+            button.dataset.id
+          );
+        const book =
+          borrowed.find(
+            item =>
+              item.id === id
+          );
+        if(
+          !book ||
+          book.renewals >= 2
+        ){
+          return;
+        }
+        book.renewals += 1;
+        book.due =
+          daysFromNow(14);
+        addActivity(
+          "Book renewed",
+          `${book.title} is now due in 14 days.`,
+          "↻"
+        );
+        renderBorrowed();
+        renderStats();
+        saveState();
+        showToast(
+          "Book renewed",
+          `${book.title} is due in 14 days.`
+        );
+      }
+    );
+  });
+  list.querySelectorAll(
+    ".return-btn"
+  ).forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        const id =
+          Number(
+            button.dataset.id
+          );
+        const book =
+          borrowed.find(
+            item =>
+              item.id === id
+          );
+        if(!book){
+          return;
+        }
+        borrowed =
+          borrowed.filter(
+            item =>
+              item.id !== id
+          );
+        booksReadThisYear += 1;
+        addActivity(
+          "Book returned",
+          `${book.title} was returned successfully.`,
+          "✓"
+        );
+        renderBorrowed();
+        renderStats();
+        renderGoal();
+        renderRecommendations();
+        saveState();
+        showToast(
+          "Book returned",
+          `${book.title} has been added to your reading progress.`
+        );
+      }
+    );
+  });
+}
+function renderGoal(){
+  const percentage =
+    Math.min(
+      100,
+      Math.round(
+        (
+          booksReadThisYear /
+          student.goal
+        ) * 100
+      )
+    );
+  document.getElementById(
+    "goal-count"
+  ).textContent =
+    `${booksReadThisYear} / ${student.goal}`;
+  document.getElementById(
+    "goal-pct"
+  ).textContent =
+    percentage + "%";
+  document.getElementById(
+    "goal-bar"
+  ).style.width =
+    percentage + "%";
+  document.getElementById(
+    "card-progress-ring"
+  ).style.setProperty(
+    "--progress",
+    percentage + "%"
+  );
+  document.getElementById(
+    "card-progress-text"
+  ).textContent =
+    `${booksReadThisYear}/${student.goal}`;
+}
+function renderNotices(){
+  document.getElementById(
+    "notices-list"
+  ).innerHTML =
+    notices.map(
+      notice => `
+        <li
+          class="flex gap-2 py-0.5">
+          <span
+            class="
+              font-mono
+              text-[8px]
+              uppercase
+              tracking-wider
+              font-medium
+              text-[var(--brass)]
+              border
+              border-[var(--line)]
+              rounded-sm
+              px-2 py-1
+              h-fit
+              shrink-0">
+            ${notice.tag}
+          </span>
+          <span
+            class="
+              text-[var(--ink)]/70
+              text-sm
+              leading-relaxed">
+            ${notice.text}
+          </span>
+        </li>
+      `
+    ).join("");
+}
+let activeGenre =
+  "All";
+function renderFilters(){
+  document.getElementById(
+    "genre-filters"
+  ).innerHTML =
+    genres.map(
+      genre => `
+        <button
+          data-genre="${genre}"
+          class="
+            genre-btn
+            font-mono
+            text-[10px]
+            uppercase
+            tracking-wider
+            font-medium
+            px-4 py-2
+            rounded-full
+            border
+            shrink-0
+            transition
+            ${
+              genre === activeGenre
+                ? "bg-[var(--forest)] text-white border-[var(--forest)]"
+                : "bg-[var(--card)] border-[var(--line)] hover:border-[var(--brass-2)]"
+            }">
+          ${genre}
+        </button>
+      `
+    ).join("");
+  document.querySelectorAll(
+    ".genre-btn"
+  ).forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        activeGenre =
+          button.dataset.genre;
+        renderFilters();
+        renderCatalog();
+      }
+    );
+  });
+}
+let catalogSort =
+  "title";
+function renderCatalog(){
+  const query =
+    (
+      document.getElementById(
+        "search-input"
+      ).value || ""
+    )
+    .toLowerCase()
+    .trim();
+  let filtered =
+    catalog.filter(
+      book => {
+        const genreMatch =
+          activeGenre === "All" ||
+          book.genre === activeGenre;
+        const queryMatch =
+          !query ||
+          book.title
+            .toLowerCase()
+            .includes(query) ||
+          book.author
+            .toLowerCase()
+            .includes(query);
+        return (
+          genreMatch &&
+          queryMatch
+        );
+      }
+    );
+  filtered.sort(
+    (a,b) => {
+      if(
+        catalogSort === "author"
+      ){
+        return a.author.localeCompare(
+          b.author
+        );
+      }
+      if(
+        catalogSort === "availability"
+      ){
+        return (
+          b.copies - a.copies ||
+          a.title.localeCompare(
+            b.title
+          )
+        );
+      }
+      return a.title.localeCompare(
+        b.title
+      );
+    }
+  );
+  const grid =
+    document.getElementById(
+      "catalog-grid"
+    );
+  if(!filtered.length){
+    grid.innerHTML = `
+      <div
+        class="
+          col-span-full
+          index-card
+          rounded-sm
+          p-8
+          text-sm
+          text-[var(--ink)]/50
+          text-center">
+        No titles match
+        ${
+          query
+            ? `“${query.replace(
+                /</g,
+                "&lt;"
+              )}”`
+            : "your filters"
+        }.
+        <br>
+        Try another search
+        or section.
+      </div>
+    `;
+    return;
+  }
+  grid.innerHTML =
+    filtered.map(
+      book => {
+        const available =
+          book.copies > 0;
+        const alreadyBorrowed =
+          borrowed.some(
+            item =>
+              item.title ===
+              book.title
+          );
+        const alreadyOnHold =
+          holds.some(
+            hold =>
+              hold.id ===
+              book.id
+          );
+        let buttonText;
+        if(alreadyBorrowed){
+          buttonText =
+            "Checked out";
+        }
+        else if(
+          !available &&
+          alreadyOnHold
+        ){
+          buttonText =
+            "On hold";
+        }
+        else if(available){
+          buttonText =
+            "Check out";
+        }
+        else{
+          buttonText =
+            "Place hold";
+        }
+        return `
+          <div
+            class="
+              index-card
+              index-card-pad
+              catalog-card
+              rounded-sm
+              p-5
+              flex
+              flex-col
+              justify-between
+              hover:shadow-md
+              transition">
+            <div>
+              <p
+                class="
+                  font-mono
+                  text-[9px]
+                  uppercase
+                  tracking-[0.2em]
+                  text-[var(--brass)]
+                  font-medium">
+                ${book.genre}
+              </p>
+              <p
+                class="
+                  font-display
+                  font-semibold
+                  mt-2
+                  leading-snug
+                  text-base">
+                ${book.title}
+              </p>
+              <p
+                class="
+                  text-xs
+                  text-[var(--ink)]/50
+                  mt-1">
+                ${book.author}
+              </p>
+              <div class="mt-4">
+                <div
+                  class="
+                    flex
+                    justify-between
+                    text-[8px]
+                    font-mono
+                    text-[var(--ink)]/40
+                    mb-1">
+                  <span>
+                    AVAILABILITY
+                  </span>
+                  <span>
+                    ${book.copies}/6
+                  </span>
+                </div>
+                <div class="availability-bar">
+                  <div
+                    class="availability-fill"
+                    style="
+                      width:${Math.min(
+                        100,
+                        (book.copies / 6) *
+                        100
+                      )}%
+                    ">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="
+                flex
+                items-center
+                justify-between
+                mt-5
+                gap-3">
+              <p
+                class="
+                  font-mono
+                  text-[9px]
+                  font-medium
+                  ${
+                    available
+                      ? "text-[var(--forest-2)]"
+                      : "text-red-600"
+                  }">
+                ${
+                  available
+                    ? book.copies +
+                      " AVAILABLE"
+                    : "ALL COPIES OUT"
+                }
+              </p>
+              <button
+                data-id="${book.id}"
+                class="
+                  action-btn
+                  shrink-0
+                  font-mono
+                  text-[10px]
+                  uppercase
+                  tracking-wider
+                  font-medium
+                  border
+                  border-[var(--line)]
+                  rounded-sm
+                  px-3 py-1.5
+                  hover:border-[var(--brass-2)]
+                  hover:text-[var(--brass)]
+                  active:scale-95
+                  transition
+                  ${
+                    alreadyBorrowed ||
+                    (!available &&
+                      alreadyOnHold)
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }"
+                ${
+                  alreadyBorrowed ||
+                  (!available &&
+                    alreadyOnHold)
+                    ? "disabled"
+                    : ""
+                }>
+                ${buttonText}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+    ).join("");
+  grid.querySelectorAll(
+    ".action-btn"
+  ).forEach(button => {
+    button.addEventListener(
+      "click",
+      () => {
+        const book =
+          catalog.find(
+            item =>
+              item.id ===
+              Number(
+                button.dataset.id
+              )
+          );
+        if(!book){
+          return;
+        }
+        if(book.copies > 0){
+          if(
+            borrowed.length >= 5
+          ){
+            showToast(
+              "Checkout limit reached",
+              "You can have up to 5 books checked out at once."
+            );
+            return;
+          }
+          if(
+            borrowed.some(
+              item =>
+                item.title ===
+                book.title
+            )
+          ){
+            showToast(
+              "Already checked out",
+              "This title is already on your account."
+            );
+            return;
+          }
+          book.copies -= 1;
+          borrowed.push({
+            id:1000 + book.id,
+            title:book.title,
+            author:book.author,
+            due:daysFromNow(14),
+            renewals:0
+          });
+          addActivity(
+            "Book checked out",
+            `${book.title} is now on your account.`,
+            "✓"
+          );
+          renderBorrowed();
+          renderStats();
+          renderCatalog();
+          saveState();
+          showToast(
+            "Checked out",
+            `${book.title} is due in 14 days.`
+          );
+          return;
+        }
+        if(
+          !holds.some(
+            hold =>
+              hold.id ===
+              book.id
+          )
+        ){
+          holds.push({
+            id:book.id,
+            title:book.title,
+            author:book.author,
+            position:
+              holds.length + 1,
+            status:"Waiting"
+          });
+          addActivity(
+            "Hold placed",
+            `You joined the queue for ${book.title}.`,
+            "▱"
+          );
+          saveState();
+          renderCatalog();
+          showToast(
+            "Hold placed",
+            `${book.title} was added to My Holds.`
+          );
+        }
+        else{
+          showToast(
+            "Already on hold",
+            `${book.title} is already in My Holds.`
+          );
+        }
+      }
+    );
+  });
+}
+document.getElementById(
+  "search-input"
+).addEventListener(
+  "input",
+  renderCatalog
+);
+document.getElementById(
+  "sort-select"
+).addEventListener(
+  "change",
+  event => {
+    catalogSort =
+      event.target.value;
+    renderCatalog();
+  }
+);
+function renderActivity(){
+  const container =
+    document.getElementById(
+      "activity-list"
+    );
+  if(!activity.length){
+    container.innerHTML = `
+      <div
+        class="empty-state
+               text-sm
+               text-[var(--ink)]/45">
+        No recent activity.
+      </div>
+    `;
+    return;
+  }
+  container.innerHTML =
+    activity
+      .slice(0,6)
+      .map(
+        item => `
+          <div
+            class="activity-item">
+            <span
+              class="activity-dot">
+            </span>
+            <div
+              class="min-w-0
+                     flex-1">
+              <div
+                class="flex
+                       justify-between
+                       gap-3">
+                <p
+                  class="
+                    font-display
+                    font-semibold
+                    text-sm">
+                  ${item.icon}
+                  ${item.title}
+                </p>
+                <span
+                  class="
+                    font-mono
+                    text-[8px]
+                    text-[var(--ink)]/35
+                    shrink-0">
+                  ${item.time}
+                </span>
+              </div>
+              <p
+                class="
+                  text-xs
+                  text-[var(--ink)]/50
+                  mt-1">
+                ${item.detail}
+              </p>
+            </div>
+          </div>
+        `
+      )
+      .join("");
+}
+function addActivity(
+  title,
+  detail,
+  icon="•"
+){
+  activity.unshift({
+    icon,
+    title,
+    detail,
+    time:"Just now"
+  });
+  renderActivity();
+}
+function renderRecommendations(){
+  const container =
+    document.getElementById(
+      "recommendations-grid"
+    );
+  container.innerHTML =
+    recommendations
+      .map(
+        (book,index) => `
+          <div
+            class="
+              index-card
+              p-5
+              recommend-card">
+            <div class="book-cover">
+              ${String(
+                index + 1
+              ).padStart(2,"0")}
+            </div>
+            <div class=" min-w-0 flex-1 flex flex-col">
+              <span class=" mini-badge text-[var(--brass)]"> ${book.genre} </span>
+              <p class=" font-display font-semibold text-base mt-2 leading-snug"> ${book.title} </p>
+              <p class=" text-xs text-[var(--ink)]/50 mt-1"> ${book.author} </p>
+              <p class=" text-xs text-[var(--ink)]/45 mt-auto pt-3"> ${book.reason} </p>
+            </div>
+          </div>
+        `
+      )
+      .join("");
+}
+function openInfoModal(
+  title,
+  body
+){
+  document.getElementById(
+    "info-modal-title"
+  ).textContent =
+    title;
+  document.getElementById(
+    "info-modal-body"
+  ).innerHTML =
+    body;
+  document.getElementById(
+    "info-modal"
+  ).classList.remove(
+    "hidden"
+  );
+}
+function closeInfoModal(){
+  document.getElementById(
+    "info-modal"
+  ).classList.add(
+    "hidden"
+  );
+}
+document.getElementById(
+  "holds-action"
+).addEventListener(
+  "click",
+  () => {
+    openInfoModal(
+      "My Holds",
+      holds.length
+        ? holds.map(
+            hold => `
+              <div class=" border-b border-[var(--line)] last:border-0 py-4 flex justify-between gap-4">
+                <div>
+                  <p class=" font-display font-semibold"> ${hold.title} </p>
+                  <p class=" text-xs text-[var(--ink)]/50 mt-1"> ${hold.author} </p>
+                </div>
+                <div class="text-right">
+                  <p class=" font-mono text-[9px] text-[var(--brass)]"> ${hold.status} </p>
+                  <p class=" text-xs text-[var(--ink)]/45 mt-1"> Position ${hold.position} </p>
+                </div>
+              </div>
+            `
+          ).join("")
+
+        : `
+          <div class=" empty-state text-sm text-[var(--ink)]/45"> You have no active holds. </div>
+
+        `
+    );
+  }
+);
+document.getElementById(
+  "history-action"
+).addEventListener(
+  "click",
+  () => {
+    const completed =
+      activity.filter(
+        item =>
+          /returned|reading goal|checked out/i
+            .test(
+              item.title
+            )
+      );
+    openInfoModal(
+      "Reading History",
+
+      `
+        <div class=" mb-4 p-4 rounded-lg bg-[var(--ivory)] border border-[var(--line)]">
+          <p class="section-kicker"> 2026 progress </p>
+          <p class=" font-display text-3xl font-bold mt-2"> ${booksReadThisYear} books </p>
+        </div>
+        ${
+          completed.length
+            ? completed.map(
+                item => `
+                  <div class=" py-3 border-b border-[var(--line)] last:border-0">
+                    <p class=" font-display font-semibold text-sm"> ${item.title}</p>
+                    <p class=" text-xs text-[var(--ink)]/50 mt-1"> ${item.detail} </p>
+                  </div>
+                `
+              ).join("")
+
+            : `
+              <div class=" empty-state text-sm text-[var(--ink)]/45"> No completed-book activity yet. </div>
+
+            `
+        }
+
+      `
+    );
+  }
+);
+document.getElementById(
+  "close-info-modal"
+).addEventListener(
+  "click",
+  closeInfoModal
+);
+document.getElementById(
+  "close-info-bottom"
+).addEventListener(
+  "click",
+  closeInfoModal
+);
+document.getElementById(
+  "info-modal"
+).addEventListener(
+  "click",
+  event => {
+    if(
+      event.target.id ===
+      "info-modal"
+    ){
+      closeInfoModal();
+    }
+  }
+);
+function openCardModal(){
+  document.getElementById(
+    "card-modal"
+  ).classList.remove(
+    "hidden"
+  );
+}
+function closeCardModal(){
+  document.getElementById(
+    "card-modal"
+  ).classList.add(
+    "hidden"
+  );
+}
+document.getElementById(
+  "card-action"
+).addEventListener(
+  "click",
+  openCardModal
+);
+document.getElementById(
+  "header-card-btn"
+).addEventListener(
+  "click",
+  openCardModal
+);
+document.getElementById(
+  "digital-card"
+).addEventListener(
+  "click",
+  openCardModal
+);
+document.getElementById(
+  "close-card-modal"
+).addEventListener(
+  "click",
+  closeCardModal
+);
+document.getElementById(
+  "close-card-bottom"
+).addEventListener(
+  "click",
+  closeCardModal
+);
+document.getElementById(
+  "card-modal"
+).addEventListener(
+  "click",
+  event => {
+    if(
+      event.target.id ===
+      "card-modal"
+    ){
+      closeCardModal();
+    }
+  }
+);
+document.getElementById(
+  "browse-action"
+).addEventListener(
+  "click",
+  () => {
+    const search =
+      document.getElementById(
+        "search-input"
+      );
+    search.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+    setTimeout(
+      () =>
+        search.focus(),
+      350
+    );
+  }
+);
+document.getElementById(
+  "clear-activity-btn"
+).addEventListener(
+  "click",
+  () => {
+    activity = [];
+    renderActivity();
+    saveState();
+    showToast(
+      "Activity cleared",
+      "Your recent activity has been cleared."
+    );
+  }
+);
+document.getElementById(
+  "refresh-recommendations"
+).addEventListener(
+  "click",
+  () => {
+    recommendations.push(
+      recommendations.shift()
+    );
+    renderRecommendations();
+    showToast(
+      "Recommendations refreshed",
+      "Your reading suggestions have been rearranged."
+    );
+  }
+);
+document.addEventListener(
+  "keydown",
+  event => {
+    if(
+      event.key !== "Escape"
+    ){
+      return;
+    }
+    closeInfoModal();
+    closeCardModal();
+  }
+);
+document.getElementById(
+  "card-holder-name"
+).textContent =
+  student.name;
+document.getElementById(
+  "card-number-display"
+).textContent =
+  student.id;
+document.getElementById(
+  "modal-card-name"
+).textContent =
+  student.name;
+document.getElementById(
+  "modal-card-id"
+).textContent =
+  "CARD NO. " +
+  student.id;
+renderStats();
+renderBorrowed();
+renderGoal();
+renderNotices();
+renderActivity();
+renderRecommendations();
+renderFilters();
+renderCatalog();
+</script>
+</body>
+</html>
