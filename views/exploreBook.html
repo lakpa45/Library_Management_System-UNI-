@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore Books | Library</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-700">
+
+<!-- Sidebar -->
+<aside class="fixed h-screen w-60 bg-[#174d3b] text-white p-5 hidden md:block">
+
+  <h2 class="font-bold text-lg mb-8">📚 Library System</h2>
+
+  <nav class="space-y-2 text-sm">
+
+    <a href="student-dashboard.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      🏠 Dashboard
+    </a>
+
+    <a href="explore-books.html"
+       class="block p-3 rounded-lg bg-[#2f8f68]">
+      🔍 Explore Books
+    </a>
+
+    <a href="my-books.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      📚 My Books
+    </a>
+
+    <a href="borrowing-history.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      🔄 Borrowing History
+    </a>
+
+    <a href="book-request.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      📖 Book Request
+    </a>
+
+    <a href="notifications.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      🔔 Notifications
+    </a>
+
+    <a href="fines.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      💰 Fines & Dues
+    </a>
+
+    <a href="profile.html"
+       class="block p-3 rounded-lg hover:bg-[#216b4e]">
+      👤 My Profile
+    </a>
+
+  </nav>
+</aside>
+
+
+<!-- Main -->
+<main class="md:ml-60 p-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+
+    <div>
+      <h1 class="text-2xl font-bold text-[#174d3b]">
+        Explore Books
+      </h1>
+
+      <p class="text-sm text-gray-500">
+        Search and discover books from our library.
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- Search -->
+  <div class="bg-white p-4 rounded-xl shadow-sm mb-6 flex gap-3">
+
+    <input
+      type="text"
+      id="search"
+      onkeyup="searchBooks()"
+      placeholder="Search by title or author..."
+      class="flex-1 border rounded-lg px-4 py-3 text-sm outline-none
+             focus:border-[#2f8f68]">
+
+      <select class="border rounded-lg px-4 py-3 text-sm">
+  <option>All Categories</option>
+  <option>Programming</option>
+  <option>Database</option>
+  <option>Networking</option>
+  <option>Mathematics</option>
+  <option>Web Development</option>
+  <option>Cyber Security</option>
+  <option>Management</option>
+</select>
+
+<select class="border rounded-lg px-4 py-3 text-sm">
+  <option>Sort By</option>
+  <option>Title A-Z</option>
+  <option>Newest</option>
+  <option>Available Books</option>
+</select>
+
+  </div>
+
+<!-- Books -->
+<div id="books"
+     class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
+  <!-- Book 1 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📘</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Programming</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Java Programming</h2>
+      <p class="text-xs text-gray-500">Herbert Schildt</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Java Programming','Herbert Schildt','Programming','9781260440218','McGraw Hill','2022','A comprehensive guide to Java programming.','Shelf A-12')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 2 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📗</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Database</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Database System Concepts</h2>
+      <p class="text-xs text-gray-500">Abraham Silberschatz</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Database System Concepts','Abraham Silberschatz','Database','9780078022159','McGraw Hill','2019','Learn database design, SQL and database management.','Shelf B-05')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 3 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📕</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Networking</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Computer Networks</h2>
+      <p class="text-xs text-gray-500">Andrew S. Tanenbaum</p>
+      <p class="text-xs text-yellow-600 mt-3">● Few Copies</p>
+      <button onclick="showDetails('Computer Networks','Andrew S. Tanenbaum','Networking','9780132126953','Pearson','2011','Introduction to computer networking and protocols.','Shelf C-08')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 4 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📙</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Mathematics</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Discrete Mathematics</h2>
+      <p class="text-xs text-gray-500">Kenneth H. Rosen</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Discrete Mathematics','Kenneth H. Rosen','Mathematics','9780073383095','McGraw Hill','2012','Concepts of discrete mathematics for computer science students.','Shelf D-03')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 5 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📓</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Web Development</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">HTML & CSS</h2>
+      <p class="text-xs text-gray-500">Jon Duckett</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('HTML & CSS','Jon Duckett','Web Development','9781118008188','Wiley','2011','A visual guide to HTML and CSS web development.','Shelf A-20')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 6 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📔</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">C Programming</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">The C Programming Language</h2>
+      <p class="text-xs text-gray-500">Brian W. Kernighan</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('The C Programming Language','Brian W. Kernighan','Programming','9780131103627','Prentice Hall','1988','A classic reference for learning C programming.','Shelf A-08')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 7 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📖</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Operating System</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Operating System Concepts</h2>
+      <p class="text-xs text-gray-500">Abraham Silberschatz</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Operating System Concepts','Abraham Silberschatz','Operating System','9781119456339','Wiley','2018','Fundamentals of operating systems and system design.','Shelf E-04')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 8 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📚</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Data Structures</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Data Structures & Algorithms</h2>
+      <p class="text-xs text-gray-500">Mark Allen Weiss</p>
+      <p class="text-xs text-yellow-600 mt-3">● Few Copies</p>
+      <button onclick="showDetails('Data Structures & Algorithms','Mark Allen Weiss','Data Structures','9780132847377','Pearson','2013','Algorithms and data structures for computer science.','Shelf F-11')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 9 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📒</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Software Engineering</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Software Engineering</h2>
+      <p class="text-xs text-gray-500">Ian Sommerville</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Software Engineering','Ian Sommerville','Software Engineering','9780133943030','Pearson','2015','Principles and practices of modern software engineering.','Shelf G-02')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 10 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📘</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Cyber Security</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Cybersecurity Fundamentals</h2>
+      <p class="text-xs text-gray-500">Chuck Easttom</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Cybersecurity Fundamentals','Chuck Easttom','Cyber Security','9780135774775','Pearson','2021','Introduction to cybersecurity principles and practices.','Shelf H-07')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 11 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📗</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Management</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Principles of Management</h2>
+      <p class="text-xs text-gray-500">Stephen P. Robbins</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Principles of Management','Stephen P. Robbins','Management','9780134527604','Pearson','2018','Introduction to management principles and organizational behavior.','Shelf J-05')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Book 12 -->
+  <div class="book bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="h-40 bg-[#e9f6ef] flex items-center justify-center text-6xl">📕</div>
+    <div class="p-5">
+      <span class="text-[10px] text-[#2f8f68]">Python</span>
+      <h2 class="font-bold text-[#174d3b] mt-2">Python Crash Course</h2>
+      <p class="text-xs text-gray-500">Eric Matthes</p>
+      <p class="text-xs text-green-600 mt-3">● Available</p>
+      <button onclick="showDetails('Python Crash Course','Eric Matthes','Programming','9781593279288','No Starch Press','2019','A hands-on introduction to Python programming.','Shelf A-25')"
+        class="mt-4 w-full bg-[#2f8f68] text-white py-2 rounded-lg text-sm">
+        View Details
+      </button>
+    </div>
+  </div>
+
+</div>
+  
+
+</main>
+
+
+<!-- Book Details Modal -->
+<div id="details"
+     class="hidden fixed inset-0 bg-black/50
+            flex items-center justify-center p-5">
+
+  <div class="bg-white rounded-2xl max-w-lg w-full p-6">
+
+    <div class="flex justify-between items-start">
+
+      <div>
+        <p class="text-xs text-[#2f8f68]">
+          BOOK DETAILS
+        </p>
+
+        <h2 id="title"
+            class="text-2xl font-bold text-[#174d3b] mt-1">
+        </h2>
+      </div>
+
+      <button onclick="closeDetails()"
+              class="text-gray-400 text-xl">
+        ✕
+      </button>
+
+    </div>
+
+
+    <div class="mt-5 space-y-3 text-sm">
+
+      <p><b>Author:</b> <span id="author"></span></p>
+
+      <p><b>Category:</b> <span id="category"></span></p>
+
+      <p><b>ISBN:</b> <span id="isbn"></span></p>
+
+      <p><b>Publisher:</b> <span id="publisher"></span></p>
+
+      <p><b>Publication Year:</b> <span id="year"></span></p>
+
+      <p><b>Location:</b> <span id="location"></span></p>
+
+      <div>
+        <b>Description:</b>
+        <p id="description"
+           class="text-gray-500 mt-1"></p>
+      </div>
+
+    </div>
+
+
+    <button
+      onclick="requestBook()"
+      class="w-full bg-[#2f8f68] text-white
+             py-3 rounded-lg mt-6
+             font-semibold">
+
+      Request This Book
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+function showDetails(title, author, category, isbn,
+                     publisher, year, description, location) {
+
+  document.getElementById("title").innerText = title;
+  document.getElementById("author").innerText = author;
+  document.getElementById("category").innerText = category;
+  document.getElementById("isbn").innerText = isbn;
+  document.getElementById("publisher").innerText = publisher;
+  document.getElementById("year").innerText = year;
+  document.getElementById("description").innerText = description;
+  document.getElementById("location").innerText = location;
+
+  document.getElementById("details").classList.remove("hidden");
+}
+
+function closeDetails() {
+  document.getElementById("details").classList.add("hidden");
+}
+
+function requestBook() {
+  window.location.href = "book-request.html";
+}
+
+function searchBooks() {
+
+  let input = document.getElementById("search")
+                    .value.toLowerCase();
+
+  document.querySelectorAll(".book").forEach(book => {
+
+    book.style.display =
+      book.innerText.toLowerCase().includes(input)
+      ? "block"
+      : "none";
+
+  });
+}
+
+</script>
+
+</body>
+</html>
