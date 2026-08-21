@@ -1487,6 +1487,25 @@ video {
   background-color: rgb(255 255 255 / 0.8);
 }
 
+.bg-\[\#f5b301\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(245 179 1 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#f1f1f0\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 241 240 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\] {
+  background-color: ;
+}
+
+.bg-\[\#ffd45e\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 212 94 / var(--tw-bg-opacity, 1));
+}
+
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }

@@ -327,22 +327,7 @@ h1,h2,h3{
 
 /* FOOTER */
 
-footer{
-    padding:50px 18px;
-    background:#08080b;
-    color:white;
-    text-align:center;
-}
 
-footer h2{
-    letter-spacing:4px;
-}
-
-footer p{
-    margin-top:10px;
-    color:#888;
-    font-size:.75rem;
-}
 
 /* TABLET */
 
@@ -402,6 +387,7 @@ footer p{
     }
 }
 </style>
+<link rel="stylesheet" href="/css/output.css">
 </head>
 
 <body>
@@ -831,23 +817,63 @@ Borrow Book
 </section>
 
 
-<!-- FOOTER -->
-
-<footer>
-
-<h2>
-ICFAI
-</h2>
-
-<p>
-ICFAI University Sikkim Library
-</p>
-
-<p>
-&copy; 2026 ICFAI Library. All Rights Reserved.
-</p>
-
-</footer>
+<!-- Footer -->
+    <footer id="contact" class="bg-stone-800 text-white py-10"> <!--  -->
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- About -->
+          <div>
+            <h3 class="text-lg font-bold">Library Management System</h3>
+            <p class="mt-2 text-sm text-gray-300">
+              Managing your library records make easy. Search, issue, and track
+              books efficiently.
+            </p>
+          </div>
+          <!-- Quick Links -->
+          <div>
+            <h3 class="text-lg font-bold">Quick Links</h3>
+            <ul class="mt-3 space-y-2 text-sm text-gray-300">
+              <li>
+                <a href="#home" class="hover:text-yellow-300 transition"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a href="#books" class="hover:text-yellow-300 transition"
+                  >Books</a
+                >
+              </li>
+              <li>
+                <a href="#members" class="hover:text-yellow-300 transition"
+                  >Members</a
+                >
+              </li>
+              <li>
+                <a href="#contact" class="hover:text-yellow-300 transition"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Contact -->
+          <div>
+            <h3 class="text-lg font-bold">Contact Us</h3>
+            <div class="mt-3 text-sm text-gray-300 space-y-2">
+              <p>Gangtok, Sikkim, India</p>
+              <p>Pin Code: 737102</p>
+              <p>Email:</p>
+              <p>Phone:</p>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom Copyright -->
+        <div class="border-t border-gray-600 mt-8 pt-5 text-center">
+          <p class="text-sm text-gray-400">
+            &copy; 2026 Library Management System. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
 
 </body>
 </html>
