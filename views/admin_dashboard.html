@@ -72,26 +72,6 @@
             </div>
             <!-- Header Actions -->
             <div class="flex items-center gap-4">
-                <!-- Search -->
-                <!-- <div class="relative">
-                    <input
-                        type="text"
-                        placeholder="Search catalog, member, or ID…"
-                        class="w-72 bg-paper border border-[#E4D9C4] rounded-full pl-9 pr-4 py-2 text-sm placeholder:text-[#8A7B5C]/70 focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass"
-                    >
-                    <svg
-                        class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A7B5C]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
-                </div> -->
                 <!-- Admin Profile -->
                 <div class="relative">
                     <button type="button" onclick="toggleAdminMenu()"
@@ -186,7 +166,7 @@
         <!-- CONTENT -->
         <div class="p-8 space-y-6 overflow-y-auto">
             <!-- STAT CARDS -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 fade-in">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 fade-in">
                 <!-- Total Books -->
                 <div
                     class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
@@ -196,7 +176,6 @@
                             <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-books">0</p>
                         </div>
                     </div>
-                    <p class="text-xs text-[#8A7B5C] mt-3">+12 added this term</p>
                 </div>
 
                 <!-- Active Borrowers -->
@@ -208,7 +187,6 @@
                             <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-borrowers">0</p>
                         </div>
                     </div>
-                    <p class="text-xs text-[#8A7B5C] mt-3">Across 6 departments</p>
                 </div>
                 <!-- Overdue -->
                 <div
@@ -219,18 +197,6 @@
                             <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-overdue">0</p>
                         </div>
                     </div>
-                    <p class="text-xs text-[#8A7B5C] mt-3">Needs follow-up</p>
-                </div>
-                <!-- Fines -->
-                <div
-                    class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Fines Collected</p>
-                            <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-fines">₹0</p>
-                        </div>
-                    </div>
-                    <p class="text-xs text-[#8A7B5C] mt-3">This month</p>
                 </div>
             </section>
             <!-- ACTIVITY + DUE -->
@@ -286,7 +252,7 @@
                     class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
                     Issue Book
                 </a>
-                
+
             </section>
     </main>
     <script src="/js/admin_dashboard.js"></script>

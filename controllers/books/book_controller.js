@@ -14,7 +14,7 @@ export const getBooks = async (req, res) => {
 // CREATE a book
 export const createBook = async (req, res) => {
     try {
-        const { title, description } = req.body;
+        const { title, description, category_id } = req.body;
 
         if (!title) {
             return res.status(400).json({ message: 'Title is required' });
@@ -23,10 +23,10 @@ export const createBook = async (req, res) => {
         const cover_image = req.file ? `/images/books/${req.file.filename}` : null;
 
         const result = await pool.query(
-            `INSERT INTO book (title, description, cover_image)
-             VALUES ($1, $2, $3)
+            `INSERT INTO book (title, description, cover_image, category_id)
+             VALUES ($1, $2, $3, $4)
              RETURNING *`,
-            [title, description, cover_image]
+            [title, description, cover_image, category_id || null]
         );
 
         res.status(201).json(result.rows[0]);
@@ -40,7 +40,7 @@ export const createBook = async (req, res) => {
 export const updateBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description } = req.body;
+        const { title, description, category_id } = req.body;
 
         if (!title) {
             return res.status(400).json({ message: 'Title is required' });
@@ -51,11 +51,11 @@ export const updateBook = async (req, res) => {
 
         if (req.file) {
             const cover_image = `/images/books/${req.file.filename}`;
-            query = `UPDATE book SET title = $1, description = $2, cover_image = $3 WHERE book_id = $4 RETURNING *`;
-            values = [title, description, cover_image, id];
+            query = `UPDATE book SET title = $1, description = $2, cover_image = $3, category_id = $4 WHERE book_id = $5 RETURNING *`;
+            values = [title, description, cover_image, category_id || null, id];
         } else {
-            query = `UPDATE book SET title = $1, description = $2 WHERE book_id = $3 RETURNING *`;
-            values = [title, description, id];
+            query = `UPDATE book SET title = $1, description = $2, category_id = $3 WHERE book_id = $4 RETURNING *`;
+            values = [title, description, category_id || null, id];
         }
 
         const result = await pool.query(query, values);

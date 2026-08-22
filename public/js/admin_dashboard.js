@@ -1,69 +1,50 @@
- const dateElement = document.getElementById("today-date");
-        const today = new Date();
-        dateElement.textContent = today.toLocaleDateString("en-IN", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+const dateElement = document.getElementById("today-date");
+const today = new Date();
+dateElement.textContent = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+});
 
-  // Recent Circulation Activity
-  const seedActivity = [];
-  const seedDue = [];
+// Recent Circulation Activity (still placeholder until borrow/return is built)
+const seedActivity = [];
+const seedDue = [];
 
-  const activity =
+const activity =
     JSON.parse(
-      localStorage.getItem('library_activity') || 'null'
+        localStorage.getItem('library_activity') || 'null'
     ) || seedActivity;
-  const dueItems =
+const dueItems =
     JSON.parse(
-      localStorage.getItem('library_due') || 'null'
+        localStorage.getItem('library_due') || 'null'
     ) || seedDue;
-  localStorage.setItem(
+localStorage.setItem(
     'library_activity',
     JSON.stringify(activity)
-  );
-  localStorage.setItem(
+);
+localStorage.setItem(
     'library_due',
     JSON.stringify(dueItems)
-  );
- const stats = {
-    books: 0,
-    borrowers:
-      activity.filter(
-        a => a.status === 'active'
-      ).length,
-    overdue:
-      dueItems.filter(
-        d => d.level === 'overdue'
-      ).length,
-    fines: 0
-};
-  animateCount(
-    'stat-books',
-    stats.books
-  );
-  animateCount(
-    'stat-borrowers',
-    stats.borrowers
-  );
-  animateCount(
-    'stat-overdue',
-    stats.overdue
-  );
-  animateCount(
-    'stat-fines',
-    stats.fines,
-    '₹'
-  );
-  function toggleAdminMenu() {
+);
+
+// Real stats from the database
+async function loadStats() {
+    try {
+        const response = await fetch('/api/dashboard/stats');
+        const stats = await response.json();
+
+        animateCount('stat-books', stats.books);
+        animateCount('stat-borrowers', stats.borrowers);
+        animateCount('stat-overdue', stats.overdue);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+loadStats();
+
+function toggleAdminMenu() {
     document.getElementById("adminMenu").classList.toggle("hidden");
 }
 
@@ -139,44 +120,44 @@ function changePassword(event) {
     }, 1500);
 }
 
-  function animateCount(
+function animateCount(
     id,
     target,
     prefix = ''
-  ) {
+) {
     const el =
-      document.getElementById(id);
+        document.getElementById(id);
     let cur = 0;
     const step =
-      Math.max(
-        1,
-        Math.ceil(target / 40)
-      );
+        Math.max(
+            1,
+            Math.ceil(target / 40)
+        );
     const t =
-      setInterval(() => {
-        cur += step;
-        if (cur >= target) {
-          cur = target;
-          clearInterval(t);
-        }
-        el.textContent =
-          prefix +
-          cur.toLocaleString('en-IN');
-      }, 20);
-  }
-  const statusStyles = {
+        setInterval(() => {
+            cur += step;
+            if (cur >= target) {
+                cur = target;
+                clearInterval(t);
+            }
+            el.textContent =
+                prefix +
+                cur.toLocaleString('en-IN');
+        }, 20);
+}
+const statusStyles = {
     active:
-      'bg-[#1B4332]/10 text-[#1B4332]',
+        'bg-[#1B4332]/10 text-[#1B4332]',
     returned:
-      'bg-[#3E6B56]/15 text-[#3E6B56]',
+        'bg-[#3E6B56]/15 text-[#3E6B56]',
     overdue:
-      'bg-[#9E4A4A]/10 text-[#9E4A4A]'
-  };
-  const activityBody =
+        'bg-[#9E4A4A]/10 text-[#9E4A4A]'
+};
+const activityBody =
     document.getElementById(
-      'activity-body'
+        'activity-body'
     );
-  activityBody.innerHTML =
+activityBody.innerHTML =
     activity.map(a => `
       <tr class="hover:bg-[#F5EFE6]/70 transition">
         <td class="px-5 py-3 font-medium">
@@ -200,31 +181,31 @@ function changePassword(event) {
         </td>
       </tr>
     `).join('');
-  const dueDot = {
+const dueDot = {
     overdue:
-      'bg-[#9E4A4A]',
+        'bg-[#9E4A4A]',
     urgent:
-      'bg-[#B6862A]',
+        'bg-[#B6862A]',
     soon:
-      'bg-[#C9972F]',
+        'bg-[#C9972F]',
     ok:
-      'bg-[#3E6B56]'
-  };
-  const dueText = {
+        'bg-[#3E6B56]'
+};
+const dueText = {
     overdue:
-      'text-[#9E4A4A]',
+        'text-[#9E4A4A]',
     urgent:
-      'text-[#B6862A]',
+        'text-[#B6862A]',
     soon:
-      'text-[#B6862A]',
+        'text-[#B6862A]',
     ok:
-      'text-[#4A5A50]'
-  };
-  const dueList =
+        'text-[#4A5A50]'
+};
+const dueList =
     document.getElementById(
-      'due-list'
+        'due-list'
     );
-  dueList.innerHTML =
+dueList.innerHTML =
     dueItems.map(d => `
       <li
         class="flex items-center gap-3 px-5 py-3 hover:bg-[#F5EFE6]/60 transition"
