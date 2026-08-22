@@ -6,222 +6,11 @@
 <title>Add to Cart</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link href="/css/output.css" rel="stylesheet">
-<style>
-  :root{
-    --ink:#0e0e10;
-    --muted:#6b6b73;
-    --line:#e7e7ea;
-    --accent:#f5b301;
-    --accent-2:#ffd45e;
-    --accent-ink:#3a2a00;
-    --tile:#f6f3ea;
-  }
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  body{
-    font-family:'Poppins', system-ui, sans-serif;
-    background: linear-gradient(180deg, #ffffff 0%, #fdf8ee 100%);
-    color: var(--ink);
-    min-height:100vh;
-  }
-  h1,h2,h3{ font-family:'Chakra Petch', sans-serif; font-weight:700; }
-  /* Nav */
-  .nav{
-    display:flex;
-    align-items:center;
-    gap:24px;
-    padding:16px clamp(18px,5vw,48px);
-    background:rgba(255,255,255,0.92);
-    border-bottom:1px solid var(--line);
-    position:sticky;
-    top:0;
-    z-index:30;
-  }
-  .brand{
-    font-family:'Chakra Petch', sans-serif;
-    font-weight:700;
-    font-size:1.4rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
-  .search{
-    flex:1;
-    display:flex;
-    align-items:center;
-    gap:9px;
-    background: var(--tile);
-    border:1px solid var(--line);
-    border-radius:40px;
-    padding:9px 16px;
-    max-width:420px;
-    color: var(--muted);
-  }
-  .search input{
-    border:none; background:none; outline:none; width:100%;
-    font-family:inherit; font-size:0.86rem; color: var(--ink);
-  }
-  .cart-ic{
-    position:relative;
-    width:44px; height:44px;
-    display:grid; place-items:center;
-    border-radius:50%;
-    border:none;
-    background: var(--tile);
-    color: var(--ink);
-    font-size:1.1rem;
-    cursor:pointer;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
-  .cart-ic:hover{ background: var(--accent); color: var(--accent-ink); }
-  .cart-count{
-    position:absolute; top:-3px; right:-3px;
-    width:19px; height:19px; border-radius:50%;
-    background: var(--accent); color: var(--accent-ink);
-    font-size:0.66rem; font-weight:700;
-    display:grid; place-items:center;
-  }
-  .cart-count[hidden]{ display:none; }
-  @keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
-  .cart-count.bump{ animation: bump 0.35s ease; }
+<link rel="stylesheet" href="/css/book_category.css">
+<link rel="stylesheet" href="/css/add_to_cart.css">
 
-  /* Page */
-  .wrap{ max-width:1180px; margin:0 auto; padding:36px clamp(18px,5vw,48px) 70px; }
-  .eyebrow{
-    display:inline-block;
-    font-family:'Chakra Petch', sans-serif;
-    text-transform:uppercase; letter-spacing:3px; font-size:0.72rem; font-weight:600;
-    color: var(--accent-ink); background: var(--accent);
-    padding:5px 12px; border-radius:40px; margin-bottom:14px;
-  }
-  .page-title{ font-size:clamp(1.7rem,3vw,2.3rem); margin-bottom:8px; }
-  .page-sub{ color: var(--muted); font-size:0.92rem; margin-bottom:32px; max-width:52ch; }
-
-  .grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap:22px;
-  }
-  .card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:16px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .card:hover{ transform: translateY(-5px); box-shadow: 0 22px 44px rgba(0,0,0,0.1); }
-  .card-media{
-    aspect-ratio:1/0.92;
-    background: var(--tile);
-    display:flex; align-items:center; justify-content:center;
-    font-size:48px;
-    position:relative;
-  }
-  .card-tag{
-    position:absolute; top:10px; left:10px;
-    background: var(--ink); color:#fff;
-    font-family:'Chakra Petch', sans-serif; font-weight:600; font-size:0.68rem;
-    padding:5px 10px; border-radius:40px;
-  }
-  .card-body{ padding:16px 16px 18px; display:flex; flex-direction:column; gap:6px; flex:1; }
-  .stars{ color: var(--accent); font-size:0.76rem; }
-  .card-title{ font-size:0.98rem; font-weight:600; font-family:'Poppins',sans-serif; line-height:1.3; }
-  .card-author{ font-size:0.78rem; color: var(--muted); margin-bottom:2px; }
-  .card-price{ font-family:'Chakra Petch', sans-serif; font-weight:700; margin-top:auto; }
-  .card-price.label{ color: var(--muted); font-weight:600; font-size:0.85rem; }
-  .add-btn{
-    margin-top:12px;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    background: var(--ink); color:#fff;
-    border:none; border-radius:40px;
-    padding:11px; font-family:'Chakra Petch', sans-serif; font-weight:600; font-size:0.82rem;
-    cursor:pointer; transition: background 0.2s ease, color 0.2s ease;
-  }
-  .add-btn:hover{ background: var(--accent); color: var(--accent-ink); }
-  .add-btn.added{ background:#2f7d4f; color:#fff; }
-  /* Cart overlay + drawer */
-  .overlay{
-    position:fixed; inset:0; background:rgba(14,14,16,0.5);
-    opacity:0; visibility:hidden; transition:opacity 0.25s ease, visibility 0.25s;
-    z-index:210;
-  }
-  .overlay.open{ opacity:1; visibility:visible; }
-
-  .drawer{
-    position:fixed; top:0; right:0; height:100dvh;
-    width:min(400px,92vw); background:#fff; z-index:220;
-    display:flex; flex-direction:column;
-    transform:translateX(100%); transition: transform 0.35s ease;
-    box-shadow:-24px 0 60px rgba(14,14,16,0.18);
-  }
-  .drawer.open{ transform:translateX(0); }
-  .drawer-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:22px 24px; border-bottom:1px solid var(--line);
-  }
-  .drawer-head h2{ font-size:1.15rem; }
-  .drawer-head button{
-    width:36px; height:36px; border-radius:50%; background: var(--tile);
-    border:none; display:grid; place-items:center; cursor:pointer; color: var(--ink);
-  }
-  .drawer-items{ flex:1; overflow-y:auto; padding:8px 24px; }
-  .drawer-empty{ color: var(--muted); font-size:0.9rem; text-align:center; margin-top:60px; }
-
-  .cart-row{ display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--line); }
-  .cart-thumb{
-    width:52px; height:52px; border-radius:10px; background: var(--tile);
-    display:grid; place-items:center; font-size:22px; flex-shrink:0;
-  }
-  .cart-info{ flex:1; min-width:0; }
-  .cart-info h4{ font-size:0.9rem; font-weight:600; margin-bottom:4px; font-family:'Poppins',sans-serif; }
-  .cart-price{ display:block; font-family:'Chakra Petch', sans-serif; font-size:0.83rem; color: var(--accent-ink); margin-bottom:8px; }
-  .qty{ display:inline-flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:40px; padding:4px 10px; }
-  .qty button{ width:20px; height:20px; border:none; background:none; font-size:0.9rem; cursor:pointer; color: var(--ink); }
-  .qty span{ min-width:14px; text-align:center; font-size:0.83rem; font-weight:600; }
-  .cart-remove{ color: var(--muted); background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; }
-  .cart-remove:hover{ color:#c1391f; }
-
-  .drawer-foot{ padding:20px 24px 26px; border-top:1px solid var(--line); }
-  .subtotal{ display:flex; justify-content:space-between; font-family:'Chakra Petch', sans-serif; font-weight:700; font-size:1.02rem; margin-bottom:14px; }
-  .checkout-btn{
-    width:100%; background: var(--accent); color: var(--accent-ink);
-    border:none; border-radius:40px; padding:13px;
-    font-family:'Chakra Petch', sans-serif; font-weight:700; font-size:0.88rem; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    transition: background 0.2s ease;
-  }
-  .checkout-btn:hover{ background: var(--accent-2); }
-
-  @media (max-width:560px){
-    .search{ display:none; }
-    .nav{ gap:14px; }
-  }
-  .card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 10px;
-  display: block;
-}
-.cart-thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
-  background: var(--tile);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.cart-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-</style>
 </head>
 <body>
 <div class="nav">
@@ -255,6 +44,71 @@
     <button class="checkout-btn">Checkout <i class="fa-solid fa-arrow-right"></i></button>
   </div>
 </aside>
+
+<!-- CTA -->
+<section class="library-cta" id="about">
+    <div class="container cta-inner">
+        <div>
+            <span class="eyebrow eyebrow--light">
+                APNA LIBRARY
+            </span>
+            <h2>
+                Can't find the book you're looking for?
+            </h2>
+            <p>
+                Search our complete library collection or contact
+                the librarian for assistance.
+            </p>
+        </div>
+        <div class="cta-buttons">
+            <a href="#" class="btn btn--accent">
+                Search Library
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+            <a href="#contact" class="btn btn--dark">
+                Contact Librarian
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+    <div class="container footer-grid">
+        <div>
+            <h2 class="footer-brand">ICFAI</h2>
+            <p>
+                ICFAI University Library provides students and
+                faculty with access to academic books, journals,
+                research materials and digital resources.
+            </p>
+        </div>
+        <div>
+            <h3>Library</h3>
+            <a href="#categories">Categories</a>
+            <a href="#popular">Popular Books</a>
+            <a href="#recent">New Arrivals</a>
+            <a href="#">Digital Library</a>
+        </div>
+        <div>
+            <h3>Support</h3>
+            <a href="#">Library Rules</a>
+            <a href="#">Borrowing Policy</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact Librarian</a>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p><i class="fa-solid fa-location-dot"></i>ICFAI University Sikkim</p>
+            <p><i class="fa-solid fa-phone"></i>+91-123-1234</p>
+            <p><i class="fa-solid fa-envelope"></i>library@icfaiuniversity.edu</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 ICFAI University Library. All Rights Reserved.</p>
+    </div>
+</footer>
+
 <script src="/js/add_to_cart.js"></script>
 </body>
 </html>
