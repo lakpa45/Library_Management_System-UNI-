@@ -182,6 +182,8 @@
           +
         </button>
       </div>
+
+      <!-- below the search line -->
       <!-- Category Grid -->
       <div
         id="categoryGrid"
@@ -272,41 +274,23 @@
               class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm resize-none"
             ></textarea>
           </div>
-          <!-- Count + Color -->
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                for="categoryCount"
-                class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5"
-                >Book Count</label
-              >
-              <input
-                id="categoryCount"
-                type="number"
-                min="0"
-                value="0"
-                class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm"
-              />
-            </div>
-            <div>
-              <label
-                for="categoryColor"
-                class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5"
-                >Shelf Color</label
-              >
-              <select
-                id="categoryColor"
-                class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm"
-              >
-                <option value="#1B4332">Forest</option>
-                <option value="#7A3B2E">Terracotta</option>
-                <option value="#4A5A8A">Slate Blue</option>
-                <option value="#8A5A9E">Plum</option>
-                <option value="#3E6B56">Sage</option>
-                <option value="#9E4A4A">Brick</option>
+
+          <!-- Color -->
+
+          <div>
+              <label for="categoryColor" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">
+                  Shelf Color
+              </label>
+              <select id="categoryColor" class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm">
+                  <option value="#1B4332">Forest</option>
+                  <option value="#7A3B2E">Terracotta</option>
+                  <option value="#4A5A8A">Slate Blue</option>
+                  <option value="#8A5A9E">Plum</option>
+                  <option value="#3E6B56">Sage</option>
+                  <option value="#9E4A4A">Brick</option>
               </select>
-            </div>
           </div>
+
           <div class="flex gap-3 pt-2">
             <button
               type="button"
