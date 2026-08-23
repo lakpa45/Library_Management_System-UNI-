@@ -356,8 +356,8 @@ section {
     display: flex;
     align-items: center;
     gap: 9px;
-    background-color: var(--soft);
-    border: 1px solid var(--line);
+    background-color: var(--tile);;
+    border: 1px solid var(--soft);
     border-radius: 40px;
     padding: 9px 16px;
     color: var(--muted);
@@ -963,25 +963,7 @@ section {
     transform: scale(1.07) rotate(-2deg);
 }
 
-.cat-card__label {
-    grid-row: 2;
-    align-self: end;
-    z-index: 2;
-    padding: 8px 16px 2px;
-    color: var(--ink);
-    font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700;
-    font-size: 1.12rem;
-    letter-spacing: 0.5px;
-}
 
-.cat-card__count {
-    grid-row: 3;
-    z-index: 2;
-    padding: 0 16px 16px;
-    color: var(--muted);
-    font-size: 0.78rem;
-}
 
 /*==marquee==*/
 .marquee {
@@ -1215,41 +1197,7 @@ section {
 .products {
     background: #fff;
 }
-/*wide featured product box span 2 cols, image beside copy */
-.product--wide {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 22px;
-    align-items: center;
-    background: var(--title);
-    border-radius: 20px;
-    padding: 18px;
-}
 
-.product--wide .product__media {
-    aspect-ratio: 1 / 1;
-    background: #fff;
-}
-
-.product--wide .product__info {
-    padding: 0;
-}
-
-.padding--wide h3 {
-    font-size: 1.4rem;
-}
-
-.product__desc {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin: 10px 0 14px;
-}
-
-.product--wide .product__price {
-    font-size: 1.25rem;
-    margin-bottom: 16px;
-}
 
 .btn--sm {
     padding: 11px 20px;
@@ -1381,18 +1329,6 @@ section {
     font-size: 0.86rem;
     margin-left: 5px;
 }
-
-/*--==Picks==--*/
-.picks .swiper {
-    overflow: hidden;
-    padding: 6px;
-    margin: -6px;
-}
-
-.picks .swiper-slide {
-    height: auto;
-}
-
 
 /*==testimonials==*/
 .testimonial-summary {
