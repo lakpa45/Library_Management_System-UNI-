@@ -12,6 +12,9 @@ const deleteModal = document.getElementById("deleteModal");
 const coverInput = document.getElementById("bookCover");
 const coverPreview = document.getElementById("coverPreview");
 
+const urlParams = new URLSearchParams(window.location.search);
+const preselectedCategoryId = urlParams.get('category');
+
 async function loadBooks() {
     try {
         const response = await fetch('/api/books');
@@ -157,6 +160,9 @@ bookForm.addEventListener("submit", async event => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    if (preselectedCategoryId) {
+        formData.append("category_id", preselectedCategoryId);
+    }
     if (selectedFile) {
         formData.append("cover_image", selectedFile);
     }

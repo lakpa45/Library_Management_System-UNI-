@@ -4,28 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register Member</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          forest: { DEFAULT:'#1B4332', dark:'#122B21', light:'#2D5F48' },
-          brass: { DEFAULT:'#C9A227', light:'#E0BF5C', dark:'#9C7D1A' },
-          paper: { DEFAULT:'#F5EFE2', dark:'#EAE1CC', card:'#FBF8F1' },
-          ink: { DEFAULT:'#2B2118', light:'#5C5142' },
-          sage: '#7A8B77',
-          clay: '#B5533C',
-        },
-        fontFamily: {
-          display: ['Fraunces','serif'],
-          body: ['Inter','sans-serif'],
-          mono: ['JetBrains Mono','monospace'],
-        },
-      }
-    }
-  }
-</script>
+<link href="/output.css" rel="stylesheet">
+
 <style>
   body { background-color:#F5EFE2; background-image: radial-gradient(#00000008 1px, transparent 1px); background-size: 22px 22px; }
   .card-edge { box-shadow: 0 1px 3px rgba(27,67,50,0.08), 0 1px 2px rgba(27,67,50,0.06); }
@@ -44,14 +24,14 @@
       <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation · New Enrollment</p>
       <h1 class="font-display text-3xl text-forest">Register a Member</h1>
     </div>
-    <a href="adminlibrary.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+    <a href="/admin_dashboard.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
       Back to Dashboard
     </a>
   </div>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
     <!-- FORM -->
-    <form id="member-form" class="lg:col-span-2 bg-paper-card rounded-xl card-edge border border-ink/5 p-6 space-y-5" novalidate>
+    <form id="member-form" class="lg:col-span-2 bg-paper-white rounded-xl card-edge border border-ink/5 p-6 space-y-5" novalidate>
       <div>
         <h2 class="font-display text-lg text-forest mb-1">Personal Details</h2>
         <p class="text-xs text-ink-light">Fields marked * are required.</p>
@@ -76,9 +56,10 @@
           <p class="field-err-msg text-xs mt-1 hidden" data-err="f-phone">Enter a valid 10-digit phone number.</p>
         </div>
         <div>
-          <label class="block text-xs font-medium text-ink-light mb-1.5">Date of Birth</label>
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Date of Birth *</label>
           <input type="date" id="f-dob"
             class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <p class="field-err-msg text-xs mt-1 hidden" data-err="f-dob">Date of birth is required.</p>
         </div>
       </div>
       <hr class="border-ink/10">
@@ -128,7 +109,7 @@
           class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brass/50 focus:border-brass transition resize-none"></textarea>
       </div>
       <div class="flex items-center justify-between pt-2">
-        <p class="text-xs text-ink-light">A library card number is generated automatically on submit.</p>
+        <p class="text-xs text-ink-light">A library card number and temporary password are generated automatically on submit.</p>
         <div class="flex gap-3">
           <button type="reset" class="text-sm font-medium text-ink-light hover:text-ink px-4 py-2.5">Clear</button>
           <button type="submit" class="bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-6 py-2.5 transition">Register Member</button>
@@ -162,7 +143,7 @@
         </div>
       </div>
       <div class="bg-paper-card rounded-xl card-edge border border-ink/5 p-4">
-        <p class="text-xs text-ink-light leading-relaxed">The card number follows <span class="font-mono text-ink">TYPE-YEAR-####</span> and is assigned once the form is submitted successfully.</p>
+        <p class="text-xs text-ink-light leading-relaxed">The card number follows <span class="font-mono text-ink">TYPE-YEAR-####</span> and the temporary password is the first 4 letters of the first name + birth year.</p>
       </div>
     </div>
   </div>
@@ -175,85 +156,6 @@
     <p class="text-paper/70 text-xs" id="toast-body"></p>
   </div>
 </div>
-<script>
-  const form = document.getElementById('member-form');
-  const toast = document.getElementById('toast');
-  const fields = {
-    name:  document.getElementById('f-name'),
-    email: document.getElementById('f-email'),
-    phone: document.getElementById('f-phone'),
-    dob:   document.getElementById('f-dob'),
-    type:  document.getElementById('f-type'),
-    dept:  document.getElementById('f-dept'),
-    roll:  document.getElementById('f-roll'),
-    expiry:document.getElementById('f-expiry'),
-    address:document.getElementById('f-address'),
-  };
-  function updatePreview() {
-    document.getElementById('prev-name').textContent = fields.name.value.trim() || '—';
-    document.getElementById('prev-type').textContent = fields.type.value || '—';
-    document.getElementById('prev-dept').textContent = fields.dept.value || '—';
-    document.getElementById('prev-expiry').textContent = fields.expiry.value
-      ? new Date(fields.expiry.value).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
-      : '—';
-  }
-  Object.values(fields).forEach(el => el.addEventListener('input', updatePreview));
-  function showError(id, show) {
-    const input = document.getElementById(id);
-    const msg = document.querySelector(`[data-err="${id}"]`);
-    if (input) input.classList.toggle('field-err', show);
-    if (msg) msg.classList.toggle('hidden', !show);
-  }
-  function validate() {
-    let valid = true;
-    const nameOk = fields.name.value.trim().length >= 2;
-    showError('f-name', !nameOk); valid = valid && nameOk;
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.value.trim());
-    showError('f-email', !emailOk); valid = valid && emailOk;
-    const phoneOk = /^\d{10}$/.test(fields.phone.value.trim());
-    showError('f-phone', !phoneOk); valid = valid && phoneOk;
-    const typeOk = fields.type.value !== '';
-    showError('f-type', !typeOk); valid = valid && typeOk;
-    const deptOk = fields.dept.value !== '';
-    showError('f-dept', !deptOk); valid = valid && deptOk;
-    const rollOk = fields.roll.value.trim().length >= 3;
-    showError('f-roll', !rollOk); valid = valid && rollOk;
-    return valid;
-  }
-  function generateCardNumber(type) {
-    const prefix = { Student:'STU', Faculty:'FAC', Staff:'STF' }[type] || 'MEM';
-    const year = new Date().getFullYear();
-    const members = JSON.parse(localStorage.getItem('library_members') || '[]');
-    const seq = (members.filter(m => m.cardNo.startsWith(`${prefix}-${year}`)).length + 1).toString().padStart(4, '0');
-    return `${prefix}-${year}-${seq}`;
-  }
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-    const cardNo = generateCardNumber(fields.type.value);
-    const member = {
-      cardNo,
-      name: fields.name.value.trim(),
-      email: fields.email.value.trim(),
-      phone: fields.phone.value.trim(),
-      dob: fields.dob.value,
-      type: fields.type.value,
-      department: fields.dept.value,
-      rollId: fields.roll.value.trim(),
-      expiry: fields.expiry.value,
-      address: fields.address.value.trim(),
-      registeredOn: new Date().toISOString(),
-    };
-    const members = JSON.parse(localStorage.getItem('library_members') || '[]');
-    members.push(member);
-    localStorage.setItem('library_members', JSON.stringify(members));
-    document.getElementById('prev-id').textContent = cardNo;
-    document.getElementById('toast-body').textContent = `${member.name} — card ${cardNo}`;
-    toast.classList.remove('translate-y-24', 'opacity-0');
-    setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3500);
-    form.reset();
-    setTimeout(updatePreview, 0);
-  });
-</script>
+<script src="/js/admin_reg_member.js"></script>
 </body>
 </html>

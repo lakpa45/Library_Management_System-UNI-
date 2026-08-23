@@ -786,7 +786,6 @@ h3 {
 .category-card:hover
 .category-icon {
     background: var(--accent);
-
     transform:
         rotate(-5deg)
         scale(1.05);

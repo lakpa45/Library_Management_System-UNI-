@@ -197,4 +197,7 @@ document.addEventListener("keydown", event => {
     if (!deleteModal.classList.contains("hidden")) closeDeleteModal();
 });
 
-loadCategories();
+window.addEventListener('pageshow', () => {
+    searchInput.value = '';
+    loadCategories();
+});

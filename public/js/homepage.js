@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const counters = document.querySelectorAll('.hero__stat .count');
     const animateCounter = (el) => {
         const target = parseInt(el.dataset.target, 10) || 0;
+
         const duration = 1400;
         const start = performance.now();
 
@@ -95,9 +96,9 @@ function buildSlider(name, options) {
     }, options));
 }
 
-// Shared storage keys + session helpers (used by auth and reviews) ========//
-const LIB_USERS_KEY = 'icfai_library_users';
-const LIB_SESSION_KEY = 'icfai_library_session';
+// ======Shared storage keys + session helpers (used by auth and reviews) ========//
+//=====const LIB_USERS_KEY = 'icfai_library_users';
+//=== const LIB_SESSION_KEY = 'icfai_library_session'; ====//
 const LIB_REVIEWS_KEY = 'icfai_library_reviews';
 
 function libGetSession() {

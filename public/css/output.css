@@ -976,10 +976,6 @@ video {
   width: 16rem;
 }
 
-.w-72 {
-  width: 18rem;
-}
-
 .w-8 {
   width: 2rem;
 }
@@ -1042,10 +1038,6 @@ video {
 
 .flex-1 {
   flex: 1 1 0%;
-}
-
-.flex-shrink {
-  flex-shrink: 1;
 }
 
 .shrink-0 {
@@ -2327,14 +2319,6 @@ video {
 .file\:text-\[\#1B2A22\]::file-selector-button {
   --tw-text-opacity: 1;
   color: rgb(27 42 34 / var(--tw-text-opacity, 1));
-}
-
-.placeholder\:text-\[\#8A7B5C\]\/70::-moz-placeholder {
-  color: rgb(138 123 92 / 0.7);
-}
-
-.placeholder\:text-\[\#8A7B5C\]\/70::placeholder {
-  color: rgb(138 123 92 / 0.7);
 }
 
 .last\:border-0:last-child {
