@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APNA Library — FAQs</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/frequently_asked_question.css">
+</head>
+<body>
+<div class="navbar-bar">
+  <div class="navbar">
+    <a href="#" class="brand">Apna Library</a>
+    <ul class="menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#products">Explore</a></li>
+      <li><a href="book_category.html">Collection</a></li>
+      <li><a href="#">Latest</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <button class="btn"><i class="fa-regular fa-envelope"></i> Contact Us</button>
+  </div>
+</div>
+<section class="faq-hero">
+  <span class="eyebrow">Help center</span>
+  <h1>Frequently Asked Questions</h1>
+  <p>Everything you need to know about borrowing, returns, memberships, and using Apna Library — search below or browse by topic.</p>
+  <form class="faq-search" id="faqSearchForm">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" id="faqSearchInput" placeholder="Search for a question...">
+    <button type="submit">Search</button>
+  </form>
+</section>
+<div class="chips" id="chips">
+  <button class="chip is-active" data-filter="all">All</button>
+  <button class="chip" data-filter="membership">Membership</button>
+  <button class="chip" data-filter="borrowing">Borrowing</button>
+  <button class="chip" data-filter="returns">Returns &amp; Fines</button>
+  <button class="chip" data-filter="account">Account</button>
+</div>
+<div class="faq-wrap">
+  <div class="faq-group" data-group="membership">
+    <div class="faq-group__title">Membership</div>
+    <div class="faq-item">
+      <button class="faq-q">
+        How do I become a member of Apna Library?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Click Register in the top navigation, fill in your name, email, and a password, and your account is created instantly. You can start browsing and reserving books right away.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Is there a membership fee?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Basic membership is free and gives you access to the full catalog. Premium membership unlocks extended loan periods and priority holds on popular titles.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Can I have more than one account?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        No, each member should register a single account tied to one email address. This keeps your borrowing history and holds in one place.
+      </div></div>
+    </div>
+  </div>
+  <div class="faq-group" data-group="borrowing">
+    <div class="faq-group__title">Borrowing</div>
+    <div class="faq-item">
+      <button class="faq-q">
+        How many books can I borrow at once?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Standard members can borrow up to 5 books at a time. Premium members can borrow up to 10.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        What is the loan period for a book?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Books are loaned for 14 days by default. You can renew a title once for an additional 7 days, as long as no one else has it on hold.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Can I reserve a book that's currently checked out?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Yes. Use the "Join Waitlist" option on the book's page and you'll be notified by email the moment a copy is returned and available for you.
+      </div></div>
+    </div>
+  </div>
+  <div class="faq-group" data-group="returns">
+    <div class="faq-group__title">Returns &amp; Fines</div>
+    <div class="faq-item">
+      <button class="faq-q">
+        What happens if I return a book late?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        A small late fee accrues per day past the due date, capped at the replacement cost of the book. You'll see a reminder in your account 3 days before anything is due.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        I lost or damaged a book — what do I do?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Contact us through the form below as soon as possible. We'll work out a replacement cost, and your account won't be restricted while we sort it out together.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Do you offer 30-day returns on new arrivals?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Yes — any title marked "New" can be swapped or returned within 30 days of checkout if it isn't the right fit for you.
+      </div></div>
+    </div>
+  </div>
+  <div class="faq-group" data-group="account">
+    <div class="faq-group__title">Account</div>
+    <div class="faq-item">
+      <button class="faq-q">
+        How do I reset my password?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Click Login, then "Forgot password" underneath the form. We'll send a reset link to the email address on your account.
+      </div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Can I see my full borrowing history?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="faq-a"><div class="faq-a__inner">
+        Yes — open your account menu and select "My Orders" to see every title you've borrowed, along with due dates and any pending fines.
+      </div></div>
+    </div>
+  </div>
+  <p class="faq-empty" id="faqEmpty">No questions match your search. Try a different term.</p>
+</div>
+<div class="cta">
+  <div class="cta-box">
+    <div>
+      <h3>Still have a question?</h3>
+      <p>Our team usually replies within one business day.</p>
+    </div>
+    <button class="btn"><i class="fa-regular fa-envelope"></i> Contact Support</button>
+  </div>
+</div>
+<!-- CTA -->
+<section class="library-cta" id="about">
+    <div class="container cta-inner">
+
+        <div class="cta-content">
+            <span class="eyebrow eyebrow--light">
+                APNA LIBRARY
+            </span>
+
+            <h2>
+                Can't find the book you're looking for?
+            </h2>
+
+            <p>
+                Search our complete library collection or contact
+                the librarian for assistance.
+            </p>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="#" class="btn btn--accent">
+                Search Library
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+
+            <a href="#contact" class="btn btn--dark">
+                Contact Librarian
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- footer -->
+ <footer class="footer" id="contact">
+    <div class="container footer-grid">
+        <div>
+            <h2 class="footer-brand">APNA LIBRARY</h2>
+            <p>
+                APNA Library provides students and
+                faculty with access to academic books, journals,
+                research materials and digital resources.
+            </p>
+        </div>
+        <div>
+            <h3>Library</h3>
+            <a href="#categories">Categories</a>
+            <a href="#popular">Popular Books</a>
+            <a href="#recent">New Arrivals</a>
+            <a href="#">Digital Library</a>
+        </div>
+        <div>
+            <h3>Support</h3>
+            <a href="#">Library Rules</a>
+            <a href="#">Borrowing Policy</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact Librarian</a>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p><i class="fa-solid fa-location-dot"></i>APNA Library Sikkim</p>
+            <p><i class="fa-solid fa-phone"></i>+91-123-1234</p>
+            <p><i class="fa-solid fa-envelope"></i>library@apna.edu</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
+    </div>
+</footer>
+<script src="/js/frequently_asked_question.js"></script>
+</body>
+</html>
