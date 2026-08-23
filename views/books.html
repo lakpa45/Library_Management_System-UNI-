@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Books</title>
-    <link href="/css/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
         font-family: "Source Sans 3", sans-serif;
@@ -82,11 +82,11 @@
           </div>
         </div>
         <div class="flex items-center gap-3">
-          
-            <a href="/admin_bk_category.html"
+          <a
+            href="/admin/dashboard"
             class="inline-flex items-center gap-2 text-[#F3EADA] hover:text-white text-sm font-medium transition"
           >
-            ← Back to Categories
+            ← Back to Dashboard
           </a>
           <button
             id="openAddBtn"
@@ -213,6 +213,19 @@
               placeholder="Short description of this book"
               class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm resize-none"
             ></textarea>
+          </div>
+
+          <div>
+            <label for="bookCopies" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">
+              Number of Copies
+            </label>
+            <input
+              id="bookCopies"
+              type="number"
+              min="1"
+              value="1"
+              class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm"
+            />
           </div>
 
           <div>

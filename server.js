@@ -6,6 +6,9 @@ import authRoutes from './routes/authRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import loanRoutes from './routes/loanRoutes.js';
+import memberRoutes from './routes/memberRoutes.js';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,7 +25,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
+app.use('/api/loans', loanRoutes);
+app.use('/api/members', memberRoutes);
 
 // Main route
 app.get('/', (req, res) => {

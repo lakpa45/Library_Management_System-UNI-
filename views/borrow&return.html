@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Borrow &amp; Return</title>
 
-<link href="/css/output.css" rel="stylesheet">
+<link href="/output.css" rel="stylesheet">
 
 <style>
   body { background-color:#F5EFE2; background-image: radial-gradient(#00000008 1px, transparent 1px); background-size: 22px 22px; }
@@ -30,7 +30,7 @@
       <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation Desk</p>
       <h1 class="font-display text-3xl text-forest">Borrow &amp; Return</h1>
     </div>
-    <a href="adminlibrary.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+    <a href="admin_dashboard.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
       Dashboard
     </a>
@@ -61,21 +61,22 @@
         <button id="tab-issue" class="tab active flex-1 rounded-full py-2 text-sm font-semibold transition">Issue Book</button>
         <button id="tab-return" class="tab flex-1 rounded-full py-2 text-sm font-semibold transition text-ink-light">Return Book</button>
       </div>
+
       <!-- ISSUE PANEL -->
       <form id="issue-form" class="p-5 space-y-4" novalidate>
         <div class="relative">
           <label class="block text-xs font-medium text-ink-light mb-1.5">Member — search by name or card no. *</label>
           <input type="text" id="i-member-search" autocomplete="off" placeholder="Start typing a name…"
             class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
-          <div id="i-member-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-48 overflow-y-auto"></div>
+          <div id="i-member-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-ink/15 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
           <input type="hidden" id="i-member-id">
           <p class="field-err-msg text-xs mt-1 hidden" data-err="i-member-search">Select a registered member.</p>
         </div>
         <div class="relative">
-          <label class="block text-xs font-medium text-ink-light mb-1.5">Book — search by title or ISBN *</label>
+          <label class="block text-xs font-medium text-ink-light mb-1.5">Book — search by title *</label>
           <input type="text" id="i-book-search" autocomplete="off" placeholder="Start typing a title…"
             class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
-          <div id="i-book-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-48 overflow-y-auto"></div>
+          <div id="i-book-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-ink/15 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
           <input type="hidden" id="i-book-id">
           <p class="field-err-msg text-xs mt-1 hidden" data-err="i-book-search">Select an available book.</p>
         </div>
@@ -98,14 +99,14 @@
           Due date: <span id="i-due-preview" class="font-mono text-ink font-medium">—</span>
         </div>
         <button type="submit" class="w-full bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full py-2.5 transition">Issue Book</button>
-      </form>
+    </form>
       <!-- RETURN PANEL -->
       <form id="return-form" class="p-5 space-y-4 hidden" novalidate>
         <div class="relative">
           <label class="block text-xs font-medium text-ink-light mb-1.5">Active Loan — search by member or title *</label>
           <input type="text" id="r-loan-search" autocomplete="off" placeholder="Start typing…"
             class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
-          <div id="r-loan-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-paper-card border border-ink/15 rounded-lg card-edge max-h-56 overflow-y-auto"></div>
+          <div id="r-loan-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-ink/15 rounded-lg shadow-lg max-h-56 overflow-y-auto"></div>
           <input type="hidden" id="r-loan-id">
           <p class="field-err-msg text-xs mt-1 hidden" data-err="r-loan-search">Select the loan being returned.</p>
         </div>

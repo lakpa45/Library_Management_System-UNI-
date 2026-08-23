@@ -11,10 +11,12 @@ export const getBooks = async (req, res) => {
     }
 };
 
-// CREATE a book
+// CREATE a book (with copies)
 export const createBook = async (req, res) => {
+    const client = await pool.connect();
     try {
-        const { title, description, category_id } = req.body;
+        const { title, description, category_id, copies } = req.body;
+        const numCopies = parseInt(copies) || 1;
 
         if (!title) {
             return res.status(400).json({ message: 'Title is required' });
@@ -22,17 +24,32 @@ export const createBook = async (req, res) => {
 
         const cover_image = req.file ? `/images/books/${req.file.filename}` : null;
 
-        const result = await pool.query(
+        await client.query('BEGIN');
+
+        const bookResult = await client.query(
             `INSERT INTO book (title, description, cover_image, category_id)
              VALUES ($1, $2, $3, $4)
              RETURNING *`,
             [title, description, cover_image, category_id || null]
         );
+        const book = bookResult.rows[0];
 
-        res.status(201).json(result.rows[0]);
+        for (let i = 0; i < numCopies; i++) {
+            const barcode = `BK${book.book_id}-${Date.now()}-${i}`;
+            await client.query(
+                `INSERT INTO book_copy (barcode, status, book_id) VALUES ($1, 'Available', $2)`,
+                [barcode, book.book_id]
+            );
+        }
+
+        await client.query('COMMIT');
+        res.status(201).json(book);
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 
