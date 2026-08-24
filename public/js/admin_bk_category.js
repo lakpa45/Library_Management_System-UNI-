@@ -73,7 +73,7 @@ function buildCard(category) {
             <span class="text-xs uppercase tracking-wide text-[#8A7B5C]">On shelf</span>
             <span class="number-font text-[#1B4332]">${Number(category.book_count || 0)}</span>
         </div>
-        <a href="/books.html?category=${category.category_id}"
+        <a href="/admin/books.html?category=${category.category_id}"
            class="mt-3 block text-center bg-[#1B4332] hover:bg-[#163A29] text-white text-sm font-semibold py-2 rounded-md transition">
             + Add Book
         </a>
