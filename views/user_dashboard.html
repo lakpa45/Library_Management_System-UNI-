@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard · APNA Library</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/user_dashboard.css">
+</head>
+<body>
+<header class="header">
+  <div class="navbar">
+    <a href="/index.html" class="brand">APNA LIBRARY</a>
+    <nav class="menu">
+      <a href="#" class="is-active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+      <a href="#books"><i class="fa-solid fa-book"></i> My Books</a>
+      <a href="#wishlist"><i class="fa-regular fa-heart"></i> Wishlist</a>
+      <a href="#account"><i class="fa-regular fa-id-badge"></i> Settings</a>
+    </nav>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="container page-head__row">
+    <div>
+      <span class="eyebrow">MY DASHBOARD</span>
+      <h1>Welcome back, Lakpa</h1>
+      <p>Here's what's happening with your books, holds, and wishlist this week.</p>
+    </div>
+    <a href="/index.html#products" class="btn btn--dark"><i class="fa-solid fa-magnifying-glass"></i> Find a book</a>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats__grid">
+    <div class="stat-card">
+      <span class="stat-card__ic"><i class="fa-solid fa-book-open"></i></span>
+      <div><strong>4</strong><small>Books Borrowed</small></div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__ic stat-card__ic--warn"><i class="fa-solid fa-clock"></i></span>
+      <div><strong>1</strong><small>Due Soon</small></div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-card__ic"><i class="fa-regular fa-heart"></i></span>
+      <div><strong>7</strong><small>Wishlist Items</small></div>
+    </div>
+  </div>
+</section>
+
+<div class="alert">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <div>
+    <strong>1 book due in 2 days</strong>
+    <p>"The Rain When You Were Mine" is due back on Aug 26. Renew now to avoid a late fee.</p>
+  </div>
+  <a href="#books" class="btn btn--accent btn--sm" style="margin-left:auto;padding:9px 18px;font-size:.78rem;">Renew</a>
+</div>
+
+<section id="books" class="books">
+  <div class="container">
+    <div class="sec-head--row">
+      <div>
+        <span class="eyebrow">CURRENTLY BORROWED</span>
+        <h2>Your active loans</h2>
+      </div>
+      <a href="#" class="link-more">View full history <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="books__grid">
+      <article class="book-card">
+        <div class="book-card__media">
+          <span class="book-card__status book-card__status--warn">Due in 2 days</span>
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <div class="book-card__body">
+          <h3>The Rain When You Were Mine</h3>
+          <p>Fiction · Novel</p>
+          <div class="book-card__due"><span>Due date</span><strong>Aug 26, 2026</strong></div>
+          <div class="book-card__actions">
+            <button class="primary">Renew</button>
+            <button>Details</button>
+          </div>
+        </div>
+      </article>
+      <article class="book-card">
+        <div class="book-card__media">
+          <span class="book-card__status">On time</span>
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <div class="book-card__body">
+          <h3>What If We Stay?</h3>
+          <p>Fiction · Novel</p>
+          <div class="book-card__due"><span>Due date</span><strong>Sep 3, 2026</strong></div>
+          <div class="book-card__actions">
+            <button class="primary">Renew</button>
+            <button>Details</button>
+          </div>
+        </div>
+      </article>
+      <article class="book-card">
+        <div class="book-card__media">
+          <span class="book-card__status">On time</span>
+          <i class="fa-solid fa-laptop-code"></i>
+        </div>
+        <div class="book-card__body">
+          <h3>The School For WhatNots</h3>
+          <p>Computer Science</p>
+          <div class="book-card__due"><span>Due date</span><strong>Sep 6, 2026</strong></div>
+          <div class="book-card__actions">
+            <button class="primary">Renew</button>
+            <button>Details</button>
+          </div>
+        </div>
+      </article>
+      <article class="book-card">
+        <div class="book-card__media">
+          <span class="book-card__status">On time</span>
+          <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+        <div class="book-card__body">
+          <h3>A Poetic Journey</h3>
+          <p>Literature</p>
+          <div class="book-card__due"><span>Due date</span><strong>Sep 10, 2026</strong></div>
+          <div class="book-card__actions">
+            <button class="primary">Renew</button>
+            <button>Details</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="split">
+  <div class="panel">
+    <h2>Recent Activity</h2>
+    <div class="activity-row">
+      <span class="activity-row__ic"><i class="fa-solid fa-arrow-right-to-bracket"></i></span>
+      <div class="activity-row__body"><strong>Borrowed "A Poetic Journey"</strong><small>Literature</small></div>
+      <span class="activity-row__time">2 days ago</span>
+    </div>
+    <div class="activity-row">
+      <span class="activity-row__ic"><i class="fa-solid fa-rotate-left"></i></span>
+      <div class="activity-row__body"><strong>Returned "Utopia"</strong><small>Novels</small></div>
+      <span class="activity-row__time">5 days ago</span>
+    </div>
+    <div class="activity-row">
+      <span class="activity-row__ic"><i class="fa-regular fa-heart"></i></span>
+      <div class="activity-row__body"><strong>Added "Into The Woods" to wishlist</strong><small>Novels</small></div>
+      <span class="activity-row__time">1 week ago</span>
+    </div>
+    <div class="activity-row">
+      <span class="activity-row__ic"><i class="fa-solid fa-star"></i></span>
+      <div class="activity-row__body"><strong>Reviewed "Again But Better"</strong><small>Rated 5 stars</small></div>
+      <span class="activity-row__time">2 weeks ago</span>
+    </div>
+  </div>
+
+  <div id="wishlist" class="panel">
+    <h2>Wishlist</h2>
+    <div class="wish-item">
+      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
+      <div class="wish-item__body"><strong>Into The Woods</strong><small>Novels · Available</small></div>
+      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
+    </div>
+    <div class="wish-item">
+      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
+      <div class="wish-item__body"><strong>The Girl With A Dream</strong><small>Novels · Available</small></div>
+      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
+    </div>
+    <div class="wish-item">
+      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
+      <div class="wish-item__body"><strong>Utopia</strong><small>Novels · Available</small></div>
+      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
+    </div>
+    <div class="wish-item">
+      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
+      <div class="wish-item__body"><strong>Again But Better</strong><small>Novels · Available</small></div>
+      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
+    </div>
+  </div>
+</section>
+
+<section id="account" class="account">
+  <div class="account__inner">
+    <div>
+      <span class="eyebrow">ACCOUNT SETTINGS</span>
+      <h2>Keep your details up to date</h2>
+      <p>Your library card number, email, and contact details are used for due date reminders and hold notifications.</p>
+    </div>
+    <form class="account__fields">
+      <label class="account__field">Full name <input type="text" value="Lakpa Tshering"></label>
+      <label class="account__field">Email <input type="email" value="Lakpatshering@example.com"></label>
+      <label class="account__field">Phone <input type="tel" value="+91-98765-43210"></label>
+      <label class="account__field">Library card no. <input type="text" value="APL-2026-0417" disabled></label>
+      <div class="account__actions">
+        <button type="submit" class="btn btn--accent">Save changes</button>
+        <button type="button" class="btn btn--ghost">Change password</button>
+      </div>
+    </form>
+  </div>
+</section>
+<!-- CAT -->
+<section class="library-cta" id="about">
+    <div class="container cta-inner">
+
+        <div class="cta-content">
+            <span class="eyebrow eyebrow--light">
+                APNA LIBRARY
+            </span>
+
+            <h2>
+                Can't find the book you're looking for?
+            </h2>
+
+            <p>
+                Search our complete library collection or contact
+                the librarian for assistance.
+            </p>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="#" class="btn btn--accent">
+                Search Library
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+
+            <a href="#contact" class="btn btn--dark">
+                Contact Librarian
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+    <div class="container footer-grid">
+        <div>
+            <h2 class="footer-brand">APNA LIBRARY</h2>
+            <p>
+                APNA Library provides students and
+                faculty with access to academic books, journals,
+                research materials and digital resources.
+            </p>
+        </div>
+        <div>
+            <h3>Library</h3>
+            <a href="book_category.html">Categories</a>
+            <a href="/index.html#products">Popular Books</a>
+            <a href="/index.html#picks">New Arrivals</a>
+            <a href="#">Digital Library</a>
+        </div>
+        <div>
+            <h3>Support</h3>
+            <a href="#">Library Rules</a>
+            <a href="#">Borrowing Policy</a>
+            <a href="frequently_asked_question.html">FAQ</a>
+            <a href="#">Contact Librarian</a>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p><i class="fa-solid fa-location-dot"></i>APNA Library Sikkim</p>
+            <p><i class="fa-solid fa-phone"></i>+91-123-1234</p>
+            <p><i class="fa-solid fa-envelope"></i>library@apna.edu</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
+    </div>
+</footer>
+<script src="/js/user_dashboard.js"></script>
+</body>
+</html>
