@@ -27,6 +27,15 @@ export const librarianSignin = async (req, res) => {
             { expiresIn: '1h' }
         );
 
+        // Cookie for page-load guarding (auto-sent by the browser on navigation)
+        res.cookie('adminSession', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 1000 // 1h, matches JWT expiry
+        });
+
+        // Token in body — unchanged, still goes to localStorage for API calls
         res.status(200).json({ message: 'Sign in successful', token });
     } catch (err) {
         console.error(err);
