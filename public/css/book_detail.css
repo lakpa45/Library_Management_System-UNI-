@@ -1,0 +1,942 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #ffffff;
+    --ink: #0e0e10;
+    --muted: #6b6b73;
+    --line: #e7e7ea;
+
+    --accent: #f5b301;
+    --accent-2: #ffd45e;
+    --accent-ink: #3a2a00;
+
+    --dark: #101015;
+
+    --maxw: 1280px;
+    --nav-h: 74px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fff;
+    color: var(--ink);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+.container {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: auto;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Chakra Petch', sans-serif;
+}
+
+
+/* =====================================
+   HEADER
+===================================== */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.menu-btn {
+    display: none;
+}
+
+.topbar {
+    background: white;
+    border-bottom: 1px solid var(--line);
+    font-size: .8rem;
+}
+
+.topbar__inner {
+    max-width: calc(var(--maxw) + 128px);
+    margin: auto;
+
+    padding: 8px clamp(18px, 5vw, 64px);
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.topbar__left,
+.topbar__right {
+    display: flex;
+    gap: 22px;
+}
+
+.topbar a,
+.topbar span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.navbar-bar {
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+}
+
+.navbar {
+    max-width: calc(var(--maxw) + 128px);
+    height: var(--nav-h);
+
+    margin: auto;
+
+    padding: 0 clamp(18px, 5vw, 64px);
+
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.brand {
+    font-family: 'Chakra Petch';
+    font-weight: 700;
+    font-size: 1.7rem;
+    letter-spacing: 4px;
+}
+
+.nav {
+    margin-right: auto;
+}
+
+.menu {
+    list-style: none;
+    display: flex;
+    gap: 5px;
+}
+
+.menu a {
+    display: block;
+    padding: 10px 15px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 600;
+    font-size: .9rem;
+}
+
+.menu a:hover {
+    color: var(--accent-ink);
+}
+
+.navbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 1px solid var(--line);
+    border-radius: 30px;
+
+    padding: 9px 15px;
+}
+
+.search input {
+    width: 130px;
+    border: none;
+    outline: none;
+}
+
+.navbar__ic {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+}
+
+.navbar__ic:hover {
+    background: var(--ink);
+    color: white;
+}
+
+.navbar__auth {
+    display: flex;
+    gap: 8px;
+}
+
+.navbar__auth-link {
+    padding: 10px 16px;
+    border-radius: 30px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 600;
+    font-size: .85rem;
+}
+
+.navbar__auth-link--accent {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.menu-icon,
+.nav-close,
+.nav-overlay {
+    display: none;
+}
+
+
+/* =====================================
+   BREADCRUMB
+===================================== */
+
+.breadcrumb {
+    margin-top: 115px;
+    padding: 25px clamp(18px, 5vw, 64px);
+
+    background: #f8f8f5;
+    border-bottom: 1px solid var(--line);
+}
+
+.breadcrumb .container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    font-size: .8rem;
+    color: var(--muted);
+}
+
+.breadcrumb a:hover {
+    color: var(--accent-ink);
+}
+
+.breadcrumb i {
+    font-size: .65rem;
+}
+
+
+/* =====================================
+   BOOK DETAILS
+===================================== */
+
+.book-details {
+    padding: 80px clamp(18px, 5vw, 64px);
+}
+
+.book-details-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 80px;
+    align-items: start;
+}
+
+
+/* BOOK IMAGE */
+
+.book-main-cover {
+    height: 520px;
+
+    display: grid;
+    place-items: center;
+
+    position: relative;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffe9a8,
+            #e6b92f
+        );
+
+    box-shadow:
+        0 25px 50px
+        rgba(0,0,0,.15);
+
+    overflow: hidden;
+}
+
+.book-main-cover i {
+    font-size: 9rem;
+    color: rgba(58,42,0,.45);
+}
+
+.book-status {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    padding: 7px 13px;
+
+    border-radius: 30px;
+
+    background: var(--ink);
+    color: white;
+
+    font-family: 'Chakra Petch';
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+.wishlist-btn {
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    background: white;
+
+    border: 1px solid var(--line);
+    border-radius: 30px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 600;
+
+    transition: .25s;
+}
+
+.wishlist-btn:hover {
+    background: var(--ink);
+    color: white;
+}
+
+
+/* BOOK TEXT */
+
+.book-category {
+    color: var(--accent-ink);
+
+    font-family: 'Chakra Petch';
+    font-size: .75rem;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+}
+
+.book-information h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    line-height: 1.05;
+
+    margin: 12px 0 15px;
+}
+
+.book-author {
+    font-size: .9rem;
+    color: var(--muted);
+}
+
+.book-author strong {
+    color: var(--ink);
+}
+
+.availability {
+    margin: 25px 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 16px;
+
+    background: #f5f8f2;
+
+    border-radius: 30px;
+
+    font-size: .85rem;
+}
+
+.availability-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #55a630;
+}
+
+.book-description {
+    padding-top: 25px;
+    border-top: 1px solid var(--line);
+}
+
+.book-description h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+
+.book-description p {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-bottom: 12px;
+}
+
+
+/* ACTION BUTTONS */
+
+.book-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.borrow-btn,
+.reserve-btn {
+    padding: 14px 24px;
+
+    border-radius: 30px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.borrow-btn {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.reserve-btn {
+    background: var(--ink);
+    color: white;
+}
+
+.login-note {
+    margin-top: 18px;
+
+    color: var(--muted);
+    font-size: .75rem;
+}
+
+.login-note i {
+    color: var(--accent);
+}
+
+
+/* =====================================
+   BOOK INFORMATION
+===================================== */
+
+.book-info-section {
+    padding: 80px clamp(18px, 5vw, 64px);
+    background: #f7f7f4;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.eyebrow {
+    display: inline-block;
+
+    padding: 5px 12px;
+
+    border-radius: 30px;
+
+    background: var(--accent);
+
+    color: var(--accent-ink);
+
+    font-family: 'Chakra Petch';
+    font-size: .7rem;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+}
+
+.section-heading h2 {
+    margin-top: 10px;
+    font-size: 2.5rem;
+}
+
+.information-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+}
+
+.info-card {
+    padding: 22px;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    background: white;
+
+    border: 1px solid var(--line);
+    border-radius: 16px;
+
+    transition: .25s;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.08);
+}
+
+.info-card > i {
+    width: 50px;
+    height: 50px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+
+    background: rgba(245,179,1,.18);
+
+    color: var(--accent-ink);
+}
+
+.info-card span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: .7rem;
+}
+
+.info-card strong {
+    display: block;
+
+    margin-top: 3px;
+
+    font-family: 'Chakra Petch';
+    font-size: .95rem;
+}
+
+
+/* =====================================
+   LIBRARY STATUS
+===================================== */
+
+.library-status {
+    padding: 70px clamp(18px, 5vw, 64px);
+}
+
+.status-box {
+    padding: 35px;
+
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    background: var(--ink);
+    color: white;
+
+    border-radius: 22px;
+}
+
+.status-icon {
+    width: 70px;
+    height: 70px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 18px;
+
+    background: var(--accent);
+
+    color: var(--accent-ink);
+
+    font-size: 1.7rem;
+}
+
+.status-content span {
+    color: var(--accent);
+    font-size: .7rem;
+
+    font-family: 'Chakra Petch';
+
+    letter-spacing: 2px;
+}
+
+.status-content h2 {
+    margin: 5px 0;
+}
+
+.status-content p {
+    color: #aaa;
+    font-size: .85rem;
+}
+
+.copies {
+    margin-left: auto;
+
+    text-align: center;
+
+    padding-left: 35px;
+
+    border-left: 1px solid #333;
+}
+
+.copies strong {
+    display: block;
+
+    font-family: 'Chakra Petch';
+    font-size: 3rem;
+
+    color: var(--accent);
+}
+
+.copies span {
+    color: #aaa;
+    font-size: .75rem;
+}
+
+
+/* =====================================
+   RELATED BOOKS
+===================================== */
+
+.related-books {
+    padding: 85px clamp(18px, 5vw, 64px);
+    background: white;
+}
+
+.sec-head--row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-bottom: 40px;
+}
+
+.sec-head--row h2 {
+    margin-top: 10px;
+    font-size: 2.5rem;
+}
+
+.link-more {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 700;
+}
+
+.link-more i {
+    color: var(--accent);
+}
+
+.related-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+}
+
+.related-card {
+    overflow: hidden;
+
+    border: 1px solid var(--line);
+    border-radius: 18px;
+
+    background: white;
+
+    transition: .3s;
+}
+
+.related-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 20px 40px
+        rgba(0,0,0,.1);
+}
+
+.related-cover {
+    height: 220px;
+
+    display: grid;
+    place-items: center;
+
+    font-size: 4.5rem;
+
+    color: rgba(0,0,0,.3);
+}
+
+.cover-blue {
+    background: #dce8f7;
+}
+
+.cover-purple {
+    background: #e6dcf2;
+}
+
+.cover-orange {
+    background: #f5e0c6;
+}
+
+.cover-green {
+    background: #dcebdc;
+}
+
+.related-info {
+    padding: 18px;
+}
+
+.related-info span {
+    font-family: 'Chakra Petch';
+
+    color: var(--accent-ink);
+
+    font-size: .7rem;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+}
+
+.related-info h3 {
+    margin: 6px 0;
+    font-size: 1rem;
+}
+
+.related-info p {
+    color: var(--muted);
+    font-size: .75rem;
+}
+/* =====================================
+   LIBRARY CTA
+===================================== */
+
+.library-cta {
+    background: var(--ink);
+    color: white;
+    padding: 75px clamp(18px, 5vw, 64px);
+}
+
+.cta-inner {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 50px;
+}
+
+.cta-content {
+    flex: 1;
+}
+
+.eyebrow--light {
+    background: white;
+    color: var(--accent-ink);
+}
+
+.cta-inner h2 {
+    max-width: 650px;
+
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15;
+
+    margin-top: 14px;
+}
+
+.cta-inner p {
+    max-width: 600px;
+
+    color: #aaa;
+
+    margin-top: 14px;
+    font-size: .9rem;
+}
+
+.cta-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    flex-shrink: 0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 13px 22px;
+
+    border-radius: 40px;
+
+    font-family: 'Chakra Petch';
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: .25s ease;
+}
+
+.btn--accent {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.btn--accent:hover {
+    background: var(--accent-2);
+    transform: translateY(-2px);
+}
+
+.btn--dark {
+    border: 1px solid #444;
+    color: white;
+}
+
+.btn--dark:hover {
+    background: white;
+    color: var(--ink);
+}
+
+
+/* =====================================
+   FOOTER
+===================================== */
+
+.footer {
+    background: #08080b;
+    color: white;
+
+    padding: 70px clamp(18px, 5vw, 64px) 20px;
+}
+
+.footer-grid {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+
+    gap: 50px;
+}
+
+.footer-brand {
+    font-size: 2rem;
+    letter-spacing: 4px;
+}
+
+.footer-grid > div:first-child p {
+    max-width: 400px;
+
+    margin-top: 15px;
+
+    color: #999;
+    font-size: .8rem;
+    line-height: 1.8;
+}
+
+.footer h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.footer-grid a {
+    display: block;
+
+    color: #999;
+
+    font-size: .78rem;
+
+    margin: 9px 0;
+
+    transition: .2s ease;
+}
+
+.footer-grid a:hover {
+    color: var(--accent);
+    transform: translateX(3px);
+}
+
+.footer-grid p {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    color: #999;
+
+    font-size: .78rem;
+
+    margin: 10px 0;
+}
+
+.footer-grid p i {
+    color: var(--accent);
+    width: 22px;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.footer-bottom {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 50px auto 0;
+
+    border-top: 1px solid #222;
+
+    padding-top: 20px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: .7rem;
+}
