@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pending Approvals</title>
+<link href="/output.css" rel="stylesheet">
+<style>
+  body { background-color:#F5EFE2; background-image: radial-gradient(#00000008 1px, transparent 1px); background-size: 22px 22px; }
+  .card-edge { box-shadow: 0 1px 3px rgba(27,67,50,0.08), 0 1px 2px rgba(27,67,50,0.06); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #C9A227aa; border-radius: 4px; }
+  .toast { transition: all .35s cubic-bezier(.4,0,.2,1); }
+  tr.fade-row { animation: fadeIn .3s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body class="font-body text-ink min-h-screen">
+<script src="/js/admin_dashboard_guard.js"></script>
+
+<div class="max-w-6xl mx-auto px-6 py-10">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div>
+      <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation · Approvals</p>
+      <h1 class="font-display text-3xl text-forest">Pending Registrations</h1>
+    </div>
+    <a href="/admin/admin_dashboard.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Dashboard
+    </a>
+  </div>
+
+  <div class="bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-[11px] uppercase tracking-wider text-ink-light border-b border-ink/10">
+          <th class="px-5 py-3 font-medium">Name</th>
+          <th class="px-5 py-3 font-medium">Email</th>
+          <th class="px-5 py-3 font-medium">Type</th>
+          <th class="px-5 py-3 font-medium">Department</th>
+          <th class="px-5 py-3 font-medium">Phone</th>
+          <th class="px-5 py-3 font-medium">Registered</th>
+          <th class="px-5 py-3 font-medium text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="pending-body" class="divide-y divide-ink/5"></tbody>
+    </table>
+    <div id="empty-state" class="hidden px-5 py-16 text-center">
+      <p class="font-display text-lg text-forest mb-1">No pending registrations</p>
+      <p class="text-sm text-ink-light">New sign-ups will appear here for review.</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast fixed bottom-6 right-6 translate-y-24 opacity-0 bg-forest text-paper rounded-xl px-5 py-4 card-edge flex items-center gap-3 max-w-sm">
+  <svg class="w-5 h-5 text-brass-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  <p class="text-sm font-medium" id="toast-msg">Done</p>
+</div>
+
+<script src="/js/pending_members.js"></script>
+</body>
+</html>
