@@ -228,3 +228,100 @@ dueList.innerHTML =
         </span>
       </li>
     `).join('');
+
+
+function libEscapeHtmlDash(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function adminAuthHeaders() {
+    return { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') };
+}
+
+function formatActivityDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function statusBadgeClasses(status) {
+    if (status === 'Overdue') return 'bg-red-50 text-red-600';
+    if (status === 'Completed') return 'bg-green-50 text-green-700';
+    return 'bg-amber-50 text-amber-700'; // Active
+}
+
+async function loadRecentActivity() {
+    const tbody = document.getElementById('activity-body');
+    if (!tbody) return;
+
+    try {
+        const response = await fetch('/api/dashboard/activity', { headers: adminAuthHeaders() });
+        if (!response.ok) throw new Error('Failed to load activity');
+        const activity = await response.json();
+
+        if (!activity.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-6 text-center text-[#8A7B5C] text-sm">No recent activity.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = activity.map((row) => `
+            <tr>
+                <td class="px-5 py-3">${libEscapeHtmlDash(row.member)}</td>
+                <td class="px-5 py-3">${libEscapeHtmlDash(row.title)}</td>
+                <td class="px-5 py-3">${libEscapeHtmlDash(row.action)}</td>
+                <td class="px-5 py-3">${formatActivityDate(row.date)}</td>
+                <td class="px-5 py-3">
+                    <span class="text-xs font-medium px-2 py-1 rounded-full ${statusBadgeClasses(row.status)}">${row.status}</span>
+                </td>
+            </tr>
+        `).join('');
+    } catch (err) {
+        console.error('Failed to load recent activity:', err);
+        tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-6 text-center text-red-500 text-sm">Couldn\'t load activity.</td></tr>';
+    }
+}
+
+async function loadDueSoon() {
+    const list = document.getElementById('due-list');
+    if (!list) return;
+
+    try {
+        const response = await fetch('/api/dashboard/due-soon', { headers: adminAuthHeaders() });
+        if (!response.ok) throw new Error('Failed to load due list');
+        const dueSoon = await response.json();
+
+        if (!dueSoon.length) {
+            list.innerHTML = '<li class="px-5 py-6 text-center text-[#8A7B5C] text-sm">Nothing due soon.</li>';
+            return;
+        }
+
+        list.innerHTML = dueSoon.map((row) => {
+            const isOverdue = row.days_remaining < 0;
+            const label = isOverdue
+                ? `${Math.abs(row.days_remaining)}d overdue`
+                : row.days_remaining === 0
+                    ? 'Due today'
+                    : `Due in ${row.days_remaining}d`;
+            return `
+                <li class="px-5 py-3 flex items-center justify-between">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-ink truncate">${libEscapeHtmlDash(row.title)}</p>
+                        <p class="text-xs text-[#8A7B5C] truncate">${libEscapeHtmlDash(row.member)}</p>
+                    </div>
+                    <span class="text-xs font-medium px-2 py-1 rounded-full shrink-0 ${isOverdue ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-700'}">${label}</span>
+                </li>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Failed to load due list:', err);
+        list.innerHTML = '<li class="px-5 py-6 text-center text-red-500 text-sm">Couldn\'t load due list.</li>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadRecentActivity();
+    loadDueSoon();
+});
