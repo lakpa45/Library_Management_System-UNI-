@@ -108,3 +108,54 @@ export const deleteBook = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// SEARCH books by title or category name
+export const searchBooks = async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (!q) {
+            return res.status(200).json([]);
+        }
+        const searchTerm = `%${q}%`;
+        const result = await pool.query(
+            `SELECT book.*, category.category_name
+             FROM book
+             LEFT JOIN category ON book.category_id = category.category_id
+             WHERE book.title ILIKE $1 OR category.category_name ILIKE $1
+             ORDER BY book.title ASC
+             LIMIT 8`,
+            [searchTerm]
+        );
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// GET single book by id (with availability info)
+export const getBookById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(
+            `SELECT book.*, category.category_name,
+                    COUNT(*) FILTER (WHERE book_copy.status = 'Available') AS available_copies,
+                    COUNT(*) AS total_copies
+             FROM book
+             LEFT JOIN category ON book.category_id = category.category_id
+             LEFT JOIN book_copy ON book_copy.book_id = book.book_id
+             WHERE book.book_id = $1
+             GROUP BY book.book_id, category.category_name`,
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
+
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

@@ -55,15 +55,23 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- testimonials: reviews + star ratings ---- */
     initReviews();
 
-    /* ---- swiper sliders ---- */
-    buildSlider('picks', {
-        minSlides: 8,
-        slidesPerView: 1.2,
-        breakpoints: {
-            560: { slidesPerView: 2 },
-            900: { slidesPerView: 3 },
-            1200: { slidesPerView: 4 }
-        }
+    /* ---- featured books from database ---- */
+    loadFeaturedBooks();
+
+    /* ---- book of the month ---- */
+    loadBookOfTheMonth();
+
+    /* ---- recent arrivals + swiper slider (init after data loads) ---- */
+    loadRecentArrivals().then(() => {
+        buildSlider('picks', {
+            minSlides: 8,
+            slidesPerView: 1.2,
+            breakpoints: {
+                560: { slidesPerView: 2 },
+                900: { slidesPerView: 3 },
+                1200: { slidesPerView: 4 }
+            }
+        });
     });
 });
 
@@ -96,9 +104,139 @@ function buildSlider(name, options) {
     }, options));
 }
 
+// For featured books from database ===============================//
+async function loadFeaturedBooks() {
+    const grid = document.getElementById('stylesGrid');
+    if (!grid) return;
+
+    try {
+        const response = await fetch('/api/books');
+        const books = await response.json();
+
+        const seenCategories = new Set();
+        const featured = [];
+
+        for (const book of books) {
+            if (book.category_id && !seenCategories.has(book.category_id)) {
+                seenCategories.add(book.category_id);
+                featured.push(book);
+            }
+            if (featured.length === 4) break;
+        }
+
+        if (featured.length < 4) {
+            for (const book of books) {
+                if (featured.length === 4) break;
+                if (!featured.includes(book)) featured.push(book);
+            }
+        }
+
+        const colorClasses = ['style-card--g1', 'style-card--g2', 'style-card--g3', 'style-card--g4'];
+
+        grid.innerHTML = featured.map((book, index) => `
+            <a href="/book_category.html" class="style-card ${colorClasses[index] || ''}">
+                <div class="style-card__media">
+                    <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
+                </div>
+                <div class="style-card__body">
+                    <span>${String(index + 1).padStart(2, '0')}. Book Name</span>
+                    <h3>${book.title}</h3>
+                </div>
+            </a>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// For "Book of the Month" — random books from database ===============================//
+function buildProductCard(book) {
+    return `
+        <article class="product">
+            <div class="product__media">
+                <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
+                <button class="product__wish" aria-label="Add to wishlist">
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+                <span class="product__add">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    Add to cart
+                </span>
+            </div>
+            <div class="product__info">
+                <div class="product__stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h3>${book.title}</h3>
+                <p class="product__price">Available</p>
+            </div>
+        </article>
+    `;
+}
+
+async function loadBookOfTheMonth() {
+    const grid = document.querySelector('.products__grid');
+    if (!grid) return;
+
+    try {
+        const response = await fetch('/api/books');
+        const books = await response.json();
+
+        const shuffled = [...books].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, 4);
+
+        grid.innerHTML = selected.map(buildProductCard).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// For "Recent Arrivals" — most recently added books ===============================//
+async function loadRecentArrivals() {
+    const wrapper = document.querySelector('.picks-swiper .swiper-wrapper');
+    if (!wrapper) return;
+
+    try {
+        const response = await fetch('/api/books');
+        const books = await response.json();
+
+        const recent = books.slice(0, 8);
+
+        wrapper.innerHTML = recent.map(book => `
+            <article class="swiper-slide product">
+                <div class="product__media">
+                    <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
+                    <button class="product__wish" aria-label="Add to wishlist">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <span class="product__add">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        Add to cart
+                    </span>
+                </div>
+                <div class="product__info">
+                    <div class="product__stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <h3>${book.title}</h3>
+                    <p class="product__price">Available</p>
+                </div>
+            </article>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // ======Shared storage keys + session helpers (used by auth and reviews) ========//
-//=====const LIB_USERS_KEY = 'icfai_library_users';
-//=== const LIB_SESSION_KEY = 'icfai_library_session'; ====//
 const LIB_REVIEWS_KEY = 'icfai_library_reviews';
 
 function libGetSession() {
@@ -325,7 +463,7 @@ function initAuth() {
     renderAuthState();
 }
 
-// For testimonials (star ratings + reviews) ==============================//
+// For testimonials (star ratings + reviews)//
 function initReviews() {
     const SEED_REVIEWS = [
         {
