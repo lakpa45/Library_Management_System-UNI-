@@ -258,20 +258,14 @@ function libGetInitials(name) {
         : parts[0].slice(0, 2);
     return initials.toUpperCase();
 }
-
-// For auth (login / register / user menu) ===============================//
+// For auth (login / user menu)
 function initAuth() {
     const overlay = document.getElementById('authOverlay');
     const modal = overlay ? overlay.querySelector('.auth-modal') : null;
     const closeBtn = document.getElementById('authClose');
     const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const tabs = document.querySelectorAll('.auth-tab');
-    const switchLinks = document.querySelectorAll('.auth-switch__link');
     const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
     const loginError = document.getElementById('loginError');
-    const registerError = document.getElementById('registerError');
 
     const authLinks = document.getElementById('navbarAuth');
     const userBlock = document.getElementById('navbarUser');
@@ -283,14 +277,18 @@ function initAuth() {
     const userMenuName = document.getElementById('userMenuName');
     const userMenuEmail = document.getElementById('userMenuEmail');
 
-    if (!overlay || !loginForm || !registerForm) return;
+    // Safety check: only abort if the overlay or login form is missing
+    if (!overlay || !loginForm) return;
 
     /* --- real session helpers (based on JWT) --- */
     const getSession = () => {
         const token = localStorage.getItem('token');
         if (!token) return null;
         try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
+            // Safer base64 decoding for JWTs
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(atob(base64));
             return { email: payload.email };
         } catch (err) {
             return null;
@@ -321,95 +319,34 @@ function initAuth() {
     /* --- modal open/close --- */
     const clearErrors = () => {
         if (loginError) loginError.textContent = '';
-        if (registerError) registerError.textContent = '';
     };
 
-    const switchTab = (tab) => {
+    const openModal = () => {
         clearErrors();
-        tabs.forEach((btn) => btn.classList.toggle('is-active', btn.dataset.tab === tab));
-        loginForm.classList.toggle('is-active', tab === 'login');
-        registerForm.classList.toggle('is-active', tab === 'register');
-        const activeForm = tab === 'login' ? loginForm : registerForm;
-        const firstInput = activeForm.querySelector('input');
-        if (firstInput) firstInput.focus();
-    };
-
-    const openModal = (tab) => {
         overlay.classList.add('is-open');
         document.body.style.overflow = 'hidden';
-        switchTab(tab || 'login');
+        const firstInput = loginForm.querySelector('input');
+        if (firstInput) firstInput.focus();
     };
 
     const closeModal = () => {
         overlay.classList.remove('is-open');
         document.body.style.overflow = '';
         loginForm.reset();
-        registerForm.reset();
         clearErrors();
     };
 
-    if (loginBtn) loginBtn.addEventListener('click', (e) => { e.preventDefault(); openModal('login'); });
-    if (registerBtn) registerBtn.addEventListener('click', (e) => { e.preventDefault(); openModal('register'); });
+    // Modal Event Listeners
+    if (loginBtn) loginBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-    tabs.forEach((btn) => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-    switchLinks.forEach((btn) => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-
-    /* --- register (real backend) --- */
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        clearErrors();
-        const formData = new FormData(registerForm);
-        const fullName = (formData.get('name') || '').trim();
-        const email = (formData.get('email') || '').trim().toLowerCase();
-        const password = formData.get('password') || '';
-
-        if (!fullName || !email || password.length < 6) {
-            registerError.textContent = 'Please fill every field (password: min 6 characters).';
-            return;
-        }
-
-        const nameParts = fullName.split(' ');
-        const first_name = nameParts[0];
-        const last_name = nameParts.slice(1).join(' ') || first_name;
-
-        try {
-            const response = await fetch('/api/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ first_name, last_name, email, password })
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                const loginResponse = await fetch('/api/auth/signin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                const loginResult = await loginResponse.json();
-
-                if (loginResponse.ok) {
-                    localStorage.setItem('token', loginResult.token);
-                    closeModal();
-                    renderAuthState();
-                }
-            } else {
-                registerError.textContent = result.message;
-            }
-        } catch (err) {
-            console.error(err);
-            registerError.textContent = 'Something went wrong. Please try again.';
-        }
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal(); });
 
     /* --- login (real backend) --- */
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearErrors();
+        
         const formData = new FormData(loginForm);
         const email = (formData.get('email') || '').trim().toLowerCase();
         const password = formData.get('password') || '';
@@ -428,7 +365,7 @@ function initAuth() {
                 closeModal();
                 renderAuthState();
             } else {
-                loginError.textContent = result.message;
+                loginError.textContent = result.message || 'Invalid credentials';
             }
         } catch (err) {
             console.error(err);
@@ -447,7 +384,7 @@ function initAuth() {
     document.addEventListener('click', (e) => {
         if (userBlock && userBlock.classList.contains('is-open') && !userBlock.contains(e.target)) {
             userBlock.classList.remove('is-open');
-            userMenuBtn.setAttribute('aria-expanded', 'false');
+            if(userMenuBtn) userMenuBtn.setAttribute('aria-expanded', 'false');
         }
     });
 

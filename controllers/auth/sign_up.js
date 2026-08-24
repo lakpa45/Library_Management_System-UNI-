@@ -1,6 +1,12 @@
 import bcrypt from 'bcrypt';
 import pool from '../../db/connection.js';
 
+function generateTempPassword(first_name, dob) {
+    const namePart = (first_name || 'User').slice(0, 4);
+    const birthYear = dob ? new Date(dob).getFullYear() : new Date().getFullYear();
+    return `${namePart}${birthYear}`;
+}
+
 async function generateCardNo(memberType) {
     const prefixMap = { Student: 'STU', Faculty: 'FAC', Staff: 'STF' };
     const prefix = prefixMap[memberType] || 'STU';
@@ -14,12 +20,6 @@ async function generateCardNo(memberType) {
     const padded = String(nextNumber).padStart(4, '0');
 
     return `${prefix}-${year}-${padded}`;
-}
-
-function generateTempPassword(first_name, dob) {
-    const namePart = (first_name || 'User').slice(0, 4);
-    const birthYear = new Date(dob).getFullYear();
-    return `${namePart}${birthYear}`;
 }
 
 export const signup = async (req, res) => {
@@ -43,10 +43,10 @@ export const signup = async (req, res) => {
         const cardNo = await generateCardNo(member_type);
 
         const insertResult = await pool.query(
-            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, card_no, roll_id, dob, address, valid_till)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, roll_id, dob, address, valid_till, card_no, status)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'Approved')
              RETURNING member_id, first_name, last_name, email, phone, member_type, department, card_no`,
-            [first_name, last_name, email, hashedPassword, phone, member_type || 'Student', department, cardNo, roll_id || null, dob || null, address || null, valid_till || null]
+            [first_name, last_name, email, hashedPassword, phone, member_type || 'Student', department, roll_id || null, dob || null, address || null, valid_till || null, cardNo]
         );
 
         const newMember = insertResult.rows[0];

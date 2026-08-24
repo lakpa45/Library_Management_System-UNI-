@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - APNA Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="/output.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: 
+                radial-gradient(60% 40% at 100% 0%, rgba(245, 179, 1, 0.12), transparent 60%),
+                radial-gradient(50% 30% at 0% 40%, rgba(230, 140, 20, 0.08), transparent 60%),
+                linear-gradient(180deg, #ffffff 0%, #fdf8ee 100%);
+            background-attachment: fixed;
+            color: #0e0e10;
+        }
+        .heading-font { font-family: 'Chakra Petch', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 relative">
+
+    <!-- Back Button -->
+    <a href="/" class="absolute top-6 left-6 flex items-center gap-2 bg-white/60 hover:bg-white backdrop-blur-md px-4 py-2 rounded-full shadow-sm border border-gray-200 text-gray-700 hover:text-amber-600 transition text-sm font-medium z-10">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span class="hidden sm:inline">Back to Home</span>
+    </a>
+
+    <!-- Centered Form Container -->
+    <div class="sm:mx-auto sm:w-full sm:max-w-lg relative z-0">
+        
+        <!-- Logo / Header -->
+        <div class="text-center mb-8">
+            
+            <h1 class="heading-font text-3xl font-bold tracking-wide uppercase">Apna Library</h1>
+            <p class="text-gray-500 mt-2">Join your campus knowledge hub</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white/90 backdrop-blur-xl py-8 px-6 shadow-2xl shadow-gray-200/50 border border-white rounded-3xl sm:px-10">
+            <form id="registerForm" class="space-y-5" novalidate>
+                
+                <div>
+                    <label for="regName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input id="regName" name="name" type="text" required placeholder="John Doe"
+                        class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                </div>
+
+                <div>
+                    <label for="regEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input id="regEmail" name="email" type="email" required placeholder="you@example.com"
+                        class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label for="regPhone" class="block text-sm font-medium text-gray-700">Phone</label>
+                        <input id="regPhone" name="phone" type="tel" required placeholder="10-digit number"
+                            class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                    </div>
+                    <div>
+                        <label for="regType" class="block text-sm font-medium text-gray-700">Member Role</label>
+                        <select id="regType" name="type" required 
+                            class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 bg-white focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                            <option value="">Select...</option>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="regDept" class="block text-sm font-medium text-gray-700">Department</label>
+                    <input id="regDept" name="department" type="text" required placeholder="e.g. Computer Science"
+                        class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label for="regPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input id="regPassword" name="password" type="password" required minlength="8" placeholder="Min. 8 chars"
+                            class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                    </div>
+                    <div>
+                        <label for="regConfirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input id="regConfirmPassword" name="confirm_password" type="password" required minlength="8" placeholder="Re-enter"
+                            class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
+                    </div>
+                </div>
+
+                <!-- Error / Success Messages -->
+                <p id="registerError" class="hidden text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100"></p>
+                <p id="registerSuccess" class="hidden text-sm font-medium text-green-700 bg-green-50 px-4 py-3 rounded-lg border border-green-200"></p>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex justify-center py-3.5 px-4 rounded-[40px] shadow-sm text-[0.95rem] font-bold text-[#3a2a00] bg-amber-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-400/30 transition-all duration-200 heading-font tracking-wide">
+                        CREATE ACCOUNT
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-600">
+                    Already a member? 
+                    <a href="/" class="font-semibold text-gray-900 hover:text-amber-500 transition">Log in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/register.js"></script>
+</body>
+</html>
