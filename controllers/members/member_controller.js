@@ -112,3 +112,68 @@ export const rejectMember = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// GET the logged-in member's own profile
+export const getMyProfile = async (req, res) => {
+    try {
+        const user = req.user;
+        let member;
+
+        if (user.member_id || user.id) {
+            const result = await pool.query(
+                'SELECT member_id, first_name, last_name, email, card_no FROM member WHERE member_id = $1',
+                [user.member_id || user.id]
+            );
+            member = result.rows[0];
+        } else if (user.email) {
+            const result = await pool.query(
+                'SELECT member_id, first_name, last_name, email, card_no FROM member WHERE email = $1',
+                [user.email]
+            );
+            member = result.rows[0];
+        }
+
+        if (!member) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+
+        res.status(200).json(member);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// UPDATE the logged-in member's own profile
+export const updateMyProfile = async (req, res) => {
+    try {
+        const user = req.user;
+        const memberId = user.member_id || user.id;
+
+        if (!memberId) {
+            return res.status(400).json({ message: 'Unable to identify member' });
+        }
+
+        const { first_name, last_name, email, phone } = req.body;
+
+        if (!first_name || !last_name || !email) {
+            return res.status(400).json({ message: 'Name and email are required' });
+        }
+
+        const result = await pool.query(
+            `UPDATE member SET first_name = $1, last_name = $2, email = $3, phone = $4
+             WHERE member_id = $5
+             RETURNING member_id, first_name, last_name, email, phone, card_no`,
+            [first_name, last_name, email, phone || null, memberId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Member not found' });
+        }
+
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

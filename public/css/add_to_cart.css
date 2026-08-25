@@ -15,42 +15,6 @@
     min-height:100vh;
   }
   h1,h2,h3{ font-family:'Chakra Petch', sans-serif; font-weight:700; }
-  /* Nav */
-  .nav{
-    display:flex;
-    align-items:center;
-    gap:24px;
-    padding:16px clamp(18px,5vw,48px);
-    background:rgba(255,255,255,0.92);
-    border-bottom:1px solid var(--line);
-    position:sticky;
-    top:0;
-    z-index:30;
-  }
-  .brand{
-    font-family:'Chakra Petch', sans-serif;
-    font-weight:700;
-    font-size:1.4rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
-  .search{
-    flex:1;
-    display:flex;
-    align-items:center;
-    gap:9px;
-    background: var(--tile);
-    border:1px solid var(--line);
-    border-radius:40px;
-    padding:9px 16px;
-    max-width:420px;
-    color: var(--muted);
-  }
-  .search input{
-    border:none; background:none; outline:none; width:100%;
-    font-family:inherit; font-size:0.86rem; color: var(--ink);
-  }
   .cart-ic{
     position:relative;
     width:44px; height:44px;
@@ -185,8 +149,6 @@
   .checkout-btn:hover{ background: var(--accent-2); }
 
   @media (max-width:560px){
-    .search{ display:none; }
-    .nav{ gap:14px; }
   }
   .card-media img {
   width: 100%;
@@ -210,4 +172,38 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+
+.cart-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.cart-item img {
+  width: 80px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cart-item-details h4 {
+  margin: 0 0 4px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #c1391f;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.wrap {
+  padding-top: 140px; /* adjust to match your actual header height */
 }

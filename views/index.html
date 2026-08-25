@@ -14,12 +14,13 @@
     
     <link rel="stylesheet" href="/css/output.css">
     <link rel="stylesheet" href="/css/home_page.css">
-    <script defer="defer" src="/js/homepage.js"></script>
-    <script defer="defer" src="/js/site_search.js"></script>
     
-    
+    <script defer src="/js/cart.js"></script>
+    <script defer src="/js/product_renderer.js"></script>
+    <script defer src="/js/homepage_cart.js"></script>
+    <script defer src="/js/homepage.js"></script>
+    <script defer src="/js/site_search.js"></script>
 
-    
 </head>
 <body>
     <!-- header -->
@@ -54,30 +55,36 @@
         <!--main bar-->
         <div class="navbar-bar">
             <div class="navbar">
-                <label for="menu-btn" class="menu-icon" aria-label="Open menu">
+                <button type="button" class="menu-icon" id="menuToggle" aria-label="Open menu" aria-controls="primaryNavigation" aria-expanded="false">
                     <i class="fa-solid fa-bars"></i>
-                </label>
+                </button>
                 <a href="#hero" class="brand">APNA LIBRARY</a>
-                <nav class="nav">
-                    <label for="menu-btn" class="nav-close" aria-label="Close menu">
+                <nav class="nav" id="primaryNavigation" aria-label="Primary navigation">
+                    <button type="button" class="nav-close" id="menuClose" aria-label="Close menu">
                         <i class="fa-solid fa-xmark"></i>
-                    </label>
+                    </button>
                     <ul class="menu">
                         <li>
-                            <a href="#hero">Home</a>
+                            <a href="/">Home</a>
                         </li>
                         <li>
-                            <a href="#category">Explore</a>
+                            <a href="/#category">Explore</a>
                         </li>
                         <li>
                             <a href="/book_category.html">Categories</a>
                         </li>
                         
                         <li>
-                            <a href="#picks">Latest</a>
+                            <a href="/#picks">Latest</a>
                         </li>
                         <li>
-                            <a href="#contact">Contact</a>
+                            <a href="/#contact">Contact</a>
+                        </li>
+                        <li class="menu__auth" data-menu-auth>
+                            <a href="#" data-login-trigger><i class="fa-regular fa-user"></i> Login</a>
+                        </li>
+                        <li class="menu__auth" data-menu-auth>
+                            <a href="/register.html">Register</a>
                         </li>
                     </ul>
                 </nav>
@@ -88,8 +95,9 @@
                         <div class="search-dropdown" id="navbarSearchDropdown"></div>
                     </form>
                     
-                    <a href="add_to_cart.html" class=" navbar__ic--cart" aria-label="Cart">
+                    <a href="/add_to_cart.html" class="navbar__ic--cart" aria-label="Cart">
                         <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="cart-count-badge">0</span>
                     </a>
                     <div class="navbar__auth" id="navbarAuth">
                         <a href="#" class="navbar__auth-link" id="loginBtn">
@@ -112,7 +120,7 @@
                                     <small id="userMenuEmail">user@example.com</small>
                                 </div>
                             </div>
-                            <a href="#" class="navbar__user-menu-item">
+                            <a href="/user_dashboard.html" class="navbar__user-menu-item">
                                 <i class="fa-regular fa-id-badge"></i>
                                 My account
                             </a>
@@ -129,7 +137,7 @@
                 </div>
             </div>
         </div>
-        <label for="menu-btn" class="nav-overlay"></label>
+        <button type="button" class="nav-overlay" id="menuOverlay" aria-label="Close menu" tabindex="-1"></button>
     </header>
     <!--hero hai ky-->
     <section id="hero" class="hero">
@@ -231,7 +239,9 @@
                 <p>Explore our carefully selected collection of books across different genres, subjects, and interests. Find your next favorite read at APNA LIBRARY.
                 </p>
             </div>
-            <div class="styles__grid" id="stylesGrid"></div>
+            <div class="styles__grid" id="stylesGrid">
+
+            </div>
         </div>
     </section>
 
@@ -304,14 +314,11 @@
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
-            <div class="products__grid">
+            <div class="products__grid" id="productsGrid">
                 
                 <article class="product">
                     <div class="product__media">
                         <img src="/images/2ndbook.jpg" alt="Check this one">
-                        <button class="product__wish" aria-label="Add to wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
                         <span class="product__add">
                             <i class="fa-solid fa-bag-shopping"></i>
                             Add to cart
@@ -334,9 +341,6 @@
                 <article class="product">
                     <div class="product__media">
                         <img src="/images/3rdbook.jpg" alt="Look at this">
-                        <button class="product__wish" aria-label="Add to wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
                         <span class="product__add">
                             <i class="fa-solid fa-bag-shopping"></i>
                             Add to cart
@@ -357,9 +361,6 @@
                 <article class="product">
                     <div class="product__media">
                         <img src="/images/11.jpg" alt="Most loved">
-                        <button class="product__wish" aria-label="Add to wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
                         <span class="product__add">
                             <i class="fa-solid fa-bag-shopping"></i>
                             Add to Cart
@@ -382,9 +383,6 @@
                 <article class="product">
                     <div class="product__media">
                         <img src="/images/7.jpg" alt="Most loved">
-                        <button class="product__wish" aria-label="Add to wishlist">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
                         <span class="product__add">
                             <i class="fa-solid fa-bag-shopping"></i>
                             Add to Cart
@@ -424,13 +422,10 @@
                 </div>
             </div>
             <div class="swiper picks-swiper">
-                <div class="swiper-wrapper">
+                <div class="swiper-wrapper" id="picksWrapper">
                     <article class="swiper-slide product">
                         <div class="product__media">
                             <img src="/images/1stbook.jpg" alt="Book name">
-                            <button class="product__wish" aria-label="Add to wishlist">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
                             <span class="product__add">
                                 <i class="fa-solid fa-bag-shopping"></i>
                                 Add to cart
@@ -451,9 +446,6 @@
                     <article class="swiper-slide product">
                         <div class="product__media">
                             <img src="/images/4.jpg" alt="Book name">
-                            <button class="product__wish" aria-label="Add to wishlist">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
                             <span class="product__add">
                                 <i class="fa-solid fa-bag-shopping"></i>
                                 Add to cart
@@ -474,9 +466,6 @@
                     <article class="swiper-slide product">
                         <div class="product__media">
                             <img src="/images/5.jpg" alt="Book name">
-                            <button class="product__wish" aria-label="Add to wishlist">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
                             <span class="product__add">
                                 <i class="fa-solid fa-bag-shopping"></i>
                                 Add to cart
@@ -497,9 +486,6 @@
                     <article class="swiper-slide product">
                         <div class="product__media">
                             <img src="/images/6.jpg" alt="Book name">
-                            <button class="product__wish" aria-label="Add to wishlist">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
                             <span class="product__add">
                                 <i class="fa-solid fa-bag-shopping"></i>
                                 Add to cart

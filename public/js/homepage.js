@@ -7,12 +7,40 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', onScroll);
     onScroll();
 
-    /* ---- mobile menu overlay + close on link click ---- */
+    /* ---- mobile navigation ---- */
     const menuBtn = document.getElementById('menu-btn');
+    const menuToggle = document.getElementById('menuToggle');
+    const menuClose = document.getElementById('menuClose');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    const setMenuOpen = (isOpen) => {
+        if (!menuBtn) return;
+        menuBtn.checked = isOpen;
+        if (menuToggle) {
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+            menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        }
+    };
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => setMenuOpen(!menuBtn?.checked));
+    }
+    if (menuClose) menuClose.addEventListener('click', () => setMenuOpen(false));
+    if (menuOverlay) menuOverlay.addEventListener('click', () => setMenuOpen(false));
+
     document.querySelectorAll('.menu a').forEach((link) => {
         link.addEventListener('click', () => {
-            if (menuBtn) menuBtn.checked = false;
+            // Keep normal anchors untouched so mobile browsers can follow them.
+            // Only the login link needs the drawer closed before its modal opens.
+            if (link.matches('[data-login-trigger]')) setMenuOpen(false);
         });
+    });
+    window.addEventListener('hashchange', () => setMenuOpen(false));
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menuBtn?.checked) {
+            setMenuOpen(false);
+            menuToggle?.focus();
+        }
     });
 
     /* ---- animated stat counters ---- */
@@ -58,14 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- featured books from database ---- */
     loadFeaturedBooks();
 
-    /* ---- book of the month ---- */
-    loadBookOfTheMonth();
-
-    /* ---- recent arrivals + swiper slider (init after data loads) ---- */
-    loadRecentArrivals().then(() => {
+    /* ---- book of the month + new arrivals (cart-driven, from homepage_cart.js) ---- */
+    loadHomepageProducts().then(() => {
         buildSlider('picks', {
             minSlides: 8,
-            slidesPerView: 1.2,
+            slidesPerView: 1,
             breakpoints: {
                 560: { slidesPerView: 2 },
                 900: { slidesPerView: 3 },
@@ -149,93 +174,6 @@ async function loadFeaturedBooks() {
     }
 }
 
-// For "Book of the Month" — random books from database ===============================//
-function buildProductCard(book) {
-    return `
-        <article class="product">
-            <div class="product__media">
-                <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
-                <button class="product__wish" aria-label="Add to wishlist">
-                    <i class="fa-regular fa-heart"></i>
-                </button>
-                <span class="product__add">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                    Add to cart
-                </span>
-            </div>
-            <div class="product__info">
-                <div class="product__stars">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <h3>${book.title}</h3>
-                <p class="product__price">Available</p>
-            </div>
-        </article>
-    `;
-}
-
-async function loadBookOfTheMonth() {
-    const grid = document.querySelector('.products__grid');
-    if (!grid) return;
-
-    try {
-        const response = await fetch('/api/books');
-        const books = await response.json();
-
-        const shuffled = [...books].sort(() => Math.random() - 0.5);
-        const selected = shuffled.slice(0, 4);
-
-        grid.innerHTML = selected.map(buildProductCard).join('');
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-// For "Recent Arrivals" — most recently added books ===============================//
-async function loadRecentArrivals() {
-    const wrapper = document.querySelector('.picks-swiper .swiper-wrapper');
-    if (!wrapper) return;
-
-    try {
-        const response = await fetch('/api/books');
-        const books = await response.json();
-
-        const recent = books.slice(0, 8);
-
-        wrapper.innerHTML = recent.map(book => `
-            <article class="swiper-slide product">
-                <div class="product__media">
-                    <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
-                    <button class="product__wish" aria-label="Add to wishlist">
-                        <i class="fa-regular fa-heart"></i>
-                    </button>
-                    <span class="product__add">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                        Add to cart
-                    </span>
-                </div>
-                <div class="product__info">
-                    <div class="product__stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                    </div>
-                    <h3>${book.title}</h3>
-                    <p class="product__price">Available</p>
-                </div>
-            </article>
-        `).join('');
-    } catch (err) {
-        console.error(err);
-    }
-}
-
 // ======Shared storage keys + session helpers (used by auth and reviews) ========//
 const LIB_REVIEWS_KEY = 'icfai_library_reviews';
 
@@ -263,7 +201,7 @@ function initAuth() {
     const overlay = document.getElementById('authOverlay');
     const modal = overlay ? overlay.querySelector('.auth-modal') : null;
     const closeBtn = document.getElementById('authClose');
-    const loginBtn = document.getElementById('loginBtn');
+    const loginButtons = document.querySelectorAll('[data-login-trigger], #loginBtn');
     const loginForm = document.getElementById('loginForm');
     const loginError = document.getElementById('loginError');
 
@@ -306,12 +244,14 @@ function initAuth() {
             const initials = getInitials(session.email);
             if (userAvatar) userAvatar.textContent = initials;
             if (userAvatarLg) userAvatarLg.textContent = initials;
-            if (userMenuName) userMenuName.textContent = session.email;
+            if (userMenuName) userMenuName.textContent = session.name || session.email.split('@')[0];
             if (userMenuEmail) userMenuEmail.textContent = session.email;
+            document.querySelectorAll('[data-menu-auth]').forEach((item) => { item.hidden = true; });
         } else {
             if (authLinks) authLinks.hidden = false;
             if (userBlock) userBlock.hidden = true;
             if (userBlock) userBlock.classList.remove('is-open');
+            document.querySelectorAll('[data-menu-auth]').forEach((item) => { item.hidden = false; });
         }
         document.dispatchEvent(new CustomEvent('libauthchange'));
     };
@@ -337,7 +277,9 @@ function initAuth() {
     };
 
     // Modal Event Listeners
-    if (loginBtn) loginBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+    loginButtons.forEach((button) => {
+        button.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+    });
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal(); });

@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  /* ---------- toast ---------- */
   const toastHost = document.createElement("div");
   toastHost.setAttribute("aria-live", "polite");
   Object.assign(toastHost.style, {
@@ -43,14 +42,12 @@
     }, 2600);
   }
 
-  /* ---------- stat card helpers ---------- */
-  const statCards = document.querySelectorAll(".stat-card strong");
-  // order in the markup: Books Borrowed, Due Soon, Wishlist Items, Books This Year
+  // expose toast globally so user-dashboard-data.js can use it too
+  window.libToast = toast;
+
+  /* wishlist: move an item into "borrowed" */
   const stat = {
-    borrowed: statCards[0],
-    dueSoon: statCards[1],
-    wishlist: statCards[2],
-    yearTotal: statCards[3],
+    wishlist: document.querySelectorAll(".stat-card strong")[2],
   };
 
   function bumpStat(el, delta) {
@@ -59,101 +56,6 @@
     el.textContent = Math.max(0, val + delta);
   }
 
-  /* ---------- due-date handling ---------- */
-  function parseDue(text) {
-    const d = new Date(text.trim());
-    return isNaN(d) ? null : d;
-  }
-
-  function daysUntil(date) {
-    const ms = date.setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0);
-    return Math.round(ms / 86400000);
-  }
-
-  function formatDate(date) {
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  }
-
-  function refreshCardStatus(card) {
-    const dueEl = card.querySelector(".book-card__due strong");
-    const statusEl = card.querySelector(".book-card__status");
-    if (!dueEl || !statusEl) return;
-    const due = parseDue(dueEl.textContent);
-    if (!due) return;
-    const days = daysUntil(due);
-    statusEl.classList.remove("book-card__status--warn");
-    if (days < 0) {
-      statusEl.textContent = "Overdue";
-      statusEl.classList.add("book-card__status--warn");
-    } else if (days <= 2) {
-      statusEl.textContent = days === 0 ? "Due today" : `Due in ${days} day${days === 1 ? "" : "s"}`;
-      statusEl.classList.add("book-card__status--warn");
-    } else {
-      statusEl.textContent = "On time";
-    }
-  }
-
-  function countDueSoon() {
-    const cards = document.querySelectorAll(".book-card");
-    let count = 0;
-    cards.forEach((card) => {
-      const dueEl = card.querySelector(".book-card__due strong");
-      if (!dueEl) return;
-      const due = parseDue(dueEl.textContent);
-      if (due && daysUntil(due) <= 2) count++;
-    });
-    if (stat.dueSoon) stat.dueSoon.textContent = count;
-  }
-
-  /* ---------- renew a loan ---------- */
-  function renewCard(card) {
-    const dueEl = card.querySelector(".book-card__due strong");
-    if (!dueEl) return;
-    const due = parseDue(dueEl.textContent) || new Date();
-    due.setDate(due.getDate() + 14);
-    dueEl.textContent = formatDate(due);
-    refreshCardStatus(card);
-
-    const title = card.querySelector("h3")?.textContent ?? "Book";
-    toast(`Renewed "${title}" — new due date ${formatDate(due)}`);
-    countDueSoon();
-  }
-
-  document.querySelectorAll(".book-card__actions .primary").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const card = btn.closest(".book-card");
-      if (card) renewCard(card);
-    });
-  });
-
-  document.querySelectorAll(".book-card__actions button:not(.primary)").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const title = btn.closest(".book-card")?.querySelector("h3")?.textContent ?? "this book";
-      toast(`Details for "${title}" coming soon`);
-    });
-  });
-
-  /* ---------- top "due soon" alert banner ---------- */
-  const alertBanner = document.querySelector(".alert");
-  const alertRenewBtn = alertBanner?.querySelector(".btn");
-  if (alertRenewBtn) {
-    alertRenewBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      // renew whichever card is currently flagged due-soon/overdue
-      const flagged = document.querySelector(".book-card__status--warn")?.closest(".book-card");
-      if (flagged) renewCard(flagged);
-      alertBanner.style.transition = "opacity .25s ease, transform .25s ease";
-      alertBanner.style.opacity = "0";
-      alertBanner.style.transform = "translateY(-6px)";
-      setTimeout(() => alertBanner.remove(), 250);
-    });
-  }
-
-  /* ---------- wishlist: move an item into "borrowed" ---------- */
   document.querySelectorAll(".wish-item__action").forEach((btn) => {
     btn.addEventListener("click", () => {
       const item = btn.closest(".wish-item");
@@ -165,13 +67,12 @@
       setTimeout(() => {
         item.remove();
         bumpStat(stat.wishlist, -1);
-        bumpStat(stat.borrowed, 1);
-        toast(`"${title}" moved to your borrowed books`);
+        toast(`"${title}" — wishlist checkout isn't connected yet`);
       }, 250);
     });
   });
 
-  /* ---------- account settings form ---------- */
+  /* account settings form */
   const accountForm = document.querySelector(".account__fields");
   if (accountForm) {
     accountForm.addEventListener("submit", (e) => {
@@ -184,7 +85,7 @@
     });
   }
 
-  /* ---------- nav scrollspy ---------- */
+  /* nav scrollspy */
   const navLinks = Array.from(document.querySelectorAll(".menu a"));
   const sections = navLinks
     .map((link) => {
@@ -208,8 +109,4 @@
   }
 
   window.addEventListener("scroll", updateActiveLink, { passive: true });
-
-  /* ---------- init ---------- */
-  document.querySelectorAll(".book-card").forEach(refreshCardStatus);
-  countDueSoon();
 })();

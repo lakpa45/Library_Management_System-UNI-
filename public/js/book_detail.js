@@ -1,66 +1,70 @@
-function libEscapeHtmlDetail(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+document.addEventListener('DOMContentLoaded', loadBookDetail);
+
+async function loadBookDetail() {
+  const params = new URLSearchParams(window.location.search);
+  const bookId = params.get('id');
+
+  const loading = document.getElementById('bookLoading');
+  const content = document.getElementById('bookDetailContent');
+  const notFound = document.getElementById('bookNotFound');
+
+  if (!bookId) {
+    loading.hidden = true;
+    notFound.hidden = false;
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/books/${bookId}`);
+
+    if (!res.ok) {
+      loading.hidden = true;
+      notFound.hidden = false;
+      return;
+    }
+
+    const book = await res.json();
+    populateBookDetail(book);
+
+    loading.hidden = true;
+    content.hidden = false;
+  } catch (err) {
+    console.error('Failed to load book:', err);
+    loading.hidden = true;
+    notFound.hidden = false;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const loadingEl = document.getElementById('bookLoading');
-    const contentEl = document.getElementById('bookDetailContent');
-    const notFoundEl = document.getElementById('bookNotFound');
+function populateBookDetail(book) {
+  document.getElementById('bookCover').src = book.cover_image || '/images/placeholder-book.jpg';
+  document.getElementById('bookCover').alt = book.title;
+  document.getElementById('bookCategory').textContent = book.category_name || '';
+  document.getElementById('bookTitle').textContent = book.title;
+  document.getElementById('bookIsbn').textContent = book.isbn ? `ISBN: ${book.isbn}` : '';
+  document.getElementById('bookDescription').textContent = book.description || '';
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+  const availEl = document.getElementById('bookAvailability');
+  const available = Number(book.available_copies) > 0;
+  availEl.textContent = available
+    ? `${book.available_copies} of ${book.total_copies} copies available`
+    : 'Currently unavailable';
+  availEl.className = available
+    ? 'mt-4 font-semibold text-sm inline-block px-3 py-1 rounded-full bg-green-100 text-green-700'
+    : 'mt-4 font-semibold text-sm inline-block px-3 py-1 rounded-full bg-red-100 text-red-700';
 
-    if (!id) {
-        loadingEl.hidden = true;
-        notFoundEl.hidden = false;
-        return;
-    }
+  const btn = document.getElementById('bookAddToCart');
+  const alreadyInCart = isInCart(book.book_id);
+  updateAddToCartButton(btn, alreadyInCart);
 
-    try {
-        const response = await fetch('/api/books/' + encodeURIComponent(id));
+  btn.addEventListener('click', () => {
+    addToCart(book);
+    window.location.href = '/add_to_cart.html';
+  });
+}
 
-        if (response.status === 404) {
-            loadingEl.hidden = true;
-            notFoundEl.hidden = false;
-            return;
-        }
-        if (!response.ok) throw new Error('Failed to load book');
-
-        const book = await response.json();
-
-        document.getElementById('bookCover').src = book.cover_image || '/images/1stbook.jpg';
-        document.getElementById('bookCover').alt = book.title || 'Book cover';
-        document.getElementById('bookTitle').textContent = book.title || 'Untitled';
-        document.getElementById('bookCategory').textContent = book.category_name || 'Uncategorized';
-        document.getElementById('bookIsbn').textContent = book.isbn ? `ISBN: ${book.isbn}` : '';
-        document.getElementById('bookDescription').textContent = book.description || 'No description available.';
-
-        const available = Number(book.available_copies) || 0;
-        const total = Number(book.total_copies) || 0;
-        const availabilityEl = document.getElementById('bookAvailability');
-
-        if (total === 0) {
-            availabilityEl.textContent = 'No copies in catalog';
-            availabilityEl.classList.add('bg-red-50', 'text-red-600');
-        } else if (available > 0) {
-            availabilityEl.textContent = `${available} of ${total} copies available`;
-            availabilityEl.classList.add('bg-green-50', 'text-green-700');
-        } else {
-            availabilityEl.textContent = 'All copies currently checked out';
-            availabilityEl.classList.add('bg-red-50', 'text-red-600');
-        }
-
-        document.title = `${book.title || 'Book'} — APNA Library`;
-
-        loadingEl.hidden = true;
-        contentEl.hidden = false;
-    } catch (err) {
-        console.error('Failed to load book:', err);
-        loadingEl.hidden = true;
-        notFoundEl.hidden = false;
-    }
-});
+function updateAddToCartButton(btn, inCart) {
+  btn.disabled = inCart;
+  btn.innerHTML = inCart
+    ? '<i class="fa-solid fa-check"></i> In Cart'
+    : '<i class="fa-solid fa-bag-shopping"></i> Add to cart';
+}

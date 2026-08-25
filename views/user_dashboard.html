@@ -27,7 +27,7 @@
   <div class="container page-head__row">
     <div>
       <span class="eyebrow">MY DASHBOARD</span>
-      <h1>Welcome back, Lakpa</h1>
+      <h1>Welcome back, <span id="userDashboardName"></span></h1>
       <p>Here's what's happening with your books, holds, and wishlist this week.</p>
     </div>
     <a href="/index.html#products" class="btn btn--dark"><i class="fa-solid fa-magnifying-glass"></i> Find a book</a>
@@ -83,7 +83,7 @@
             <button class="primary">Renew</button>
             <button>Details</button>
           </div>
-        </div>
+        </div> 
       </article>
       <article class="book-card">
         <div class="book-card__media">
@@ -274,6 +274,9 @@
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+
+<script src="/js/user_dashboard_data.js"></script>
 <script src="/js/user_dashboard.js"></script>
+
 </body>
 </html>

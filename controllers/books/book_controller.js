@@ -159,3 +159,23 @@ export const getBookById = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// GET all books that currently have at least one available copy
+export const getAvailableBooks = async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT b.book_id, b.title, b.cover_image, c.category_name,
+                    COUNT(bc.copy_id) FILTER (WHERE bc.status = 'Available') AS available_copies
+             FROM book b
+             LEFT JOIN category c ON b.category_id = c.category_id
+             JOIN book_copy bc ON bc.book_id = b.book_id
+             GROUP BY b.book_id, c.category_name
+             HAVING COUNT(bc.copy_id) FILTER (WHERE bc.status = 'Available') > 0
+             ORDER BY b.title ASC`
+        );
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
