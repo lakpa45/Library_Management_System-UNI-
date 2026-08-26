@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="/js/admin-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+    <link href="/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin_style.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: { display: ['"Lora"', 'serif'], body: ['"Inter"', 'sans-serif'] },
+                colors: { forest: '#2F4C39', ink: '#1B2A22', 'ink-light': '#8A7B5C' }
+            }}
+        };
+    </script>
+    <style>.card-edge{box-shadow:0 1px 2px rgba(27,42,34,.05);}</style>
+</head>
+
+<body class="font-body text-ink min-h-screen flex bg-[#FBF8F2]">
+    <script src="/js/admin_dashboard_guard.js"></script>
+    <!-- SIDEBAR -->
+    <aside class="w-64 shrink-0 min-h-screen bg-[#1e3a5f] text-[#F3EADA] flex flex-col border-r-4 border-[#A9834F]">
+        <!-- Brand -->
+        <div class="px-6 py-7 border-b border-white/10">
+            <p class="font-display text-2xl tracking-tight text-white">
+                BOOKS
+            </p>
+            <p class="text-[11px] uppercase tracking-[0.2em] text-[#C9D9CF] mt-1">
+                Librarian Console
+            </p>
+        </div>
+        <!-- Navigation -->
+        <nav class="flex-1 py-5">
+            <!-- Overview -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mb-2">Overview</p>
+            <a href="#"
+                class="drawer-tab active relative flex items-center gap-3 px-6 py-3 text-sm font-medium transition">
+                Dashboard
+            </a>
+            <!-- Catalog -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mt-6 mb-2">Catalog</p>
+            <a href="/admin/admin_bk_category.html"
+                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Books
+            </a>
+            <!-- Circulation -->
+            <p class="px-6 text-[10px] uppercase tracking-[0.15em] text-white/40 mt-6 mb-2">Circulation</p>
+            <a href="/admin/admin_borrow_ret_bk.html"
+                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Borrow / Return
+            </a>
+            <a href="/admin/members.html"
+                class="drawer-tab relative flex items-center gap-3 px-6 py-3 text-sm text-white/75 hover:bg-white/5 hover:text-white transition">
+                Members
+            </a>
+        </nav>
+        <!-- Sidebar Footer -->
+        <div class="px-6 py-4 border-t border-white/10">
+            <p class="font-mono text-xs text-[#C9D9CF]/60">Term catalog · Aug 2026</p>
+            <p class="text-[10px] text-white/30 mt-1">Librarian Workspace</p>
+        </div>
+    </aside>
+    <!--  MAIN AREA  -->
+    <main class="flex-1 flex flex-col min-w-0 min-h-screen">
+        <!-- TOP BAR -->
+        <header class="bg-white border-b border-[#E4D9C4] px-8 py-4 flex items-center justify-between card-edge">
+            <!-- Page Title -->
+            <div>
+                <h1 class="font-display text-2xl text-forest">
+                    Reading Room Overview
+                </h1>
+                <p id="today-date" class="text-xs text-ink-light mt-0.5">
+                </p>
+            </div>
+            <!-- Header Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Librarian Profile -->
+                <div class="relative">
+                    <button type="button" onclick="toggleAdminMenu()"
+                        class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition duration-200">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-medium text-ink" id="librarianName">Librarian</p>
+                            <p class="text-[10px] text-ink-light">Circulation Desk</p>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-full bg-forest text-white flex items-center justify-center font-display">
+                            L
+                        </div>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div id="adminMenu"
+                        class="hidden absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg border border-[#A9834F]/30 py-2 z-50">
+                        <a href="/admin-profile.html"
+                            class="block px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">My Profile</a>
+                        <!-- Change Password -->
+                        <button type="button" onclick="openPasswordModal()"
+                            class="w-full text-left px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">
+                            Change Password
+                        </button>
+                        <div class="border-t border-gray-200 my-1"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-ink hover:bg-[#F3EADA] transition">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Change Password Modal -->
+        <div id="passwordModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
+
+            <div class="bg-white w-[90%] max-w-md rounded-xl shadow-2xl p-6">
+
+                <div class="flex items-center justify-between mb-5">
+                    <h2 class="text-xl font-bold text-[#1B2A22]">
+                        Change Password
+                    </h2>
+
+                    <button onclick="closePasswordModal()" class="text-gray-500 hover:text-red-600 text-xl">
+                        &times;
+                    </button>
+                </div>
+
+                <form onsubmit="changePassword(event)">
+
+                    <!-- Current Password -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Current Password
+                    </label>
+
+                    <input id="currentPassword" type="password" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                        placeholder="Enter current password">
+
+                    <!-- New Password -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        New Password
+                    </label>
+
+                    <input id="newPassword" type="password" required minlength="6"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                        placeholder="Enter new password">
+
+                    <!-- Confirm Password -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm New Password
+                    </label>
+
+                    <input id="confirmPassword" type="password" required minlength="6"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9972F]"
+                        placeholder="Confirm new password">
+
+                    <p id="passwordMessage" class="text-sm mb-4"></p>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closePasswordModal()"
+                            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                            class="px-4 py-2 rounded-lg bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold">
+                            Change Password
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <!-- CONTENT -->
+        <div class="p-8 space-y-6 overflow-y-auto">
+            <!-- STAT CARDS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 fade-in">
+                <!-- Total Books -->
+                <div
+                    class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Total Books</p>
+                            <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-books">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Borrowers -->
+                <div
+                    class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Active Borrowers</p>
+                            <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-borrowers">0</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Overdue -->
+                <div
+                    class="bg-white rounded-2xl shadow-lg p-5 text-center hover:shadow-2xl hover:-translate-y-2 transition duration-300">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wider text-[#8A7B5C]">Overdue Items</p>
+                            <p class="font-display text-3xl text-[#8A7B5C] mt-1" id="stat-overdue">0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ACTIVITY + DUE -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Activity -->
+                <div class="lg:col-span-2 bg-white rounded-xl card-edge border border-[#E4D9C4] overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-[#E4D9C4]">
+                        <h2 class="font-display text-lg text-forest">Recent Circulation Activity</h2>
+                        <button
+                            class="text-xs font-medium text-[#B6862A] hover:text-[#C9972F] border border-[#C9972F]/40 hover:border-[#C9972F] rounded-full px-3 py-1 transition">View
+                            ledger</button>
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr
+                                class="text-left text-[11px] uppercase tracking-wider text-[#8A7B5C] border-b border-[#E4D9C4]">
+                                <th class="px-5 py-3 font-medium">Member</th>
+                                <th class="px-5 py-3 font-medium">Title</th>
+                                <th class="px-5 py-3 font-medium">Action</th>
+                                <th class="px-5 py-3 font-medium">Date</th>
+                                <th class="px-5 py-3 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-body" class="divide-y divide-[#E4D9C4]"></tbody>
+                    </table>
+                </div>
+                <!-- Due Soon -->
+                <div class="bg-white rounded-xl card-edge border border-[#E4D9C4] overflow-hidden flex flex-col">
+                    <div class="px-5 py-4 border-b border-[#E4D9C4]">
+                        <h2 class="font-display text-lg text-forest">Due for Return</h2>
+                        <p class="text-xs text-[#8A7B5C]">Sorted by urgency</p>
+                    </div>
+                    <ul id="due-list" class="divide-y divide-[#E4D9C4] overflow-y-auto max-h-[420px]"></ul>
+                </div>
+            </section>
+            <!-- QUICK ACTIONS -->
+            <section
+                class="bg-[#1e3a5f] rounded-xl px-6 py-5 flex flex-wrap items-center gap-4 card-edge border border-[#A9834F]/40">
+                <!-- Title -->
+                <span class="font-display text-[#F3EADA] text-lg mr-2">Quick Actions</span>
+                <!-- Add New Book -->
+                <a href="/admin/admin_bk_category.html"
+                    class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+                    + Add New Book
+                </a>
+                <!-- Register Member -->
+                <a href="/admin/members.html"
+                    class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+                    Register Member
+                </a>
+                <!-- Issue Book -->
+                <a href="/admin/admin_borrow_ret_bk.html"
+                    class="bg-[#C9972F] hover:bg-[#B6862A] text-[#1B2A22] font-semibold text-sm rounded-full px-4 py-2 transition duration-200">
+                    Issue Book
+                </a>
+
+            </section>
+    </main>
+    <script src="/js/librarian_dashboard.js"></script>
+</body>
+
+</html>
