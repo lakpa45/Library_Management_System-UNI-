@@ -292,20 +292,33 @@ function initAuth() {
         const formData = new FormData(loginForm);
         const email = (formData.get('email') || '').trim().toLowerCase();
         const password = formData.get('password') || '';
+        const role = formData.get('role');
+
+        if (role !== 'admin' && role !== 'user') {
+            loginError.textContent = 'Please select a role.';
+            return;
+        }
+
+        const isAdmin = role === 'admin';
 
         try {
-            const response = await fetch('/api/auth/signin', {
+            const response = await fetch(isAdmin ? '/api/auth/librarian/signin' : '/api/auth/signin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password, role })
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('token', result.token);
+                localStorage.setItem(isAdmin ? 'adminToken' : 'token', result.token);
                 closeModal();
+                if (isAdmin) {
+                    window.location.href = '/admin/dashboard';
+                    return;
+                }
                 renderAuthState();
+                window.location.href = '/user_dashboard.html';
             } else {
                 loginError.textContent = result.message || 'Invalid credentials';
             }

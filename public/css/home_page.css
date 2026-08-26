@@ -716,7 +716,8 @@ section {
     color: var(--ink);
 }
 
-.auth-field input {
+.auth-field input,
+.auth-field select {
     border: 1px solid var(--line);
     border-radius: 10px;
     padding: 11px 14px;
@@ -728,7 +729,8 @@ section {
     transition: border-color 0.2s ease;
 }
 
-.auth-field input:focus {
+.auth-field input:focus,
+.auth-field select:focus {
     border-color: var(--accent);
 }
 

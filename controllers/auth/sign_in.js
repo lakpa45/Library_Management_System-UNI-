@@ -4,7 +4,11 @@ import pool from '../../db/connection.js';
 
 export const signin = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role = 'user' } = req.body;
+
+        if (role !== 'user') {
+            return res.status(400).json({ message: 'Please use the selected role to sign in.' });
+        }
 
         const member = await pool.query(
             'SELECT * FROM member WHERE email = $1',
@@ -21,7 +25,7 @@ export const signin = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: member.member_id, email: member.email },
+            { id: member.member_id, email: member.email, role: 'user' },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );

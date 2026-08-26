@@ -551,6 +551,13 @@
                     Password
                     <input type="password" name="password" required placeholder="••••••••">
                 </label>
+                <label class="auth-field">
+                    Role
+                    <select id="loginRole" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="user" selected>User</option>
+                    </select>
+                </label>
                 <p class="auth-error" id="loginError"></p>
                 <button type="submit" class="btn btn--accent auth-submit">Login</button>
                 <p class="auth-switch">New here? <a href="/register.html" class="auth-switch__link">Register now</a></p>

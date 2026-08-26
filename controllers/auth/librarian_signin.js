@@ -4,7 +4,11 @@ import pool from '../../db/connection.js';
 
 export const librarianSignin = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role = 'admin' } = req.body;
+
+        if (role !== 'admin') {
+            return res.status(400).json({ message: 'Please use the selected role to sign in.' });
+        }
 
         const result = await pool.query(
             'SELECT * FROM admins WHERE email = $1',
