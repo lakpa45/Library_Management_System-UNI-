@@ -1,615 +1,590 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Commerce | ICFAI Library</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,500&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-:root{
-    --ink:#0e0e10;
-    --muted:#6b6b73;
-    --line:#e7e7ea;
-    --accent:#f5b301;
-    --accent-ink:#3a2a00;
-    --maxw:1280px;
-}
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:linear-gradient(180deg,#fff,#fdf8ee);
-    color:var(--ink);
-}
-
-a{
-    text-decoration:none;
-    color:inherit;
-}
-
-h1,h2,h3{
-    font-family:'Chakra Petch',sans-serif;
-}
-
-/* HEADER */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:rgba(255,255,255,.95);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-}
-
-.navbar{
-    max-width:1408px;
-    height:74px;
-    margin:auto;
-    padding:0 clamp(18px,5vw,64px);
-    display:flex;
-    align-items:center;
-    gap:30px;
-}
-
-.brand{
-    font-family:'Chakra Petch';
-    font-size:1.7rem;
-    font-weight:700;
-    letter-spacing:4px;
-}
-
-.nav{
-    margin-right:auto;
-}
-
-.menu{
-    display:flex;
-    gap:5px;
-    list-style:none;
-}
-
-.menu a{
-    padding:10px 15px;
-    font-family:'Chakra Petch';
-    font-size:.92rem;
-}
-
-.menu a:hover{
-    color:var(--accent-ink);
-}
-
-.back-btn{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 17px;
-    border-radius:30px;
-    background:var(--accent);
-    color:var(--accent-ink);
-    font-family:'Chakra Petch';
-    font-weight:600;
-}
-
-/* HERO */
-
-.page-hero{
-    padding:90px 18px 70px;
-}
-
-.page-hero-inner{
-    max-width:var(--maxw);
-    margin:auto;
-}
-
-.breadcrumb{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    color:var(--muted);
-    font-size:.8rem;
-    margin-bottom:25px;
-}
-
-.eyebrow{
-    display:inline-block;
-    padding:5px 12px;
-    border-radius:30px;
-    background:var(--accent);
-    color:var(--accent-ink);
-    font-family:'Chakra Petch';
-    font-size:.7rem;
-    font-weight:600;
-    letter-spacing:2px;
-}
-
-.page-hero h1{
-    font-size:clamp(3rem,6vw,5rem);
-    margin-top:15px;
-}
-
-.page-hero h1 span{
-    font-family:'Playfair Display';
-    font-style:italic;
-    color:var(--accent-ink);
-}
-
-.page-hero p{
-    max-width:700px;
-    margin-top:15px;
-    color:var(--muted);
-    line-height:1.7;
-}
-
-.category-info{
-    display:flex;
-    gap:35px;
-    margin-top:30px;
-}
-
-.info-item strong{
-    display:block;
-    font-family:'Chakra Petch';
-    font-size:1.6rem;
-}
-
-.info-item span{
-    color:var(--muted);
-    font-size:.75rem;
-}
-
-/* BOOK SECTION */
-
-.books-section{
-    padding:70px 18px 100px;
-    background:#fff;
-}
-
-.books-container{
-    max-width:var(--maxw);
-    margin:auto;
-}
-
-.section-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
-}
-
-.section-top h2{
-    font-size:2rem;
-}
-
-.sort-box{
-    padding:10px 15px;
-    border:1px solid var(--line);
-    border-radius:30px;
-    background:white;
-    font-family:'Poppins';
-}
-
-/* GRID */
-
-.books-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
-}
-
-.book-card{
-    overflow:hidden;
-    background:white;
-    border:1px solid var(--line);
-    border-radius:20px;
-    transition:.3s;
-}
-
-.book-card:hover{
-    transform:translateY(-7px);
-    box-shadow:0 20px 40px rgba(0,0,0,.1);
-}
-
-/* COVERS */
-
-.book-cover{
-    height:260px;
-    display:grid;
-    place-items:center;
-    position:relative;
-    background:linear-gradient(145deg,#ffe9a8,#f5c83d);
-    color:rgba(58,42,0,.45);
-    font-size:5rem;
-}
-
-.book-card:nth-child(2) .book-cover{
-    background:linear-gradient(145deg,#e5e9f0,#b9c1cf);
-}
-
-.book-card:nth-child(3) .book-cover{
-    background:linear-gradient(145deg,#f5e4b8,#dfc77f);
-}
-
-.book-card:nth-child(4) .book-cover{
-    background:linear-gradient(145deg,#f3e9df,#e5c6a8);
-}
-
-.book-card:nth-child(5) .book-cover{
-    background:linear-gradient(145deg,#dfeee8,#a9d5c7);
-}
-
-.book-card:nth-child(6) .book-cover{
-    background:linear-gradient(145deg,#eee2f3,#cdb6d8);
-}
-
-.book-card:nth-child(7) .book-cover{
-    background:linear-gradient(145deg,#f6dede,#e6b5b5);
-}
-
-.book-card:nth-child(8) .book-cover{
-    background:linear-gradient(145deg,#dfe9f4,#aebfd5);
-}
-
-.book-tag{
-    position:absolute;
-    top:14px;
-    left:14px;
-    padding:5px 10px;
-    border-radius:30px;
-    background:var(--ink);
-    color:white;
-    font-family:'Chakra Petch';
-    font-size:.65rem;
-}
-
-.book-info{
-    padding:18px;
-}
-
-.book-category{
-    color:var(--accent-ink);
-    font-family:'Chakra Petch';
-    font-size:.7rem;
-    font-weight:600;
-    text-transform:uppercase;
-}
-
-.book-info h3{
-    font-size:1.05rem;
-    margin:6px 0;
-}
-
-.book-info p{
-    color:var(--muted);
-    font-size:.75rem;
-    line-height:1.6;
-}
-
-.book-btn{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-    margin-top:15px;
-    padding:10px 15px;
-    border-radius:30px;
-    background:var(--ink);
-    color:white;
-    font-family:'Chakra Petch';
-    font-weight:600;
-    font-size:.75rem;
-    border:none;
-    cursor:pointer;
-}
-
-.book-btn:hover{
-    background:var(--accent);
-    color:var(--accent-ink);
-}
-
-
-/* RESPONSIVE */
-
-@media(max-width:1000px){
-
-    .books-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .menu{
-        display:none;
-    }
-}
-
-@media(max-width:600px){
-
-    .navbar{
-        height:65px;
-    }
-
-    .brand{
-        font-size:1.3rem;
-    }
-
-    .back-btn{
-        margin-left:auto;
-        padding:9px 13px;
-        font-size:.75rem;
-    }
-
-    .page-hero{
-        padding-top:60px;
-    }
-
-    .page-hero h1{
-        font-size:3rem;
-    }
-
-    .category-info{
-        gap:20px;
-    }
-
-    .books-grid{
-        grid-template-columns:1fr;
-    }
-
-    .section-top{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
-    }
-
-    .sort-box{
-        width:100%;
-    }
-}
-</style>
-<link rel="stylesheet" href="/css/output.css">
-</head>
-<body data-category-id="1">
-    
-<header class="header">
-<div class="navbar">
-<a href="index.html" class="brand">ICFAI</a>
-<nav class="nav">
-<ul class="menu">
-<li><a href="index.html">Home</a></li>
-<li><a href="bookcategory.html">Categories</a></li>
-<li><a href="index.html#popular">Popular</a></li>
-<li><a href="index.html#recent">Recent Books</a></li>
-</ul>
-</nav>
-<a href="bookcategory.html" class="back-btn">
-<i class="fa-solid fa-arrow-left"></i>
-Categories
-</a>
-</div>
-</header>
-<section class="page-hero">
-<div class="page-hero-inner">
-<div class="breadcrumb">
-<a href="index.html">Home</a>
-<i class="fa-solid fa-chevron-right"></i>
-<a href="bookcategory.html">Categories</a>
-<i class="fa-solid fa-chevron-right"></i>
-<strong>Commerce</strong>
-</div>
-<span class="eyebrow">
-BOOK CATEGORY
-</span>
-<h1>
-Explore <span>Commerce</span>
-</h1>
-<p>
-Explore a comprehensive collection of commerce books covering
-accounting, finance, economics, taxation, business studies,
-marketing and entrepreneurship.
-</p>
-<div class="category-info">
-<div class="info-item">
-<strong>190+</strong>
-<span>Books Available</span>
-</div>
-<div class="info-item">
-<strong>95+</strong>
-<span>Authors</span>
-</div>
-<div class="info-item">
-<strong>10</strong>
-<span>Sub Categories</span>
-</div>
-</div>
-</div>
-</section>
-<section class="books-section">
-<div class="books-container">
-<div class="section-top">
-<h2>
-Commerce Collection
-</h2>
-<select class="sort-box">
-<option>Sort: Latest</option>
-<option>Sort: A-Z</option>
-<option>Sort: Popular</option>
-</select>
-</div>
-<div class="books-grid">
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">NEW</span>
-<i class="fa-solid fa-calculator"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Accounting
-</span>
-<h3>
-Financial Accounting
-</h3>
-<p>
-Learn accounting principles, financial statements and bookkeeping methods.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">POPULAR</span>
-<i class="fa-solid fa-money-bill-trend-up"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Finance
-</span>
-<h3>
-Financial Management
-</h3>
-<p>
-Explore investment, financial planning, markets and management principles.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-chart-line"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Economics
-</span>
-<h3>
-Business Economics
-</h3>
-<p>
-Understand markets, demand, supply, economic policies and business decisions.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-bullhorn"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Marketing
-</span>
-<h3>
-Marketing Management
-</h3>
-<p>
-Explore marketing strategies, consumer behaviour, branding and promotion.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-building"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Business Studies
-</span>
-<h3>
-Business Management
-</h3>
-<p>
-Study business organisations, management practices and corporate operations.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-file-invoice-dollar"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Taxation
-</span>
-<h3>
-Taxation Studies
-</h3>
-<p>
-Learn about taxation principles, tax systems, compliance and planning.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-lightbulb"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-Entrepreneurship
-</span>
-<h3>
-Entrepreneurship</h3>
-<p>
-Discover business ideas, startups, innovation and entrepreneurial strategies.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-globe"></i>
-</div>
-<div class="book-info">
-<span class="book-category">
-International Business
-</span>
-<h3>
-International Commerce
-</h3>
-<p>
-Explore global trade, international markets and cross-border business.
-</p>
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-</div>
-</div>
-</section>
-<!-- Footer -->
-    <footer id="contact" class="bg-stone-800 text-white py-10"> <!--  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Commerce | ICFAI Library</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,500&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --ink: #0e0e10;
+        --muted: #6b6b73;
+        --line: #e7e7ea;
+        --accent: #f5b301;
+        --accent-ink: #3a2a00;
+        --maxw: 1280px;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(180deg, #fff, #fdf8ee);
+        color: var(--ink);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Chakra Petch", sans-serif;
+      }
+
+      /* HEADER */
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .navbar {
+        max-width: 1408px;
+        height: 74px;
+        margin: auto;
+        padding: 0 clamp(18px, 5vw, 64px);
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+
+      .brand {
+        font-family: "Chakra Petch";
+        font-size: 1.7rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+      }
+
+      .nav {
+        margin-right: auto;
+      }
+
+      .menu {
+        display: flex;
+        gap: 5px;
+        list-style: none;
+      }
+
+      .menu a {
+        padding: 10px 15px;
+        font-family: "Chakra Petch";
+        font-size: 0.92rem;
+      }
+
+      .menu a:hover {
+        color: var(--accent-ink);
+      }
+
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 17px;
+        border-radius: 30px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-family: "Chakra Petch";
+        font-weight: 600;
+      }
+
+      /* HERO */
+
+      .page-hero {
+        padding: 90px 18px 70px;
+      }
+
+      .page-hero-inner {
+        max-width: var(--maxw);
+        margin: auto;
+      }
+
+      .breadcrumb {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.8rem;
+        margin-bottom: 25px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 30px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-family: "Chakra Petch";
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+      }
+
+      .page-hero h1 {
+        font-size: clamp(3rem, 6vw, 5rem);
+        margin-top: 15px;
+      }
+
+      .page-hero h1 span {
+        font-family: "Playfair Display";
+        font-style: italic;
+        color: var(--accent-ink);
+      }
+
+      .page-hero p {
+        max-width: 700px;
+        margin-top: 15px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .category-info {
+        display: flex;
+        gap: 35px;
+        margin-top: 30px;
+      }
+
+      .info-item strong {
+        display: block;
+        font-family: "Chakra Petch";
+        font-size: 1.6rem;
+      }
+
+      .info-item span {
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      /* BOOK SECTION */
+
+      .books-section {
+        padding: 70px 18px 100px;
+        background: #fff;
+      }
+
+      .books-container {
+        max-width: var(--maxw);
+        margin: auto;
+      }
+
+      .section-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .section-top h2 {
+        font-size: 2rem;
+      }
+
+      .sort-box {
+        padding: 10px 15px;
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        background: white;
+        font-family: "Poppins";
+      }
+
+      /* GRID */
+
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .book-card {
+        overflow: hidden;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        transition: 0.3s;
+      }
+
+      .book-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      /* COVERS */
+
+      .book-cover {
+        height: 260px;
+        display: grid;
+        place-items: center;
+        position: relative;
+        background: linear-gradient(145deg, #ffe9a8, #f5c83d);
+        color: rgba(58, 42, 0, 0.45);
+        font-size: 5rem;
+      }
+
+      .book-card:nth-child(2) .book-cover {
+        background: linear-gradient(145deg, #e5e9f0, #b9c1cf);
+      }
+
+      .book-card:nth-child(3) .book-cover {
+        background: linear-gradient(145deg, #f5e4b8, #dfc77f);
+      }
+
+      .book-card:nth-child(4) .book-cover {
+        background: linear-gradient(145deg, #f3e9df, #e5c6a8);
+      }
+
+      .book-card:nth-child(5) .book-cover {
+        background: linear-gradient(145deg, #dfeee8, #a9d5c7);
+      }
+
+      .book-card:nth-child(6) .book-cover {
+        background: linear-gradient(145deg, #eee2f3, #cdb6d8);
+      }
+
+      .book-card:nth-child(7) .book-cover {
+        background: linear-gradient(145deg, #f6dede, #e6b5b5);
+      }
+
+      .book-card:nth-child(8) .book-cover {
+        background: linear-gradient(145deg, #dfe9f4, #aebfd5);
+      }
+
+      .book-tag {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        padding: 5px 10px;
+        border-radius: 30px;
+        background: var(--ink);
+        color: white;
+        font-family: "Chakra Petch";
+        font-size: 0.65rem;
+      }
+
+      .book-info {
+        padding: 18px;
+      }
+
+      .book-category {
+        color: var(--accent-ink);
+        font-family: "Chakra Petch";
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .book-info h3 {
+        font-size: 1.05rem;
+        margin: 6px 0;
+      }
+
+      .book-info p {
+        color: var(--muted);
+        font-size: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .book-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 15px;
+        padding: 10px 15px;
+        border-radius: 30px;
+        background: var(--ink);
+        color: white;
+        font-family: "Chakra Petch";
+        font-weight: 600;
+        font-size: 0.75rem;
+        border: none;
+        cursor: pointer;
+      }
+
+      .book-btn:hover {
+        background: var(--accent);
+        color: var(--accent-ink);
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 1000px) {
+        .books-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .menu {
+          display: none;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .navbar {
+          height: 65px;
+        }
+
+        .brand {
+          font-size: 1.3rem;
+        }
+
+        .back-btn {
+          margin-left: auto;
+          padding: 9px 13px;
+          font-size: 0.75rem;
+        }
+
+        .page-hero {
+          padding-top: 60px;
+        }
+
+        .page-hero h1 {
+          font-size: 3rem;
+        }
+
+        .category-info {
+          gap: 20px;
+        }
+
+        .books-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-top {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .sort-box {
+          width: 100%;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="/css/output.css" />
+  </head>
+  <body data-category-id="1">
+    <header class="header">
+      <div class="navbar">
+        <a href="index.html" class="brand">ICFAI</a>
+        <nav class="nav">
+          <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="bookcategory.html">Categories</a></li>
+            <li><a href="index.html#popular">Popular</a></li>
+            <li><a href="index.html#recent">Recent Books</a></li>
+          </ul>
+        </nav>
+        <a href="bookcategory.html" class="back-btn">
+          <i class="fa-solid fa-arrow-left"></i>
+          Categories
+        </a>
+      </div>
+    </header>
+    <section class="page-hero">
+      <div class="page-hero-inner">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="bookcategory.html">Categories</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <strong>Commerce</strong>
+        </div>
+        <span class="eyebrow"> BOOK CATEGORY </span>
+        <h1>Explore <span>Commerce</span></h1>
+        <p>
+          Explore a comprehensive collection of commerce books covering
+          accounting, finance, economics, taxation, business studies, marketing
+          and entrepreneurship.
+        </p>
+        <div class="category-info">
+          <div class="info-item">
+            <strong>190+</strong>
+            <span>Books Available</span>
+          </div>
+          <div class="info-item">
+            <strong>95+</strong>
+            <span>Authors</span>
+          </div>
+          <div class="info-item">
+            <strong>10</strong>
+            <span>Sub Categories</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="books-section">
+      <div class="books-container">
+        <div class="section-top">
+          <h2>Commerce Collection</h2>
+          <select class="sort-box">
+            <option>Sort: Latest</option>
+            <option>Sort: A-Z</option>
+            <option>Sort: Popular</option>
+          </select>
+        </div>
+        <div class="books-grid">
+          <article class="book-card">
+            <div class="book-cover">
+              <span class="book-tag">NEW</span>
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Accounting </span>
+              <h3>Financial Accounting</h3>
+              <p>
+                Learn accounting principles, financial statements and
+                bookkeeping methods.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <span class="book-tag">POPULAR</span>
+              <i class="fa-solid fa-money-bill-trend-up"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Finance </span>
+              <h3>Financial Management</h3>
+              <p>
+                Explore investment, financial planning, markets and management
+                principles.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Economics </span>
+              <h3>Business Economics</h3>
+              <p>
+                Understand markets, demand, supply, economic policies and
+                business decisions.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Marketing </span>
+              <h3>Marketing Management</h3>
+              <p>
+                Explore marketing strategies, consumer behaviour, branding and
+                promotion.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-building"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Business Studies </span>
+              <h3>Business Management</h3>
+              <p>
+                Study business organisations, management practices and corporate
+                operations.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Taxation </span>
+              <h3>Taxation Studies</h3>
+              <p>
+                Learn about taxation principles, tax systems, compliance and
+                planning.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> Entrepreneurship </span>
+              <h3>Entrepreneurship</h3>
+              <p>
+                Discover business ideas, startups, innovation and
+                entrepreneurial strategies.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+          <article class="book-card">
+            <div class="book-cover">
+              <i class="fa-solid fa-globe"></i>
+            </div>
+            <div class="book-info">
+              <span class="book-category"> International Business </span>
+              <h3>International Commerce</h3>
+              <p>
+                Explore global trade, international markets and cross-border
+                business.
+              </p>
+              <button class="book-btn">
+                Borrow Book
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer id="contact" class="bg-stone-800 text-white py-10">
+      <!--  -->
       <div class="max-w-7xl mx-auto px-6">
         <div class="grid md:grid-cols-3 gap-8">
           <!-- About -->
@@ -665,5 +640,5 @@ Borrow Book
         </div>
       </div>
     </footer>
-</body>
+  </body>
 </html>

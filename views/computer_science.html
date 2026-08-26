@@ -18,6 +18,8 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <link rel="stylesheet" href="/css/computer_science.css">
+    <link rel="stylesheet" href="/css/category_cart.css">
+    <script defer src="/js/cart.js"></script>
 </head>
 <body>
     <!-- HEADER -->
@@ -48,6 +50,10 @@
                     </li>
                 </ul>
             </nav>
+            <a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count-badge">0</span>
+            </a>
             <a href="book_category.html" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i>
             Categories
@@ -114,162 +120,7 @@
                     </option>
                 </select>
             </div>
-            <div class="books-grid">
-                <!-- BOOK 1 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <span class="book-tag">
-                            NEW
-                        </span>
-                        <i class="fa-solid fa-code"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Programming
-                        </span>
-                        <h3>
-                            Introduction to Programming
-                        </h3>
-                        <p>
-                            Basic programming concepts and problem solving.
-                        </p>
-                        <button type="button" class="book-btn">    Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 2 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <span class="book-tag">
-                            POPULAR
-                        </span>
-                        <i class="fa-brands fa-java"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Java
-                        </span>
-                        <h3>
-                            Java Programming
-                        </h3>
-                        <p>
-                            Learn Java programming and object-oriented concepts.
-                        </p>
-                    <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 3 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <i class="fa-solid fa-database"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Database
-                        </span>
-                        <h3>
-                            Database Management Systems
-                        </h3>
-                        <p>
-                            SQL, database design and management concepts.
-                        </p>
-                        <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 4 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <span class="book-tag">
-                            NEW
-                        </span>
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Artificial Intelligence
-                        </span>
-                        <h3>
-                            Artificial Intelligence
-                        </h3>
-                        <p>
-                            Fundamentals of AI and intelligent systems.
-                        </p>
-                    <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i>
-</button>
-                    </div>
-                </article>
-                <!-- BOOK 5 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <i class="fa-solid fa-network-wired"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Networking
-                        </span>
-                        <h3>
-                            Computer Networks
-                        </h3>
-                        <p>
-                            Networking concepts, protocols and architectures.
-                        </p>
-                         <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 6 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Cybersecurity
-                        </span>
-                        <h3>
-                            Cyber Security Fundamentals
-                        </h3>
-                        <p>
-                            Security principles, threats and protection.
-                        </p>
-                        <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 7 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <i class="fa-solid fa-globe"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Web Development
-                        </span>
-                        <h3>
-                            Modern Web Development
-                        </h3>
-                        <p>
-                            HTML, CSS, JavaScript and modern web technologies.
-                        </p>
-                        <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-                <!-- BOOK 8 -->
-                <article class="book-card">
-                    <div class="book-cover">
-                        <i class="fa-solid fa-mobile-screen"></i>
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">
-                            Software Engineering
-                        </span>
-                        <h3>
-                            Software Engineering
-                        </h3>
-                        <p>
-                            Software development, SDLC and project management.
-                        </p>
-                        <button type="button" class="book-btn">Borrow Book<i class="fa-solid fa-arrow-right"></i></button>
-                    </div>
-                </article>
-            </div>
+            <div class="books-grid"></div>
         </div>
     </section>
     <!-- CAT -->
@@ -342,5 +193,7 @@
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(6);</script>
 </body>
 </html>

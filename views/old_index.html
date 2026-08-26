@@ -29,6 +29,7 @@
 
     <!-- tailwind -->
     <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="/css/category_cart.css">
   </head>
   <body>
     <!--==header==-->
@@ -107,14 +108,10 @@
             <a href="#products" class="navbar__ic" aria-label="Wishlist">
               <i class="fa-regular fa-heart"></i>
             </a>
-            <a
-              href="#products"
-              class="navbar__ic navbar__ic--cart"
-              aria-label="Cart"
-            >
-              <i class="fa-solid fa-bag-shopping"></i>
-              <!-- <span class="navbar__count">3</span> -->
-            </a>
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
             <div class="navbar__auth">
               <a href="register_member.html" class="navbar__auth-link">
                 <i class="fa-regular fa-user"></i>

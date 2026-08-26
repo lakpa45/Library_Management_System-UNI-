@@ -11,6 +11,8 @@
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/science.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
 
 </head>
 
@@ -29,6 +31,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 <li><a href="index.html#recent">Recent Books</a></li>
 </ul>
 </nav>
+
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
 
 <a href="book_category.html" class="back-btn">
 <i class="fa-solid fa-arrow-left"></i>
@@ -92,140 +99,9 @@ science, astronomy and other scientific disciplines.
 </select>
 </div>
 
-<div class="books-grid">
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">NEW</span>
-<i class="fa-solid fa-atom"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Physics</span>
-<h3>Fundamentals of Physics</h3>
-<p>Fundamental concepts and principles of physics.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">POPULAR</span>
-<i class="fa-solid fa-flask"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Chemistry</span>
-<h3>Modern Chemistry</h3>
-<p>Core concepts of chemistry and chemical reactions.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-dna"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Biology</span>
-<h3>Principles of Biology</h3>
-<p>Cell biology, genetics and biological systems.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-leaf"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Environmental Science</span>
-<h3>Environmental Science</h3>
-<p>Environment, ecosystems and sustainability.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-earth-americas"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Earth Science</span>
-<h3>Earth Science</h3>
-<p>Earth systems, geology and natural processes.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-satellite"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Astronomy</span>
-<h3>Introduction to Astronomy</h3>
-<p>Stars, planets, galaxies and the universe.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-microscope"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Research</span>
-<h3>Scientific Research Methods</h3>
-<p>Research methodology and scientific investigation.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-vial"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Laboratory</span>
-<h3>Laboratory Science</h3>
-<p>Laboratory techniques and scientific experiments.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-</div>
-</div>
-</section>
+<div class="books-grid"></div>
+        </div>
+    </section>
 <!-- CAT -->
  <section class="library-cta" id="about">
     <div class="container cta-inner">
@@ -296,5 +172,7 @@ science, astronomy and other scientific disciplines.
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(4);</script>
 </body>
 </html>

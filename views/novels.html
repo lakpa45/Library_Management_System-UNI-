@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/novel.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
 
 </head>
 
@@ -28,6 +30,11 @@
 <li><a href="index.html#recent">Recent Books</a></li>
 </ul>
 </nav>
+
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
 
 <a href="book_category.html" class="back-btn">
 <i class="fa-solid fa-arrow-left"></i>
@@ -90,109 +97,9 @@ mystery, romance, adventure, fantasy and classic stories.
 </select>
 </div>
 
-<div class="books-grid">
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">NEW</span>
-<i class="fa-solid fa-book-open"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Fiction</span>
-<h3>Indian Fiction</h3>
-<p>A collection of engaging Indian fiction and storytelling.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">POPULAR</span>
-<i class="fa-solid fa-magnifying-glass"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Mystery</span>
-<h3>The Mystery Collection</h3>
-<p>Fascinating mystery and detective stories.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-compass"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Adventure</span>
-<h3>Adventure Stories</h3>
-<p>Exciting stories filled with adventure and exploration.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-heart"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Romance</span>
-<h3>Classic Romance</h3>
-<p>A collection of classic romantic fiction.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-wand-magic-sparkles"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Fantasy</span>
-<h3>Worlds of Fantasy</h3>
-<p>Explore imaginative worlds and magical adventures.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-landmark"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Historical</span>
-<h3>Historical Novels</h3>
-<p>Stories inspired by historical events and cultures.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-people-group"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Contemporary</span>
-<h3>Contemporary Fiction</h3>
-<p>Modern stories exploring people and society.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-book"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Classic</span>
-<h3>Classic Novels</h3>
-<p>Timeless novels from renowned authors.</p>
-<button class="book-btn">Borrow Book <i class="fa-solid fa-arrow-right"></i></button>
-</div>
-</article>
-
-</div>
-</div>
-</section>
+<div class="books-grid"></div>
+        </div>
+    </section>
 <!-- CAT -->
 <section class="library-cta" id="about">
     <div class="container cta-inner">
@@ -263,5 +170,7 @@ mystery, romance, adventure, fantasy and classic stories.
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(8);</script>
 </body>
 </html>

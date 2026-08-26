@@ -11,6 +11,8 @@
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/management.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
 
 </head>
 
@@ -29,6 +31,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 <li><a href="index.html#recent">Recent Books</a></li>
 </ul>
 </nav>
+
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
 
 <a href="book_category.html" class="back-btn">
 <i class="fa-solid fa-arrow-left"></i>
@@ -95,140 +102,9 @@ finance, human resources, entrepreneurship and management.
 </div>
 
 
-<div class="books-grid">
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">NEW</span>
-<i class="fa-solid fa-briefcase"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Management</span>
-<h3>Principles of Management</h3>
-<p>Fundamental principles and practices of modern management.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">POPULAR</span>
-<i class="fa-solid fa-chart-line"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Business</span>
-<h3>Business Management</h3>
-<p>Business planning, decision making and organizational management.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-bullhorn"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Marketing</span>
-<h3>Marketing Management</h3>
-<p>Marketing strategies, consumer behavior and market research.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-coins"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Finance</span>
-<h3>Financial Management</h3>
-<p>Financial planning, investment and business finance.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-users"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Human Resources</span>
-<h3>Human Resource Management</h3>
-<p>Recruitment, employee development and HR management.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-lightbulb"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Entrepreneurship</span>
-<h3>Entrepreneurship Development</h3>
-<p>Business ideas, startups and entrepreneurial development.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-building"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Organization</span>
-<h3>Organizational Behavior</h3>
-<p>Understanding people and behavior inside organizations.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-scale-balanced"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Business Law</span>
-<h3>Business Law</h3>
-<p>Legal principles and regulations related to businesses.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-</div>
-</div>
-</section>
+<div class="books-grid"></div>
+        </div>
+    </section>
 <!-- CAT -->
 <section class="library-cta" id="about">
     <div class="container cta-inner">
@@ -299,5 +175,7 @@ finance, human resources, entrepreneurship and management.
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(3);</script>
 </body>
 </html>

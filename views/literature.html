@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/literature.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
 
 </head>
 
@@ -46,6 +48,11 @@
 </ul>
 
 </nav>
+
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
 
 <a href="book_category.html" class="back-btn">
 <i class="fa-solid fa-arrow-left"></i>
@@ -150,294 +157,9 @@ Sort: Popular
 </div>
 
 
-<div class="books-grid">
-
-
-<!-- CARD 1 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<span class="book-tag">
-NEW
-</span>
-
-<i class="fa-solid fa-feather-pointed"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Poetry
-</span>
-
-<h3>
-Poetry Collection
-</h3>
-
-<p>
-Explore beautiful poems and literary works from celebrated poets.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 2 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<span class="book-tag">
-POPULAR
-</span>
-
-<i class="fa-solid fa-masks-theater"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Drama
-</span>
-
-<h3>
-World of Drama
-</h3>
-
-<p>
-A collection of famous plays, dramatic works and theatrical literature.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 3 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-scroll"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Essays
-</span>
-
-<h3>
-Literary Essays
-</h3>
-
-<p>
-Thought-provoking essays exploring literature, society and culture.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 4 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-book-open"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Indian Literature
-</span>
-
-<h3>
-Indian Literature
-</h3>
-
-<p>
-Discover important literary works from Indian authors and writers.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 5 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-globe"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-World Literature
-</span>
-
-<h3>
-World Literature
-</h3>
-
-<p>
-Explore influential literary works from different countries and cultures.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 6 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Criticism
-</span>
-
-<h3>
-Literary Criticism
-</h3>
-
-<p>
-Study critical approaches to literature, authors and literary movements.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 7 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-landmark"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Classical Literature
-</span>
-
-<h3>
-Classical Works
-</h3>
-
-<p>
-Read timeless literary works that have influenced generations.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-<!-- CARD 8 -->
-
-<article class="book-card">
-
-<div class="book-cover">
-
-<i class="fa-solid fa-language"></i>
-
-</div>
-
-<div class="book-info">
-
-<span class="book-category">
-Language & Literature
-</span>
-
-<h3>
-Language Studies
-</h3>
-
-<p>
-Books exploring language, linguistics and the art of literary expression.
-</p>
-
-<button class="book-btn">
-Borrow Book
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-</article>
-
-
-</div>
-
-</div>
-
-</section>
+<div class="books-grid"></div>
+        </div>
+    </section>
 <!-- CAT -->
 <section class="library-cta" id="about">
     <div class="container cta-inner">
@@ -510,5 +232,7 @@ Borrow Book
     </div>
 </footer>
 
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(9);</script>
 </body>
 </html>

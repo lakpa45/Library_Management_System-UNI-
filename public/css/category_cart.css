@@ -1,0 +1,44 @@
+.category-cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--ink);
+}
+
+.category-cart:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+.category-cart .cart-count-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font: 700 0.68rem/1 'Chakra Petch', sans-serif;
+}
+
+@media (max-width: 600px) {
+    .category-cart {
+        width: 38px;
+        height: 38px;
+        margin-left: auto;
+    }
+
+    .category-cart + .back-btn {
+        margin-left: 0;
+    }
+}

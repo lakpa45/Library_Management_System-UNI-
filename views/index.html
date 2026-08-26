@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,6 +16,7 @@
     
     <link rel="stylesheet" href="/css/output.css">
     <link rel="stylesheet" href="/css/home_page.css">
+    <link rel="stylesheet" href="/css/category_cart.css">
     
     <script defer src="/js/cart.js"></script>
     <script defer src="/js/product_renderer.js"></script>
@@ -57,11 +60,14 @@
             <div class="navbar">
                 <button type="button" class="menu-icon" id="menuToggle" aria-label="Open menu" aria-controls="primaryNavigation" aria-expanded="false">
                     <i class="fa-solid fa-bars"></i>
+                        
                 </button>
                 <a href="#hero" class="brand">APNA LIBRARY</a>
                 <nav class="nav" id="primaryNavigation" aria-label="Primary navigation">
                     <button type="button" class="nav-close" id="menuClose" aria-label="Close menu">
-                        <i class="fa-solid fa-xmark"></i>
+                        <i class="fa-solid fa-xmark">
+
+                        </i>
                     </button>
                     <ul class="menu">
                         <li>
@@ -95,7 +101,7 @@
                         <div class="search-dropdown" id="navbarSearchDropdown"></div>
                     </form>
                     
-                    <a href="/add_to_cart.html" class="navbar__ic--cart" aria-label="Cart">
+                    <a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
                         <i class="fa-solid fa-bag-shopping"></i>
                         <span class="cart-count-badge">0</span>
                     </a>
@@ -123,10 +129,6 @@
                             <a href="/user_dashboard.html" class="navbar__user-menu-item">
                                 <i class="fa-regular fa-id-badge"></i>
                                 My account
-                            </a>
-                            <a href="#products" class="navbar__user-menu-item">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                My orders
                             </a>
                             <button type="button" class="navbar__user-menu-item navbar__user-menu-item--logout" id="logoutBtn">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i>

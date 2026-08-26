@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.menu a').forEach((link) => {
         link.addEventListener('click', () => {
-            // Keep normal anchors untouched so mobile browsers can follow them.
-            // Only the login link needs the drawer closed before its modal opens.
-            if (link.matches('[data-login-trigger]')) setMenuOpen(false);
+            // Keep normal anchors untouched so browsers can follow their links.
+            // Close the sidebar first so it cannot remain over the destination.
+            setMenuOpen(false);
         });
     });
     window.addEventListener('hashchange', () => setMenuOpen(false));
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// For swiper sliders ===============================//
+// For swiper sliders //
 function buildSlider(name, options) {
     if (typeof Swiper === 'undefined') return;
     const container = document.querySelector('.' + name + '-swiper');
@@ -129,7 +129,7 @@ function buildSlider(name, options) {
     }, options));
 }
 
-// For featured books from database ===============================//
+// For featured books from database //
 async function loadFeaturedBooks() {
     const grid = document.getElementById('stylesGrid');
     if (!grid) return;

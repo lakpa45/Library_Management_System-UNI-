@@ -11,6 +11,8 @@
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/mathematics.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
 
 </head>
 
@@ -29,6 +31,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 <li><a href="index.html#recent">Recent Books</a></li>
 </ul>
 </nav>
+
+<a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
+<i class="fa-solid fa-bag-shopping"></i>
+<span class="cart-count-badge">0</span>
+</a>
 
 <a href="book_category.html" class="back-btn">
 <i class="fa-solid fa-arrow-left"></i>
@@ -92,140 +99,9 @@ geometry, probability, discrete mathematics and mathematical methods.
 </select>
 </div>
 
-<div class="books-grid">
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">NEW</span>
-<i class="fa-solid fa-square-root-variable"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Algebra</span>
-<h3>College Algebra</h3>
-<p>Fundamentals of algebra and mathematical equations.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<span class="book-tag">POPULAR</span>
-<i class="fa-solid fa-chart-line"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Calculus</span>
-<h3>Calculus</h3>
-<p>Limits, derivatives, integration and applications.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-chart-column"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Statistics</span>
-<h3>Introduction to Statistics</h3>
-<p>Statistical methods, data analysis and interpretation.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-percent"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Probability</span>
-<h3>Probability Theory</h3>
-<p>Probability concepts, distributions and applications.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-shapes"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Geometry</span>
-<h3>Analytical Geometry</h3>
-<p>Geometric principles, coordinates and mathematical structures.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-network-wired"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Discrete Mathematics</span>
-<h3>Discrete Mathematics</h3>
-<p>Logic, sets, graphs, relations and combinatorics.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-infinity"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Advanced Mathematics</span>
-<h3>Advanced Mathematics</h3>
-<p>Advanced mathematical concepts and problem solving.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-
-<article class="book-card">
-<div class="book-cover">
-<i class="fa-solid fa-calculator"></i>
-</div>
-<div class="book-info">
-<span class="book-category">Applied Mathematics</span>
-<h3>Applied Mathematics</h3>
-<p>Mathematical techniques and their real-world applications.</p>
-                  <button type="button" class="book-btn">
-    Borrow Book
-    <i class="fa-solid fa-arrow-right"></i>
-</button>
-</div>
-</article>
-
-</div>
-</div>
-</section>
+<div class="books-grid"></div>
+        </div>
+    </section>
 <!-- CAT -->
 <section class="library-cta" id="about">
     <div class="container cta-inner">
@@ -296,5 +172,7 @@ geometry, probability, discrete mathematics and mathematical methods.
         <p>&copy; 2026 APNA Library. All Rights Reserved.</p>
     </div>
 </footer>
+<script src="/js/category_page.js"></script>
+<script>loadCategoryBooks(7);</script>
 </body>
 </html>

@@ -275,6 +275,8 @@ section {
     backdrop-filter: blur(10px);
     border-bottom:1px solid var(--line);
     transition: box-shadow 0.3s ease;
+    position: relative;
+    z-index: 160;
 }
 
 .navbar {
@@ -466,22 +468,6 @@ section {
 .navbar__ic--cart:hover {
     background: var(--accent);
     color: var(--accent-ink);
-}
-
-.navbar__count,
-.cart-count-badge {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 19px;
-    height: 19px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-size: 0.66rem;
-    font-weight: 700;
-    display: grid;
-    place-items: center;
 }
 
 .navbar__auth {
