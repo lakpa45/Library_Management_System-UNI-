@@ -129,46 +129,67 @@ function buildSlider(name, options) {
     }, options));
 }
 
-// For featured books from database //
+// For category collections from database //
 async function loadFeaturedBooks() {
     const grid = document.getElementById('stylesGrid');
-    if (!grid) return;
+    const categoryGrid = document.getElementById('homepageCategoryGrid');
+    if (!grid && !categoryGrid) return;
 
     try {
-        const response = await fetch('/api/books');
-        const books = await response.json();
-
-        const seenCategories = new Set();
-        const featured = [];
-
-        for (const book of books) {
-            if (book.category_id && !seenCategories.has(book.category_id)) {
-                seenCategories.add(book.category_id);
-                featured.push(book);
-            }
-            if (featured.length === 4) break;
-        }
-
-        if (featured.length < 4) {
-            for (const book of books) {
-                if (featured.length === 4) break;
-                if (!featured.includes(book)) featured.push(book);
-            }
-        }
+        const [bookResponse, categoryResponse] = await Promise.all([
+            fetch('/api/books'),
+            fetch('/api/categories')
+        ]);
+        if (!bookResponse.ok || !categoryResponse.ok) throw new Error('Unable to load collections');
+        const books = await bookResponse.json();
+        const categories = await categoryResponse.json();
 
         const colorClasses = ['style-card--g1', 'style-card--g2', 'style-card--g3', 'style-card--g4'];
+        const icons = ['fa-book-open', 'fa-graduation-cap', 'fa-flask', 'fa-scale-balanced', 'fa-laptop-code', 'fa-landmark'];
 
-        grid.innerHTML = featured.map((book, index) => `
-            <a href="/book_category.html" class="style-card ${colorClasses[index] || ''}">
-                <div class="style-card__media">
-                    <img src="${book.cover_image || '/images/1stbook.jpg'}" alt="${book.title}">
-                </div>
-                <div class="style-card__body">
-                    <span>${String(index + 1).padStart(2, '0')}. Book Name</span>
-                    <h3>${book.title}</h3>
-                </div>
-            </a>
-        `).join('');
+        if (grid) {
+            grid.replaceChildren(...books.slice(0, 4).map((book, index) => {
+                const link = document.createElement('a');
+                link.href = `/book_detail.html?id=${encodeURIComponent(book.book_id)}`;
+                link.className = `style-card ${colorClasses[index] || ''}`;
+                const media = document.createElement('div');
+                media.className = 'style-card__media';
+                const image = document.createElement('img');
+                image.src = book.cover_image || '/images/1stbook.jpg';
+                image.alt = `Cover of ${book.title}`;
+                image.loading = 'lazy';
+                media.append(image);
+                const body = document.createElement('div');
+                body.className = 'style-card__body';
+                const label = document.createElement('span');
+                label.textContent = `${String(index + 1).padStart(2, '0')}. Featured Book`;
+                const title = document.createElement('h3');
+                title.textContent = book.title;
+                body.append(label, title);
+                link.append(media, body);
+                return link;
+            }));
+        }
+
+        if (categoryGrid) {
+            categoryGrid.replaceChildren(...categories.slice(0, 4).map((category, index) => {
+                const link = document.createElement('a');
+                link.href = `/categories?categoryId=${encodeURIComponent(category.category_id)}`;
+                link.className = 'cat-title';
+                const iconWrap = document.createElement('span');
+                iconWrap.className = 'cat-title__ic';
+                const icon = document.createElement('i');
+                icon.className = `fa-solid ${icons[index % icons.length]}`;
+                iconWrap.append(icon);
+                const title = document.createElement('h3');
+                title.textContent = category.category_name;
+                const count = document.createElement('span');
+                count.className = 'cat-title__count';
+                count.textContent = `${category.book_count} ${Number(category.book_count) === 1 ? 'Book' : 'Books'}`;
+                link.append(iconWrap, title, count);
+                return link;
+            }));
+        }
     } catch (err) {
         console.error(err);
     }
@@ -294,15 +315,24 @@ function initAuth() {
         const password = formData.get('password') || '';
         const role = formData.get('role');
 
-        if (role !== 'admin' && role !== 'user') {
+        const loginOptions = {
+            user: { endpoint: '/api/auth/signin', tokenKey: 'token' },
+            admin: { endpoint: '/api/auth/librarian/signin', tokenKey: 'adminToken' },
+            librarian: {
+                endpoint: '/api/auth/librarian-staff/signin',
+                tokenKey: 'librarianToken',
+                redirect: '/librarian/dashboard'
+            }
+        };
+        const loginOption = loginOptions[role];
+
+        if (!loginOption) {
             loginError.textContent = 'Please select a role.';
             return;
         }
 
-        const isAdmin = role === 'admin';
-
         try {
-            const response = await fetch(isAdmin ? '/api/auth/librarian/signin' : '/api/auth/signin', {
+            const response = await fetch(loginOption.endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, role })
@@ -311,10 +341,10 @@ function initAuth() {
             const result = await response.json();
 
             if (response.ok) {
-                localStorage.setItem(isAdmin ? 'adminToken' : 'token', result.token);
+                localStorage.setItem(loginOption.tokenKey, result.token);
                 closeModal();
-                if (isAdmin) {
-                    window.location.href = '/admin/dashboard';
+                if (role === 'admin' || role === 'librarian') {
+                    window.location.href = loginOption.redirect || '/admin/dashboard';
                     return;
                 }
                 renderAuthState();

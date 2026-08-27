@@ -2,11 +2,16 @@ import express from 'express';
 import { signup } from '../controllers/auth/sign_up.js';
 import { signin } from '../controllers/auth/sign_in.js';
 import { librarianSignin } from '../controllers/auth/librarian_signin.js';
+import { librarianStaffSignin } from '../controllers/auth/librarian_staff_signin.js';
+
+import { forgotPassword, resetPassword } from '../controllers/auth/password_reset_controller.js';
 
 const router = express.Router();
 
 router.post('/signup', signup);
 router.post('/signin', signin);
 router.post('/librarian/signin', librarianSignin);
-
+router.post('/librarian-staff/signin', librarianStaffSignin);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 export default router;

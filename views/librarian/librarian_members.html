@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Members</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="/output.css" rel="stylesheet">
 
 <style>
@@ -18,8 +20,21 @@
   tr.fade-row { animation: fadeIn .3s ease both; }
   @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
 </style>
+<link href="/css/admin_dashboard_shared.css" rel="stylesheet">
 </head>
 <body class="font-body text-ink min-h-screen">
+
+<div class="dashboard-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span>APNA</span></div>
+    <p class="quick-label">Librarian Workspace</p>
+    <nav class="side-nav" aria-label="Librarian navigation">
+      <a href="/librarian/dashboard"><i class="fa-solid fa-chart-column"></i> Dashboard</a><a href="/librarian/book-categories"><i class="fa-solid fa-book"></i> Books</a><a href="/librarian/borrow-return"><i class="fa-solid fa-arrow-right-arrow-left"></i> Borrow / Return</a><a href="/librarian/members" class="active"><i class="fa-solid fa-users"></i> Members</a><a href="/librarian/pending-members"><i class="fa-solid fa-user-clock"></i> Pending Members</a><a href="/librarian/register-member"><i class="fa-regular fa-address-card"></i> Register Member</a><a href="/"><i class="fa-solid fa-house"></i> Main Website</a>
+    </nav>
+    <div class="sidebar-footer">Librarian Workspace<br>APNA Library · 2026</div>
+  </aside>
+  <button type="button" class="sidebar-overlay" id="sidebarOverlay" aria-label="Close navigation"></button>
+  <main class="main-area"><header class="top-header"><button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div class="top-search"><a class="action-btn" href="/librarian/dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div><div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-users"></i></span><span>Members</span></div><span class="today">Librarian Workspace</span></div></header><div class="dashboard-content">
 
 <div class="max-w-6xl mx-auto px-6 py-10">
 
@@ -30,11 +45,11 @@
       <h1 class="font-display text-3xl text-forest">Members</h1>
     </div>
     <div class="flex items-center gap-3">
-      <a href="/admin/admin_dashboard.html" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
+      <a href="/librarian/dashboard" class="text-sm font-medium text-ink-light hover:text-forest flex items-center gap-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Dashboard
       </a>
-      <a href="/admin/admin_reg_member.html" class="bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition flex items-center gap-1.5">
+      <a href="/librarian/register-member" class="bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition flex items-center gap-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Register Member
       </a>
@@ -100,10 +115,12 @@
     <div id="empty-state" class="hidden px-5 py-16 text-center">
       <p class="font-display text-lg text-forest mb-1">No members found</p>
       <p class="text-sm text-ink-light mb-4">Adjust your search or register a new member to get started.</p>
-      <a href="/admin/admin_reg-member.html" class="inline-block bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition">Register Member</a>
+      <a href="/librarian/register-member" class="inline-block bg-forest hover:bg-forest-light text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition">Register Member</a>
     </div>
   </div>
 </div>
+
+</div></main></div>
 
 <!-- Detail drawer -->
 <div id="drawer-backdrop" class="fixed inset-0 bg-ink/40 opacity-0 pointer-events-none transition-opacity z-40"></div>
@@ -147,5 +164,6 @@
 <script src="/js/members.js">
   
 </script>
+<script src="/js/admin_shell.js"></script>
 </body>
 </html>

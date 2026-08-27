@@ -1,22 +1,26 @@
 (function () {
-    const token = localStorage.getItem('adminToken');
+    const adminToken = localStorage.getItem('adminToken');
+    const librarianToken = localStorage.getItem('librarianToken');
+    const token = adminToken || librarianToken;
 
     if (!token) {
-        window.location.replace('/admin_login.html');
+        window.location.replace('/');
         return;
     }
 
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const isExpired = payload.exp && Date.now() >= payload.exp * 1000;
-        const isAdmin = payload.role === 'admin';
+        const isStaff = payload.role === 'admin' || payload.role === 'librarian';
 
-        if (isExpired || !isAdmin) {
-            localStorage.removeItem('adminToken');
-            window.location.replace('/admin_login.html');
+        if (isExpired || !isStaff) {
+            if (adminToken) localStorage.removeItem('adminToken');
+            if (librarianToken) localStorage.removeItem('librarianToken');
+            window.location.replace('/');
         }
     } catch (err) {
-        localStorage.removeItem('adminToken');
-        window.location.replace('/admin_login.html');
+        if (adminToken) localStorage.removeItem('adminToken');
+        if (librarianToken) localStorage.removeItem('librarianToken');
+        window.location.replace('/');
     }
 })();

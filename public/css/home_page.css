@@ -1151,7 +1151,7 @@ section {
 /*==category==*/
 .category__grid {
     display: grid;
-    grid-template-columns: repeat(6,1fr);
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     gap: 16px;
 }
 
@@ -2415,4 +2415,9 @@ section {
     .navbar__actions {
         gap: 4px;
     }
+}
+
+/* Homepage database categories: fit as many equal cards as the row allows. */
+#homepageCategoryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
 }

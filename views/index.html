@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="/css/home_page.css">
     <link rel="stylesheet" href="/css/category_cart.css">
     
-    <script defer src="/js/cart.js"></script>
     <script defer src="/js/product_renderer.js"></script>
     <script defer src="/js/homepage_cart.js"></script>
     <script defer src="/js/homepage.js"></script>
@@ -74,17 +73,17 @@
                             <a href="/">Home</a>
                         </li>
                         <li>
-                            <a href="/#category">Explore</a>
+                            <a href="/books">Books</a>
                         </li>
                         <li>
-                            <a href="/book_category.html">Categories</a>
+                            <a href="/categories">Categories</a>
                         </li>
                         
                         <li>
-                            <a href="/#picks">Latest</a>
+                            <a href="/e-books">E-Books</a>
                         </li>
                         <li>
-                            <a href="/#contact">Contact</a>
+                            <a href="/my-books">My Books</a>
                         </li>
                         <li class="menu__auth" data-menu-auth>
                             <a href="#" data-login-trigger><i class="fa-regular fa-user"></i> Login</a>
@@ -101,10 +100,6 @@
                         <div class="search-dropdown" id="navbarSearchDropdown"></div>
                     </form>
                     
-                    <a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                        <span class="cart-count-badge">0</span>
-                    </a>
                     <div class="navbar__auth" id="navbarAuth">
                         <a href="#" class="navbar__auth-link" id="loginBtn">
                             <i class="fa-regular fa-user"></i>
@@ -256,7 +251,7 @@
                 <h2>Explore Our Collection</h2>
                 <p>Discover academic resources, reference materials, and books across a wide range of subjects to support your learning and research.</p>
             </div>
-            <div class="category__grid">
+            <div class="category__grid" id="homepageCategoryGrid">
                 <a href="/management.html" class="cat-title">
                     <span class="cat-title__ic">
                         <i class="fa-solid fa-sun"></i>
@@ -311,7 +306,7 @@
                     <span class="eyebrow">Most Popular</span>
                     <h2>Book of the Month</h2>
                 </div>
-                <a href="/book_category.html" class="link-more">
+                <a href="/books" class="link-more">
                     View all books
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -322,8 +317,8 @@
                     <div class="product__media">
                         <img src="/images/2ndbook.jpg" alt="Check this one">
                         <span class="product__add">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Add to cart
+                            <i class="fa-regular fa-heart"></i>
+                            Add to Wishlist
                         </span>
                     </div>
                     <div class="product__info">
@@ -344,8 +339,8 @@
                     <div class="product__media">
                         <img src="/images/3rdbook.jpg" alt="Look at this">
                         <span class="product__add">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Add to cart
+                            <i class="fa-regular fa-heart"></i>
+                            Add to Wishlist
                         </span>
                     </div>
                     <div class="product__info">
@@ -364,8 +359,8 @@
                     <div class="product__media">
                         <img src="/images/11.jpg" alt="Most loved">
                         <span class="product__add">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Add to Cart
+                            <i class="fa-regular fa-heart"></i>
+                            Add to Wishlist
                         </span>
                     </div>
                     <div class="product__info">
@@ -386,8 +381,8 @@
                     <div class="product__media">
                         <img src="/images/7.jpg" alt="Most loved">
                         <span class="product__add">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            Add to Cart
+                            <i class="fa-regular fa-heart"></i>
+                            Add to Wishlist
                         </span>
                     </div>
                     <div class="product__info">
@@ -429,8 +424,8 @@
                         <div class="product__media">
                             <img src="/images/1stbook.jpg" alt="Book name">
                             <span class="product__add">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                Add to cart
+                                <i class="fa-regular fa-heart"></i>
+                                Add to Wishlist
                             </span>
                         </div>
                         <div class="product__info">
@@ -449,8 +444,8 @@
                         <div class="product__media">
                             <img src="/images/4.jpg" alt="Book name">
                             <span class="product__add">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                Add to cart
+                                <i class="fa-regular fa-heart"></i>
+                                Add to Wishlist
                             </span>
                         </div>
                         <div class="product__info">
@@ -469,8 +464,8 @@
                         <div class="product__media">
                             <img src="/images/5.jpg" alt="Book name">
                             <span class="product__add">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                Add to cart
+                                <i class="fa-regular fa-heart"></i>
+                                Add to Wishlist
                             </span>
                         </div>
                         <div class="product__info">
@@ -489,8 +484,8 @@
                         <div class="product__media">
                             <img src="/images/6.jpg" alt="Book name">
                             <span class="product__add">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                Add to cart
+                                <i class="fa-regular fa-heart"></i>
+                                Add to Wishlist
                             </span>
                         </div>
                         <div class="product__info">
@@ -556,6 +551,7 @@
                     <select id="loginRole" name="role" required>
                         <option value="admin">Admin</option>
                         <option value="user" selected>User</option>
+                        <option value="librarian">Librarian</option>
                     </select>
                 </label>
                 <p class="auth-error" id="loginError"></p>

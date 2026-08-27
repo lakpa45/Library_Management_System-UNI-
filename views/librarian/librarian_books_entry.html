@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Librarian Books Entry</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/librarian_book_entry.css">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/output.css">
+<link rel="stylesheet" href="/css/home_page.css">
+<link rel="stylesheet" href="/css/category_cart.css">
+<script defer src="/js/cart.js"></script>
+<script defer src="/js/homepage.js"></script>
+<script defer src="/js/site_search.js"></script>
+
+</head>
+<body>
+<header class="header">
+  <input type="checkbox" id="menu-btn" class="menu-btn">
+  <div class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__left">
+        <a href="#contact"><i class="fa-solid fa-phone"></i> +91-123-1234</a>
+        <a href="#contact"><i class="fa-regular fa-envelope"></i> contact@gmail.com</a>
+      </div>
+      <div class="topbar__right">
+        <span><i class="fa-solid fa-globe"></i> English</span>
+        <a href="#contact"><i class="fa-regular fa-circle-question"></i> Need Help?</a>
+      </div>
+    </div>
+  </div>
+  <div class="navbar-bar">
+    <div class="navbar">
+      <button type="button" class="menu-icon" id="menuToggle" aria-label="Open menu" aria-controls="primaryNavigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+      <a href="#hero" class="brand">APNA LIBRARY</a>
+      <nav class="nav" id="primaryNavigation" aria-label="Primary navigation">
+        <button type="button" class="nav-close" id="menuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+        <ul class="menu">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blank_page.html">Books</a></li>
+          <li><a href="/book_category.html">Categories</a></li>
+          <li><a href="/#picks">Latest</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li class="menu__auth" data-menu-auth><a href="#" data-login-trigger><i class="fa-regular fa-user"></i> Login</a></li>
+          <li class="menu__auth" data-menu-auth><a href="/register.html">Register</a></li>
+        </ul>
+      </nav>
+      <div class="navbar__actions">
+        <form action="#products" class="search" id="navbarSearchForm" autocomplete="off">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" id="navbarSearchInput" placeholder="Search Library" aria-label="Search">
+          <div class="search-dropdown" id="navbarSearchDropdown"></div>
+        </form>
+        <a href="/add_to_cart.html" class="navbar__ic--cart category-cart" aria-label="Cart"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count-badge">0</span></a>
+        <div class="navbar__auth" id="navbarAuth">
+          <a href="#" class="navbar__auth-link" id="loginBtn"><i class="fa-regular fa-user"></i> Login</a>
+          <a href="/register.html" class="navbar__auth-link navbar__auth-link--accent" id="registerBtn">Register</a>
+        </div>
+        <div class="navbar__user" id="navbarUser" hidden>
+          <button type="button" class="navbar__user-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false"><span class="navbar__avatar" id="userAvatar">U</span></button>
+          <div class="navbar__user-menu" id="userMenu">
+            <div class="navbar__user-menu-info"><span class="navbar__avatar navbar__avatar--lg" id="userAvatarLg">U</span><div><strong id="userMenuName">User</strong><small id="userMenuEmail">user@example.com</small></div></div>
+            <a href="/user_dashboard.html" class="navbar__user-menu-item"><i class="fa-regular fa-id-badge"></i> My account</a>
+            <button type="button" class="navbar__user-menu-item navbar__user-menu-item--logout" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="nav-overlay" id="menuOverlay" aria-label="Close menu" tabindex="-1"></button>
+</header>
+
+<div class="app" id="app">
+  <div class="reader-back-control">
+    <div class="brand" hidden>
+      <span class="brand-mark">Marginalia</span>
+      <span class="brand-sub">Read here — no download required</span>
+    </div>
+    <button class="back-btn" id="backBtn" aria-label="Back to library">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Library
+    </button>
+  </div>
+
+  <main class="screen library-screen" id="libraryScreen">
+    <section class="continue-card" id="continueCard" hidden>
+      <div class="continue-ribbon"></div>
+      <p class="eyebrow">Continue Reading</p>
+      <h2 id="continueTitle"></h2>
+      <p class="meta" id="continueMeta"></p>
+      <button class="resume-btn" id="resumeBtn">
+        Resume reading
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+      <p class="continue-hint">Files stay on your device. Point back to the PDF once and we'll drop you on the right page.</p>
+    </section>
+
+    <div class="library-heading">
+      <h1>Your library</h1>
+      <span id="libCount"></span>
+    </div>
+    <div class="library-grid" id="libraryGrid"></div>
+  </main>
+
+  <main class="screen reader-screen" id="readerScreen" hidden>
+    <div class="toolbar">
+      <span class="doc-title-mini" id="readerTitle"></span>
+      <div class="tb-group tb-zoom">
+        <button id="zoomOut" aria-label="Zoom out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+        <span id="zoomLevel">100%</span>
+        <button id="zoomIn" aria-label="Zoom in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </div>
+      <div class="tb-group tb-pages">
+        <button id="prevPage" aria-label="Previous page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <span class="page-stamp"><input id="pageInput" inputmode="numeric" aria-label="Current page" value="1"> / <span id="pageTotal">—</span></span>
+        <button id="nextPage" aria-label="Next page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+      <div class="tb-group tb-actions">
+        <button class="ribbon-toggle" id="bookmarkBtn" aria-label="Bookmark this document" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"></path></svg>
+        </button>
+        <button id="fullscreenBtn" aria-label="Enter full screen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M16 3h3a2 2 0 0 1 2 2v3"></path><path d="M21 16v3a2 2 0 0 1-2 2h-3"></path><path d="M8 21H5a2 2 0 0 1-2-2v-3"></path></svg>
+        </button>
+        <button id="downloadBtn" aria-label="Download PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+      </div>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <div class="page-shell" id="pageShell">
+        <canvas id="pdfCanvas"></canvas>
+        <div class="corner-fold prev" id="foldPrev" title="Previous page"></div>
+        <div class="corner-fold next" id="foldNext" title="Next page"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<input type="file" id="fileInput" accept="application/pdf" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="/js/librarian_book_entry.js"></script>
+</body>
+</html>

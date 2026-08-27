@@ -29,7 +29,7 @@ function toggleAdminMenu() {
 
 function logout() {
     if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "login.html";
+        window.location.href = "/";
     }
 }
 function openPasswordModal() {
@@ -129,7 +129,7 @@ function libEscapeHtmlDash(str) {
 }
 
 function adminAuthHeaders() {
-    return { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') };
+    return { 'Authorization': 'Bearer ' + (localStorage.getItem('adminToken') || localStorage.getItem('librarianToken')) };
 }
 
 function formatActivityDate(dateStr) {

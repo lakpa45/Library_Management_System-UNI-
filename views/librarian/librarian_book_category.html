@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Admin Book Categories</title>
-    <script src="/js/admin-guard.js"></script>
+    <title>Book Categories</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="/output.css" rel="stylesheet">
     <style>
       body {
@@ -71,8 +72,29 @@
         }
       }
     </style>
+    <link href="/css/admin_dashboard_shared.css" rel="stylesheet">
   </head>
   <body class="paper-texture min-h-screen text-[#1B2A22]">
+    <script src="/js/admin_dashboard_guard.js"></script>
+    <div class="dashboard-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><span class="brand-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span>APNA</span></div>
+        <p class="quick-label">Librarian Workspace</p>
+        <nav class="side-nav" aria-label="Librarian navigation">
+          <a href="/librarian/dashboard"><i class="fa-solid fa-chart-column"></i> Dashboard</a>
+          <a href="/librarian/book-categories" class="active"><i class="fa-solid fa-book"></i> Books</a>
+          <a href="/librarian/borrow-return"><i class="fa-solid fa-arrow-right-arrow-left"></i> Borrow / Return</a>
+          <a href="/librarian/members"><i class="fa-solid fa-users"></i> Members</a>
+          <a href="/librarian/pending-members"><i class="fa-solid fa-user-clock"></i> Pending Members</a>
+          <a href="/librarian/register-member"><i class="fa-solid fa-user-plus"></i> Add Member</a>
+          <a href="/"><i class="fa-solid fa-house"></i> Main Website</a>
+        </nav>
+        <div class="sidebar-footer">Librarian Workspace<br>APNA Library · 2026</div>
+      </aside>
+      <button type="button" class="sidebar-overlay" id="sidebarOverlay" aria-label="Close navigation"></button>
+      <main class="main-area">
+        <header class="top-header"><button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div class="top-search"><button class="action-btn" id="topAddCategoryBtn" type="button"><i class="fa-solid fa-plus"></i> Add Category</button></div><div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-layer-group"></i></span><span>Book Categories</span></div><span class="today">Librarian Workspace</span></div></header>
+        <div class="dashboard-content">
     <!-- Header -->
     <header class="bg-[#1e3a5f] text-[#F3EADA] border-b-4 border-[#A9834F]">
       <div
@@ -93,7 +115,8 @@
         
     <div class="flex items-center gap-6">
         <a
-            href="/admin/dashboard"
+            id="dashboardBackLink"
+            href="/librarian/dashboard"
             class="inline-flex items-center gap-2 text-[#F3EADA] hover:text-white text-sm font-medium transition"
         >
             ← Back to Dashboard
@@ -344,6 +367,11 @@
       </div>
     </div>
 
-    <script src="/js/admin_bk_category.js"></script>
+        </div>
+      </main>
+    </div>
+
+    <script src="/js/librarian_book_category.js"></script>
+    <script src="/js/admin_shell.js"></script>
   </body>
 </html>

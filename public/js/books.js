@@ -1,6 +1,7 @@
 let books = [];
 let deleteTargetId = null;
 let selectedFile = null;
+let selectedPdf = null;
 
 const grid = document.getElementById("bookGrid");
 const emptyState = document.getElementById("emptyState");
@@ -11,9 +12,11 @@ const modalTitle = document.getElementById("modalTitle");
 const deleteModal = document.getElementById("deleteModal");
 const coverInput = document.getElementById("bookCover");
 const coverPreview = document.getElementById("coverPreview");
+const pdfInput = document.getElementById("bookPdf");
+const pdfFileName = document.getElementById("pdfFileName");
 
 const urlParams = new URLSearchParams(window.location.search);
-const preselectedCategoryId = urlParams.get('category');
+const preselectedCategoryId = urlParams.get('category_id') || urlParams.get('category');
 
 async function loadBooks() {
     try {
@@ -79,6 +82,7 @@ function buildCard(book) {
                 <p class="text-sm text-[#4A5A50] leading-snug">
                     ${escapeHTML(book.description || "No description yet.")}
                 </p>
+                ${book.pdf_file ? `<a href="${escapeHTML(book.pdf_file)}" target="_blank" rel="noopener" class="mt-3 inline-flex items-center text-sm font-semibold text-[#8A6500] hover:underline">Open PDF</a>` : ''}
             </div>
         </div>
     `;
@@ -111,6 +115,9 @@ function openModal(book = null) {
     bookForm.reset();
     coverPreview.classList.add("hidden");
     selectedFile = null;
+    selectedPdf = null;
+    pdfFileName.textContent = "";
+    pdfFileName.classList.add("hidden");
 
     document.getElementById("bookID").value = book ? book.book_id : "";
     document.getElementById("bookTitle").value = book ? book.title : "";
@@ -119,6 +126,10 @@ function openModal(book = null) {
     if (book && book.cover_image) {
         coverPreview.src = book.cover_image;
         coverPreview.classList.remove("hidden");
+    }
+    if (book && book.pdf_file) {
+        pdfFileName.textContent = "Current PDF: " + book.pdf_file.split('/').pop();
+        pdfFileName.classList.remove("hidden");
     }
 
     modalTitle.textContent = book ? "Edit Book" : "New Book";
@@ -131,6 +142,7 @@ function closeModal() {
 }
 
 document.getElementById("openAddBtn").addEventListener("click", () => openModal());
+document.getElementById("topAddBookBtn").addEventListener("click", () => openModal());
 document.getElementById("openAddBtnMobile").addEventListener("click", () => openModal());
 document.getElementById("emptyAddBtn").addEventListener("click", () => openModal());
 document.getElementById("closeModalBtn").addEventListener("click", closeModal);
@@ -148,6 +160,13 @@ coverInput.addEventListener("change", () => {
     }
 });
 
+pdfInput.addEventListener("change", () => {
+    const file = pdfInput.files[0];
+    selectedPdf = file || null;
+    pdfFileName.textContent = file ? `Selected PDF: ${file.name}` : "";
+    pdfFileName.classList.toggle("hidden", !file);
+});
+
 bookForm.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -160,11 +179,15 @@ bookForm.addEventListener("submit", async event => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("copies", document.getElementById("bookCopies").value || "1");
     if (preselectedCategoryId) {
         formData.append("category_id", preselectedCategoryId);
     }
     if (selectedFile) {
         formData.append("cover_image", selectedFile);
+    }
+    if (selectedPdf) {
+        formData.append("book_pdf", selectedPdf);
     }
 
     try {
@@ -207,6 +230,9 @@ deleteModal.addEventListener("click", event => {
 document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
     if (!deleteTargetId) return;
 
+    const confirmButton = document.getElementById("confirmDeleteBtn");
+    confirmButton.disabled = true;
+
     try {
         const response = await fetch(`/api/books/${deleteTargetId}`, {
             method: "DELETE"
@@ -215,9 +241,19 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", async () =
         if (response.ok) {
             closeDeleteModal();
             await loadBooks();
+            return;
         }
+
+        const contentType = response.headers.get("content-type") || "";
+        const result = contentType.includes("application/json")
+            ? await response.json()
+            : {};
+        alert(result.message || "Unable to remove the book.");
     } catch (err) {
         console.error(err);
+        alert("Unable to remove the book. Please try again.");
+    } finally {
+        confirmButton.disabled = false;
     }
 });
 
@@ -227,4 +263,6 @@ document.addEventListener("keydown", event => {
     if (!deleteModal.classList.contains("hidden")) closeDeleteModal();
 });
 
-loadBooks();
+loadBooks().then(() => {
+    if (preselectedCategoryId) openModal();
+});

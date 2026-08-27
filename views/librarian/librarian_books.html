@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Books</title>
-    <script src="/js/admin-guard.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="/output.css" rel="stylesheet" />
     <style>
       body {
@@ -71,8 +72,35 @@
         background: #e4d9c4;
       }
     </style>
+    <link href="/css/admin_dashboard_shared.css" rel="stylesheet" />
   </head>
   <body class="paper-texture min-h-screen text-[#1B2A22]">
+    <div class="dashboard-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand"><span class="brand-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span>APNA</span></div>
+        <p class="quick-label">Librarian Workspace</p>
+        <nav class="side-nav" aria-label="Librarian navigation">
+          <a href="/librarian/dashboard"><i class="fa-solid fa-chart-column"></i> Dashboard</a>
+          <a href="/librarian/book-categories" class="active"><i class="fa-solid fa-book"></i> Books</a>
+          <a href="/librarian/borrow-return"><i class="fa-solid fa-arrow-right-arrow-left"></i> Borrow / Return</a>
+          <a href="/librarian/members"><i class="fa-solid fa-users"></i> Members</a>
+          <a href="/librarian/pending-members"><i class="fa-solid fa-user-clock"></i> Pending Members</a>
+          <a href="/librarian/register-member"><i class="fa-regular fa-address-card"></i> Register Member</a>
+          <a href="/"><i class="fa-solid fa-house"></i> Main Website</a>
+        </nav>
+        <div class="sidebar-footer">Librarian Workspace<br />APNA Library · 2026</div>
+      </aside>
+      <button type="button" class="sidebar-overlay" id="sidebarOverlay" aria-label="Close navigation"></button>
+      <main class="main-area">
+        <header class="top-header">
+          <button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+          <div class="top-search">
+            <a class="action-btn" href="/librarian/dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+            <button class="action-btn" id="topAddBookBtn" type="button" style="margin-left:8px"><i class="fa-solid fa-plus"></i> Add Book</button>
+          </div>
+          <div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-book"></i></span><span>Books Management</span></div><span class="today">Librarian Workspace</span></div>
+        </header>
+        <div class="dashboard-content">
     <!-- Header -->
     <header class="bg-[#1e3a5f] text-[#F3EADA] border-b-4 border-[#A9834F]">
       <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -84,7 +112,7 @@
         </div>
         <div class="flex items-center gap-3">
           <a
-            href="/admin/dashboard"
+            href="/librarian/dashboard"
             class="inline-flex items-center gap-2 text-[#F3EADA] hover:text-white text-sm font-medium transition"
           >
             ← Back to Dashboard
@@ -231,7 +259,7 @@
 
           <div>
             <label for="bookCover" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">
-              Cover Image
+              Cover Image (JPG, PNG or WebP)
             </label>
             <input
               id="bookCover"
@@ -240,6 +268,12 @@
               class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]"
             />
             <img id="coverPreview" class="hidden mt-3 h-32 rounded-md border border-[#E4D9C4] object-cover" />
+          </div>
+
+          <div>
+            <label for="bookPdf" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">Book PDF</label>
+            <input id="bookPdf" type="file" accept="application/pdf,.pdf" class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]" />
+            <p id="pdfFileName" class="hidden mt-2 text-xs text-[#4A5A50]"></p>
           </div>
 
           <div class="flex gap-3 pt-2">
@@ -280,7 +314,12 @@
       </div>
     </div>
 
+        </div>
+      </main>
+    </div>
+
     <script src="/js/admin_dashboard_guard.js"></script>
     <script src="/js/books.js"></script>
+    <script src="/js/admin_shell.js"></script>
   </body>
 </html>

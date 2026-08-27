@@ -9,6 +9,8 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import loanRoutes from './routes/loanRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
+import librarianRoutes from './routes/librarianRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
 import { requireAdminPage } from './middleware/admin_page_guard.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,24 +38,45 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/loans', loanRoutes);
 app.use('/api/members', memberRoutes);
+app.use('/api/librarians', librarianRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
 // Main route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// admin login route
-app.get('/admin/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'admin_login.html'));
+app.get('/e-books', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'e_books.html'));
+});
+
+app.get('/books', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'all_books.html'));
+});
+
+app.get('/categories', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'categories.html'));
+});
+
+app.get('/my-books', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'my_books.html'));
 });
 
 // Map of clean admin pages
 const ADMIN_PAGES = {
     'dashboard': 'admin_dashboard.html',
-    'books': 'admin_bk_category.html',
-    'borrow-return': 'admin_borrow_ret_bk.html',
-    'members': 'admin_members.html',
-    'register-member': 'register_member.html',
+    'librarians': 'admin_librarians.html',
+    'audit-logs': 'admin_audit_logs.html',
+};
+
+const LIBRARIAN_PAGES = {
+    'dashboard': 'librarian_dashboard.html',
+    'book-categories': 'librarian_book_category.html',
+    'books': 'librarian_books.html',
+    'borrow-return': 'librarian_borrow_return.html',
+    'members': 'librarian_members.html',
+    'pending-members': 'librarian_pending_members.html',
+    'register-member': 'librarian_register_member.html',
 };
 
 // guarded admin pages — one route covers all of views/admin
@@ -64,7 +87,21 @@ app.get('/admin/:page', requireAdminPage, (req, res) => {
         return res.status(404).send('Not found');
     }
 
+    if (['librarians', 'audit-logs'].includes(req.params.page) && req.admin.role !== 'admin') {
+        return res.status(403).send('Administrator access required');
+    }
+
     res.sendFile(path.join(__dirname, 'views', 'admin', filename));
+});
+
+app.get('/librarian/:page', requireAdminPage, (req, res) => {
+    const filename = LIBRARIAN_PAGES[req.params.page];
+
+    if (!filename) {
+        return res.status(404).send('Not found');
+    }
+
+    res.sendFile(path.join(__dirname, 'views', 'librarian', filename));
 });
 
 app.listen(PORT, () => {

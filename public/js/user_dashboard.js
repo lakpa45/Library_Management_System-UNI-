@@ -81,7 +81,7 @@
     });
     const changePwBtn = accountForm.querySelector(".btn--ghost");
     changePwBtn?.addEventListener("click", () => {
-      toast("Password reset link sent to your email");
+      window.location.href = "/forget_password.html";
     });
   }
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Add Member | APNA Library</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/output.css" rel="stylesheet"><link href="/css/admin_dashboard_shared.css" rel="stylesheet">
+  <style>
+    .member-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:16px;align-items:start}.member-form-card,.member-preview-card{padding:20px;border:1px solid var(--line);border-radius:9px;background:#fff}.section-title{margin:0 0 4px;font-size:16px}.section-copy{margin:0 0 18px;color:var(--muted);font-size:11px}.member-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.member-field--full{grid-column:1/-1}.member-field label{display:block;margin-bottom:6px;color:#555;font-size:11px;font-weight:600}.member-field input,.member-field select,.member-field textarea{width:100%;padding:10px 11px;border:1px solid #d7d7d9;border-radius:7px;background:#fff;outline:none}.member-field input:focus,.member-field select:focus,.member-field textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(245,179,1,.14)}.field-error{display:none;margin:5px 0 0;color:#b42318;font-size:10px}.member-field.invalid .field-error{display:block}.member-field.invalid input,.member-field.invalid select{border-color:#b42318}.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.form-actions button{padding:10px 16px;border:0;border-radius:6px;font-weight:600;cursor:pointer}.clear-button{background:#eee}.submit-button{background:var(--red);color:var(--accent-ink)}.submit-button:hover{background:var(--red-dark)}.submit-button:disabled{opacity:.65}.library-card{padding:20px;border-radius:10px;background:#1f1f1f;color:#fff;box-shadow:0 12px 26px rgba(0,0,0,.18)}.library-card small{color:var(--red);text-transform:uppercase;letter-spacing:.14em}.library-card h2{margin:8px 0 18px;font-size:20px}.card-details{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:11px}.card-details span{display:block;margin-top:3px;color:#fff;font-size:12px;font-weight:600}.form-message{min-height:18px;margin:14px 0 0;font-size:12px}.form-message.error{color:#b42318}.form-message.success{color:#16794b}@media(max-width:760px){.member-layout,.member-form-grid{grid-template-columns:1fr}.member-field--full{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <script src="/js/admin_dashboard_guard.js"></script>
+  <div class="dashboard-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><span class="brand-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span>APNA</span></div>
+      <p class="quick-label">Librarian Workspace</p>
+      <nav class="side-nav" aria-label="Librarian navigation"><a href="/librarian/dashboard"><i class="fa-solid fa-chart-column"></i> Dashboard</a><a href="/librarian/book-categories"><i class="fa-solid fa-book"></i> Books</a><a href="/librarian/borrow-return"><i class="fa-solid fa-arrow-right-arrow-left"></i> Borrow / Return</a><a href="/librarian/members"><i class="fa-solid fa-users"></i> Members</a><a href="/librarian/pending-members"><i class="fa-solid fa-user-clock"></i> Pending Members</a><a href="/librarian/register-member" class="active"><i class="fa-solid fa-user-plus"></i> Add Member</a><a href="/"><i class="fa-solid fa-house"></i> Main Website</a></nav>
+      <div class="sidebar-footer">Librarian Workspace<br>APNA Library · 2026</div>
+    </aside>
+    <button type="button" class="sidebar-overlay" id="sidebarOverlay" aria-label="Close navigation"></button>
+    <main class="main-area">
+      <header class="top-header"><button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div class="top-search"><a class="action-btn" href="/librarian/dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div><div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-user-plus"></i></span><span>Add a new library member</span></div><span class="today">Librarian Workspace</span></div></header>
+      <div class="dashboard-content"><div class="member-layout">
+        <form id="memberForm" class="member-form-card" novalidate>
+          <h1 class="section-title">Member details</h1><p class="section-copy">Required fields are marked *. A card number and temporary password are generated automatically.</p>
+          <div class="member-form-grid">
+            <div class="member-field"><label for="firstName">First name *</label><input id="firstName" type="text"><p class="field-error">Enter a first name.</p></div>
+            <div class="member-field"><label for="lastName">Last name *</label><input id="lastName" type="text"><p class="field-error">Enter a last name.</p></div>
+            <div class="member-field"><label for="email">Email *</label><input id="email" type="email"><p class="field-error">Enter a valid email.</p></div>
+            <div class="member-field"><label for="phone">Phone number *</label><input id="phone" type="tel" inputmode="numeric" maxlength="10"><p class="field-error">Enter a valid 10-digit number.</p></div>
+            <div class="member-field"><label for="dateOfBirth">Date of birth *</label><input id="dateOfBirth" type="date"><p class="field-error">Choose a date of birth.</p></div>
+            <div class="member-field"><label for="department">Department *</label><input id="department" type="text" placeholder="e.g. BCA"><p class="field-error">Enter a department.</p></div>
+            <div class="member-field"><label for="rollId">Roll / Employee ID *</label><input id="rollId" type="text"><p class="field-error">Enter a roll or employee ID.</p></div>
+            <div class="member-field"><label for="validTill">Membership valid till</label><input id="validTill" type="date"></div>
+            <div class="member-field member-field--full"><label for="address">Address</label><textarea id="address" rows="3"></textarea></div>
+          </div>
+          <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+          <div class="form-actions"><button class="clear-button" type="reset">Clear</button><button class="submit-button" id="submitMember" type="submit"><i class="fa-solid fa-user-plus"></i> Add Member</button></div>
+        </form>
+        <aside class="member-preview-card"><p class="section-copy">Library card preview</p><div class="library-card"><small>APNA Library Member</small><h2 id="previewName">New Member</h2><div class="card-details"><div>Card number<span id="previewCard">Generated after saving</span></div><div>Type<span id="previewType">—</span></div><div>Department<span id="previewDepartment">—</span></div><div>Valid till<span id="previewExpiry">—</span></div></div></div></aside>
+      </div></div>
+    </main>
+  </div>
+  <script src="/js/librarian_register_member.js"></script><script src="/js/admin_shell.js"></script>
+</body>
+</html>

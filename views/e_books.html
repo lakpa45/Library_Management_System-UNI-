@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free E-Books | APNA Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="/css/home_page.css">
+    <link rel="stylesheet" href="/css/category_cart.css">
+    <style>
+        .menu a[aria-current="page"] { color:var(--accent-ink); font-weight:700; }
+        .menu a[aria-current="page"]::after { transform:scaleX(1); }
+        .ebook-main { min-height:100vh; padding-top:126px; background:var(--paper); }
+        .ebook-hero { padding:72px clamp(18px,5vw,64px); background:linear-gradient(135deg,#fff7da 0%,#f5b301 100%); }
+        .ebook-hero__inner, .ebook-section { width:min(1180px,100%); margin:0 auto; }
+        .ebook-kicker { display:inline-block; margin-bottom:12px; color:var(--accent-ink); font-family:'Chakra Petch',sans-serif; font-size:.78rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+        .ebook-hero h1 { margin:0; color:var(--ink); font-family:'Chakra Petch',sans-serif; font-size:clamp(2.2rem,5vw,4.5rem); line-height:1; }
+        .ebook-hero p { max-width:650px; margin:18px 0 30px; color:#564b31; font-size:1rem; line-height:1.75; }
+        .ebook-search { max-width:720px; display:flex; padding:7px; border:1px solid rgba(58,42,0,.16); border-radius:999px; background:#fff; box-shadow:0 18px 45px rgba(58,42,0,.12); }
+        .ebook-search input { min-width:0; flex:1; padding:13px 18px; border:0; outline:0; background:transparent; color:var(--ink); }
+        .ebook-search button { min-width:120px; padding:12px 22px; border:0; border-radius:999px; background:var(--ink); color:#fff; font-weight:700; cursor:pointer; transition:.2s; }
+        .ebook-search button:hover:not(:disabled) { transform:translateY(-2px); background:#000; }
+        .ebook-search button:disabled { opacity:.58; cursor:not-allowed; }
+        .ebook-section { padding:64px clamp(18px,3vw,36px) 80px; }
+        .ebook-section__head { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:26px; }
+        .ebook-section h2 { margin:0; font-family:'Chakra Petch',sans-serif; font-size:clamp(1.7rem,3vw,2.5rem); }
+        .ebook-result-count { color:var(--muted); font-size:.9rem; }
+        .ebook-status { min-height:24px; margin:0 0 14px; color:var(--muted); font-size:.88rem; }
+        .ebook-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+        .ebook-card { min-width:0; overflow:hidden; display:grid; grid-template-columns:145px minmax(0,1fr); border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:0 10px 28px rgba(29,29,29,.07); transition:transform .2s,box-shadow .2s; }
+        .ebook-card:hover { transform:translateY(-5px); box-shadow:0 18px 38px rgba(29,29,29,.12); }
+        .ebook-card__cover { min-height:225px; background:#eee9dc; }
+        .ebook-card__cover img, .ebook-cover-placeholder { width:100%; height:100%; min-height:225px; object-fit:cover; }
+        .ebook-cover-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:18px; background:linear-gradient(145deg,#29251c,#57481f); color:#ffd45e; text-align:center; }
+        .ebook-cover-placeholder i { font-size:2.3rem; }
+        .ebook-cover-placeholder span { font-family:'Chakra Petch',sans-serif; font-size:.8rem; letter-spacing:.08em; }
+        .ebook-card__body { min-width:0; padding:18px; display:flex; flex-direction:column; }
+        .ebook-card__language { margin:0 0 8px; color:#9a7510; font-size:.72rem; font-weight:700; text-transform:uppercase; }
+        .ebook-card h3 { margin:0; display:-webkit-box; overflow:hidden; color:var(--ink); font-family:'Chakra Petch',sans-serif; font-size:1.05rem; line-height:1.3; -webkit-box-orient:vertical; -webkit-line-clamp:3; }
+        .ebook-card__author { margin:9px 0; overflow:hidden; color:var(--muted); font-size:.82rem; text-overflow:ellipsis; white-space:nowrap; }
+        .ebook-card__downloads { margin:0 0 16px; color:#72684e; font-size:.74rem; }
+        .ebook-card__actions { margin-top:auto; display:grid; gap:8px; }
+        .ebook-btn { display:block; padding:9px 10px; border-radius:999px; text-align:center; text-decoration:none; font-size:.75rem; font-weight:700; transition:.2s; }
+        .ebook-btn--primary { background:var(--accent); color:var(--accent-ink); }
+        .ebook-btn--primary:hover { background:var(--accent-2); transform:translateY(-1px); }
+        .ebook-btn--secondary { border:1px solid var(--ink); color:var(--ink); }
+        .ebook-btn--secondary:hover { background:var(--ink); color:#fff; }
+        .ebook-btn--disabled { background:#eee; color:#929292; cursor:not-allowed; }
+        .ebook-pagination { margin-top:34px; display:flex; align-items:center; justify-content:center; gap:16px; }
+        .ebook-pagination button { min-width:110px; padding:11px 17px; border:1px solid var(--ink); border-radius:999px; background:#fff; color:var(--ink); font-weight:700; cursor:pointer; transition:.2s; }
+        .ebook-pagination button:hover:not(:disabled) { background:var(--ink); color:#fff; }
+        .ebook-pagination button:disabled { opacity:.35; cursor:not-allowed; }
+        .ebook-pagination span { min-width:80px; text-align:center; font-family:'Chakra Petch',sans-serif; font-weight:700; }
+        .ebook-empty { grid-column:1/-1; padding:70px 20px; border:1px dashed #d7cfbc; border-radius:18px; color:var(--muted); text-align:center; }
+        .ebook-empty i { color:var(--accent); font-size:2.2rem; }
+        .ebook-empty h3 { margin:14px 0 6px; color:var(--ink); }
+        .ebook-empty p { margin:0; }
+        .ebook-empty--error i { color:#c1391f; }
+        .skeleton { border-radius:8px; background:linear-gradient(90deg,#eee 25%,#f8f8f8 50%,#eee 75%); background-size:200% 100%; animation:ebook-shimmer 1.2s infinite; }
+        .skeleton-cover { width:100%; min-height:225px; border-radius:0; }
+        .skeleton-line { width:75%; height:13px; margin-bottom:12px; }
+        .skeleton-line--wide { width:100%; height:22px; }
+        .skeleton-line--short { width:48%; }
+        @keyframes ebook-shimmer { to { background-position:-200% 0; } }
+        :where(.ebook-search input,.ebook-search button,.ebook-btn,.ebook-pagination button):focus-visible { outline:3px solid #1976d2; outline-offset:3px; }
+        @media (max-width:1050px) { .ebook-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:650px) {
+            .ebook-main { padding-top:84px; }
+            .ebook-hero { padding-top:52px; padding-bottom:52px; }
+            .ebook-search { border-radius:18px; flex-direction:column; }
+            .ebook-search button { width:100%; }
+            .ebook-grid { grid-template-columns:1fr; }
+            .ebook-card { grid-template-columns:120px minmax(0,1fr); }
+            .ebook-card__cover, .ebook-card__cover img, .ebook-cover-placeholder, .skeleton-cover { min-height:210px; }
+            .ebook-section__head { align-items:start; flex-direction:column; gap:7px; }
+            .ebook-pagination { gap:8px; }
+            .ebook-pagination button { min-width:92px; }
+        }
+    </style>
+    <script defer src="/js/site_search.js"></script>
+    <script defer src="/js/eBooks.js"></script>
+</head>
+<body>
+    <header class="header">
+        <input type="checkbox" id="menu-btn" class="menu-btn">
+        <div class="topbar">
+            <div class="topbar__inner">
+                <div class="topbar__left">
+                    <a href="#contact"><i class="fa-solid fa-phone"></i> +91-123-1234</a>
+                    <a href="#contact"><i class="fa-regular fa-envelope"></i> contact@gmail.com</a>
+                </div>
+                <div class="topbar__right">
+                    <span><i class="fa-solid fa-globe"></i> English</span>
+                    <a href="#contact"><i class="fa-regular fa-circle-question"></i> Need Help?</a>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-bar">
+            <div class="navbar">
+                <button type="button" class="menu-icon" id="menuToggle" aria-label="Open menu" aria-controls="primaryNavigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+                <a href="/" class="brand">APNA LIBRARY</a>
+                <nav class="nav" id="primaryNavigation" aria-label="Primary navigation">
+                    <button type="button" class="nav-close" id="menuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+                    <ul class="menu">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/books">Books</a></li>
+                        <li><a href="/categories">Categories</a></li>
+                        <li><a href="/e-books" aria-current="page">E-Books</a></li>
+                        <li><a href="/my-books">My Books</a></li>
+                        <li class="menu__auth" data-menu-auth><a href="/"><i class="fa-regular fa-user"></i> Login</a></li>
+                        <li class="menu__auth" data-menu-auth><a href="/register.html">Register</a></li>
+                    </ul>
+                </nav>
+                <div class="navbar__actions">
+                    <form action="#products" class="search" id="navbarSearchForm" autocomplete="off">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" id="navbarSearchInput" placeholder="Search Library" aria-label="Search library catalog">
+                        <div class="search-dropdown" id="navbarSearchDropdown"></div>
+                    </form>
+                    <div class="navbar__auth" id="navbarAuth">
+                        <a href="/" class="navbar__auth-link" id="loginBtn"><i class="fa-regular fa-user"></i> Login</a>
+                        <a href="/register.html" class="navbar__auth-link navbar__auth-link--accent" id="registerBtn">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="nav-overlay" id="menuOverlay" aria-label="Close menu" tabindex="-1"></button>
+    </header>
+
+    <main class="ebook-main">
+        <section class="ebook-hero" aria-labelledby="ebookPageTitle">
+            <div class="ebook-hero__inner">
+                <span class="ebook-kicker">Read freely · Learn endlessly</span>
+                <h1 id="ebookPageTitle">Discover Free E-Books</h1>
+                <p>Explore thousands of free public-domain books from Project Gutenberg. Search timeless literature by title or author, then read online or download an EPUB.</p>
+                <form class="ebook-search" id="ebookSearchForm" role="search" novalidate>
+                    <label class="sr-only" for="ebookSearchInput">Search free e-books by title or author</label>
+                    <input type="search" id="ebookSearchInput" placeholder="Search by title or author" autocomplete="off">
+                    <button type="submit" id="ebookSearchButton">Search</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="ebook-section" id="availableBooks" aria-labelledby="availableBooksTitle">
+            <div class="ebook-section__head">
+                <h2 id="availableBooksTitle">Available Books</h2>
+                <span class="ebook-result-count" id="ebookResultCount"></span>
+            </div>
+            <p class="ebook-status" id="ebookStatus" role="status" aria-live="polite"></p>
+            <div class="ebook-grid" id="ebookGrid" aria-live="polite"></div>
+            <nav class="ebook-pagination" aria-label="E-book result pages">
+                <button type="button" id="ebookPrevious" disabled>Previous</button>
+                <span id="ebookPageIndicator" aria-live="polite">Page 1</span>
+                <button type="button" id="ebookNext" disabled>Next</button>
+            </nav>
+        </section>
+    </main>
+    <footer class="footer" id="contact"><div class="container footer-grid"><div><h2 class="footer-brand">APNA Library</h2><p>APNA Library provides students and faculty with access to academic books, journals, research materials and digital resources.</p></div><div><h3>Library</h3><a href="/categories">Categories</a><a href="/books">Popular Books</a><a href="/books?sort=newest">New Arrivals</a><a href="/e-books">Digital Library</a></div><div><h3>Support</h3><a href="#">Library Rules</a><a href="#">Borrowing Policy</a><a href="/frequently_asked_question.html">FAQ</a><a href="#">Contact Librarian</a></div><div><h3>Contact</h3><p><i class="fa-solid fa-location-dot"></i> APNA Library Sikkim</p><p><i class="fa-solid fa-phone"></i> +91-123-1234</p><p><i class="fa-solid fa-envelope"></i> library@apna.edu</p></div></div><div class="footer-bottom"><p>&copy; 2026 APNA Library. All Rights Reserved.</p></div></footer>
+</body>
+</html>

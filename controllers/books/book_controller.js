@@ -3,8 +3,63 @@ import pool from '../../db/connection.js';
 // GET all books
 export const getBooks = async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM book ORDER BY book_id DESC');
-        res.status(200).json(result.rows);
+        const usePublicListing = ['q', 'category', 'availability', 'page', 'limit', 'sort', 'public']
+            .some(key => req.query[key] !== undefined);
+
+        if (!usePublicListing) {
+            const result = await pool.query('SELECT * FROM book ORDER BY book_id DESC');
+            return res.status(200).json(result.rows);
+        }
+
+        const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+        const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 12, 1), 48);
+        const category = req.query.category ? Number.parseInt(req.query.category, 10) : null;
+        const availability = ['available', 'unavailable'].includes(req.query.availability) ? req.query.availability : 'all';
+        const sortMap = {
+            newest: 'b.book_id DESC', title_asc: 'b.title ASC',
+            title_desc: 'b.title DESC', most_available: 'available_copies DESC, b.title ASC'
+        };
+        const orderBy = sortMap[req.query.sort] || sortMap.newest;
+        const search = String(req.query.q || '').trim();
+        const memberId = req.user?.role === 'user' ? req.user.id : null;
+        const values = [memberId];
+        const where = [];
+
+        if (search) {
+            values.push(`%${search}%`);
+            where.push(`(b.title ILIKE $${values.length} OR COALESCE(b.isbn, '') ILIKE $${values.length} OR COALESCE(c.category_name, '') ILIKE $${values.length})`);
+        }
+        if (Number.isInteger(category) && category > 0) {
+            values.push(category);
+            where.push(`b.category_id = $${values.length}`);
+        }
+        if (availability === 'available') where.push(`EXISTS (SELECT 1 FROM book_copy ac WHERE ac.book_id = b.book_id AND LOWER(ac.status) = 'available')`);
+        if (availability === 'unavailable') where.push(`NOT EXISTS (SELECT 1 FROM book_copy ac WHERE ac.book_id = b.book_id AND LOWER(ac.status) = 'available')`);
+
+        const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+        const countResult = await pool.query(
+            `SELECT COUNT(*)::int AS total FROM book b
+             LEFT JOIN category c ON c.category_id = b.category_id
+             CROSS JOIN (SELECT $1::int AS authenticated_member_id) auth
+             ${whereSql}`,
+            values
+        );
+        const queryValues = [...values, limit, (page - 1) * limit];
+        const result = await pool.query(
+            `SELECT b.book_id, b.title, b.isbn, b.description, b.cover_image, b.category_id,
+                    c.category_name, COUNT(bc.copy_id)::int AS total_copies,
+                    COUNT(bc.copy_id) FILTER (WHERE LOWER(bc.status) = 'available')::int AS available_copies,
+                    EXISTS (SELECT 1 FROM wishlist w WHERE w.book_id = b.book_id AND w.member_id = $1) AS wishlisted
+             FROM book b
+             LEFT JOIN category c ON c.category_id = b.category_id
+             LEFT JOIN book_copy bc ON bc.book_id = b.book_id
+             ${whereSql}
+             GROUP BY b.book_id, c.category_name
+             ORDER BY ${orderBy}
+             LIMIT $${queryValues.length - 1} OFFSET $${queryValues.length}`,
+            queryValues
+        );
+        res.status(200).json({ books: result.rows, total: countResult.rows[0].total, page, limit, pages: Math.max(Math.ceil(countResult.rows[0].total / limit), 1) });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
@@ -22,15 +77,19 @@ export const createBook = async (req, res) => {
             return res.status(400).json({ message: 'Title is required' });
         }
 
-        const cover_image = req.file ? `/images/books/${req.file.filename}` : null;
+        const coverFile = req.files?.cover_image?.[0];
+        const pdfFile = req.files?.book_pdf?.[0];
+        const cover_image = coverFile ? `/images/books/${coverFile.filename}` : null;
+        const pdf_file = pdfFile ? `/pdfs/books/${pdfFile.filename}` : null;
 
         await client.query('BEGIN');
+        await client.query('ALTER TABLE book ADD COLUMN IF NOT EXISTS pdf_file TEXT');
 
         const bookResult = await client.query(
-            `INSERT INTO book (title, description, cover_image, category_id)
-             VALUES ($1, $2, $3, $4)
+            `INSERT INTO book (title, description, cover_image, category_id, pdf_file)
+             VALUES ($1, $2, $3, $4, $5)
              RETURNING *`,
-            [title, description, cover_image, category_id || null]
+            [title, description, cover_image, category_id || null, pdf_file]
         );
         const book = bookResult.rows[0];
 
@@ -63,17 +122,18 @@ export const updateBook = async (req, res) => {
             return res.status(400).json({ message: 'Title is required' });
         }
 
-        let query;
-        let values;
+        const coverFile = req.files?.cover_image?.[0];
+        const pdfFile = req.files?.book_pdf?.[0];
+        const cover_image = coverFile ? `/images/books/${coverFile.filename}` : null;
+        const pdf_file = pdfFile ? `/pdfs/books/${pdfFile.filename}` : null;
 
-        if (req.file) {
-            const cover_image = `/images/books/${req.file.filename}`;
-            query = `UPDATE book SET title = $1, description = $2, cover_image = $3, category_id = $4 WHERE book_id = $5 RETURNING *`;
-            values = [title, description, cover_image, category_id || null, id];
-        } else {
-            query = `UPDATE book SET title = $1, description = $2, category_id = $3 WHERE book_id = $4 RETURNING *`;
-            values = [title, description, category_id || null, id];
-        }
+        await pool.query('ALTER TABLE book ADD COLUMN IF NOT EXISTS pdf_file TEXT');
+        const query = `UPDATE book
+                       SET title = $1, description = $2, category_id = $3,
+                           cover_image = COALESCE($4, cover_image),
+                           pdf_file = COALESCE($5, pdf_file)
+                       WHERE book_id = $6 RETURNING *`;
+        const values = [title, description, category_id || null, cover_image, pdf_file, id];
 
         const result = await pool.query(query, values);
 
@@ -90,22 +150,54 @@ export const updateBook = async (req, res) => {
 
 // DELETE a book
 export const deleteBook = async (req, res) => {
+    const client = await pool.connect();
+
     try {
         const { id } = req.params;
 
-        const result = await pool.query(
+        await client.query('BEGIN');
+
+        const bookResult = await client.query(
+            'SELECT book_id FROM book WHERE book_id = $1 FOR UPDATE',
+            [id]
+        );
+
+        if (bookResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Book not found' });
+        }
+
+        const issueResult = await client.query(
+            `SELECT 1
+             FROM issue i
+             JOIN book_copy bc ON bc.copy_id = i.copy_id
+             WHERE bc.book_id = $1
+             LIMIT 1`,
+            [id]
+        );
+
+        if (issueResult.rows.length > 0) {
+            await client.query('ROLLBACK');
+            return res.status(409).json({
+                message: 'This book cannot be removed because it has borrowing records.'
+            });
+        }
+
+        await client.query('DELETE FROM book_copy WHERE book_id = $1', [id]);
+
+        await client.query(
             'DELETE FROM book WHERE book_id = $1 RETURNING *',
             [id]
         );
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Book not found' });
-        }
-
+        await client.query('COMMIT');
         res.status(200).json({ message: 'Book deleted' });
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 

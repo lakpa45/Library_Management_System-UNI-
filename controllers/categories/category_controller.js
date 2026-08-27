@@ -66,3 +66,21 @@ export const deleteCategory = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+export const getCategoryById = async (req, res) => {
+    const id = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(id) || id < 1) return res.status(400).json({ message: 'Invalid category ID' });
+    try {
+        const result = await pool.query(
+            `SELECT c.category_id, c.category_name, c.description, c.color,
+                    COUNT(b.book_id)::int AS book_count
+             FROM category c LEFT JOIN book b ON b.category_id = c.category_id
+             WHERE c.category_id = $1 GROUP BY c.category_id`, [id]
+        );
+        if (!result.rowCount) return res.status(404).json({ message: 'Category not found' });
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Category read failed:', error.message);
+        res.status(500).json({ message: 'Unable to load category' });
+    }
+};
