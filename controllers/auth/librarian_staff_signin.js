@@ -4,14 +4,15 @@ import pool from '../../db/connection.js';
 
 export const librarianStaffSignin = async (req, res) => {
     try {
-        const { email, password, role = 'librarian' } = req.body;
+        const email = String(req.body.email || '').trim().toLowerCase();
+        const { password, role = 'librarian' } = req.body;
 
         if (role !== 'librarian') {
             return res.status(400).json({ message: 'Please use the selected role to sign in.' });
         }
 
         const librarian = await pool.query(
-            'SELECT * FROM librarian WHERE email = $1',
+            'SELECT * FROM librarian WHERE LOWER(email) = $1',
             [email]
         ).then((result) => result.rows[0]);
 

@@ -2,6 +2,8 @@ let books = [];
 let deleteTargetId = null;
 let selectedFile = null;
 let selectedPdf = null;
+let categories = [];
+let activeBookType = "physical";
 
 const grid = document.getElementById("bookGrid");
 const emptyState = document.getElementById("emptyState");
@@ -14,6 +16,11 @@ const coverInput = document.getElementById("bookCover");
 const coverPreview = document.getElementById("coverPreview");
 const pdfInput = document.getElementById("bookPdf");
 const pdfFileName = document.getElementById("pdfFileName");
+const categoryInput = document.getElementById("bookCategory");
+const bookTypeInput = document.getElementById("bookType");
+const bookTypeToggle = document.getElementById("bookTypeToggle");
+const emptyStateTitle = document.getElementById("emptyStateTitle");
+const emptyStateMessage = document.getElementById("emptyStateMessage");
 
 const urlParams = new URLSearchParams(window.location.search);
 const preselectedCategoryId = urlParams.get('category_id') || urlParams.get('category');
@@ -28,17 +35,33 @@ async function loadBooks() {
     }
 }
 
+async function loadCategories() {
+    const response = await fetch('/api/categories');
+    const result = await response.json().catch(() => []);
+    if (!response.ok) throw new Error(result.message || 'Unable to load categories.');
+    categories = result;
+    categoryInput.replaceChildren(new Option('Select a category', ''));
+    categories.forEach(category => categoryInput.add(new Option(category.category_name, category.category_id)));
+}
+
 function render() {
     const query = searchInput.value.trim().toLowerCase();
     const filtered = books.filter(book => {
         const title = (book.title || "").toLowerCase();
         const description = (book.description || "").toLowerCase();
-        return title.includes(query) || description.includes(query);
+        const matchesSearch = title.includes(query) || description.includes(query);
+        return (book.book_type || "physical").toLowerCase() === activeBookType
+            && matchesSearch;
     });
 
     grid.innerHTML = "";
     if (filtered.length === 0) {
         emptyState.classList.remove("hidden");
+        const label = activeBookType === "physical" ? "physical books" : "digital books";
+        emptyStateTitle.textContent = `No ${label} available`;
+        emptyStateMessage.textContent = query
+            ? `No ${label} match “${searchInput.value.trim()}”.`
+            : `There are currently no ${label} in the catalog.`;
     } else {
         emptyState.classList.add("hidden");
         filtered.forEach(book => grid.appendChild(buildCard(book)));
@@ -46,6 +69,36 @@ function render() {
 
     document.getElementById("statBookCount").textContent = books.length;
 }
+
+function selectBookType(type) {
+    if (!['physical', 'digital'].includes(type) || type === activeBookType) return;
+    const previousType = activeBookType;
+    activeBookType = type;
+    bookTypeToggle.dataset.active = type;
+    bookTypeToggle.querySelectorAll('[data-book-type]').forEach(button => {
+        const selected = button.dataset.bookType === type;
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+    });
+    grid.setAttribute('aria-labelledby', type === 'physical' ? 'physicalBooksTab' : 'digitalBooksTab');
+    render();
+    grid.classList.remove('book-grid-enter', 'book-grid-enter--left');
+    void grid.offsetWidth;
+    grid.classList.add(type === 'digital' && previousType === 'physical' ? 'book-grid-enter' : 'book-grid-enter--left');
+}
+
+bookTypeToggle.addEventListener('click', event => {
+    const button = event.target.closest('[data-book-type]');
+    if (button) selectBookType(button.dataset.bookType);
+});
+
+bookTypeToggle.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const type = event.key === 'ArrowLeft' || event.key === 'Home' ? 'physical' : 'digital';
+    selectBookType(type);
+    bookTypeToggle.querySelector(`[data-book-type="${type}"]`).focus();
+});
 
 function buildCard(book) {
     const card = document.createElement("div");
@@ -122,6 +175,9 @@ function openModal(book = null) {
     document.getElementById("bookID").value = book ? book.book_id : "";
     document.getElementById("bookTitle").value = book ? book.title : "";
     document.getElementById("bookDesc").value = book ? book.description || "" : "";
+    document.getElementById("bookIsbn").value = book ? book.isbn || "" : "";
+    categoryInput.value = book ? String(book.category_id || '') : String(preselectedCategoryId || '');
+    bookTypeInput.value = book ? String(book.book_type || 'physical').toLowerCase() : activeBookType;
 
     if (book && book.cover_image) {
         coverPreview.src = book.cover_image;
@@ -165,6 +221,7 @@ pdfInput.addEventListener("change", () => {
     selectedPdf = file || null;
     pdfFileName.textContent = file ? `Selected PDF: ${file.name}` : "";
     pdfFileName.classList.toggle("hidden", !file);
+    if (file) bookTypeInput.value = 'digital';
 });
 
 bookForm.addEventListener("submit", async event => {
@@ -173,16 +230,19 @@ bookForm.addEventListener("submit", async event => {
     const id = document.getElementById("bookID").value;
     const title = document.getElementById("bookTitle").value.trim();
     const description = document.getElementById("bookDesc").value.trim();
+    const isbn = document.getElementById("bookIsbn").value.trim();
+    const categoryId = categoryInput.value;
+    const bookType = bookTypeInput.value;
 
-    if (!title) return;
+    if (!title || !categoryId) return;
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("isbn", isbn);
     formData.append("copies", document.getElementById("bookCopies").value || "1");
-    if (preselectedCategoryId) {
-        formData.append("category_id", preselectedCategoryId);
-    }
+    formData.append("category_id", categoryId);
+    formData.append("book_type", bookType);
     if (selectedFile) {
         formData.append("cover_image", selectedFile);
     }
@@ -190,6 +250,8 @@ bookForm.addEventListener("submit", async event => {
         formData.append("book_pdf", selectedPdf);
     }
 
+    const submitButton = bookForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
     try {
         const url = id ? `/api/books/${id}` : "/api/books";
         const method = id ? "PUT" : "POST";
@@ -203,12 +265,14 @@ bookForm.addEventListener("submit", async event => {
             closeModal();
             await loadBooks();
         } else {
-            const result = await response.json();
+            const result = await response.json().catch(() => ({}));
             alert(result.message || "Something went wrong.");
         }
     } catch (err) {
         console.error(err);
         alert("Something went wrong. Please try again.");
+    } finally {
+        submitButton.disabled = false;
     }
 });
 
@@ -263,6 +327,6 @@ document.addEventListener("keydown", event => {
     if (!deleteModal.classList.contains("hidden")) closeDeleteModal();
 });
 
-loadBooks().then(() => {
+Promise.all([loadBooks(), loadCategories()]).then(() => {
     if (preselectedCategoryId) openModal();
 });

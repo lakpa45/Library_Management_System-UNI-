@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
+            try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (err) { console.error('Server sign-out failed:', err); }
             localStorage.removeItem('token');
             window.location.href = '/';
         });

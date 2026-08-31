@@ -78,7 +78,7 @@ export const approveMember = async (req, res) => {
         }
 
         const member = memberResult.rows[0];
-        const cardNo = await generateCardNo(member.member_type);
+        const cardNo = member.card_no || await generateCardNo(member.member_type);
 
         const result = await pool.query(
             `UPDATE member SET status = 'Approved', card_no = $1 WHERE member_id = $2 RETURNING member_id, first_name, card_no`,
@@ -121,13 +121,17 @@ export const getMyProfile = async (req, res) => {
 
         if (user.member_id || user.id) {
             const result = await pool.query(
-                'SELECT member_id, first_name, last_name, email, card_no FROM member WHERE member_id = $1',
+                `SELECT member_id, first_name, last_name, email, phone, card_no,
+                        member_type, department, status, registered_on, valid_till
+                 FROM member WHERE member_id = $1`,
                 [user.member_id || user.id]
             );
             member = result.rows[0];
         } else if (user.email) {
             const result = await pool.query(
-                'SELECT member_id, first_name, last_name, email, card_no FROM member WHERE email = $1',
+                `SELECT member_id, first_name, last_name, email, phone, card_no,
+                        member_type, department, status, registered_on, valid_till
+                 FROM member WHERE LOWER(email) = LOWER($1)`,
                 [user.email]
             );
             member = result.rows[0];

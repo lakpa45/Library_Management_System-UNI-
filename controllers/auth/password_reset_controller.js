@@ -38,31 +38,41 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
+    const client = await pool.connect();
     try {
         const { token, newPassword } = req.body;
 
-        if (!token || !newPassword || newPassword.length < 6) {
+        if (!token || typeof newPassword !== 'string' || newPassword.length < 8 || newPassword.length > 72) {
             return res.status(400).json({ message: 'Invalid request' });
         }
 
-        const resetResult = await pool.query(
-            'SELECT * FROM password_reset WHERE token = $1 AND used = FALSE AND expires_at > NOW()',
+        await client.query('BEGIN');
+
+        const resetResult = await client.query(
+            `SELECT * FROM password_reset
+             WHERE token = $1 AND used = FALSE AND expires_at > NOW()
+             FOR UPDATE`,
             [token]
         );
 
         if (resetResult.rows.length === 0) {
+            await client.query('ROLLBACK');
             return res.status(400).json({ message: 'This reset link is invalid or has expired' });
         }
 
         const resetRow = resetResult.rows[0];
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        await pool.query('UPDATE member SET password = $1 WHERE email = $2', [hashedPassword, resetRow.email]);
-        await pool.query('UPDATE password_reset SET used = TRUE WHERE reset_id = $1', [resetRow.reset_id]);
+        await client.query('UPDATE member SET password = $1 WHERE email = $2', [hashedPassword, resetRow.email]);
+        await client.query('UPDATE password_reset SET used = TRUE WHERE reset_id = $1', [resetRow.reset_id]);
+        await client.query('COMMIT');
 
         res.status(200).json({ message: 'Password reset successful' });
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };

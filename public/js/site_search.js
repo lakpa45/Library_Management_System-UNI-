@@ -10,7 +10,8 @@ function libEscapeHtmlSearch(str) {
 function attachBookSearch(inputId, dropdownId) {
     const input = document.getElementById(inputId);
     const dropdown = document.getElementById(dropdownId);
-    if (!input || !dropdown) return;
+    if (!input || !dropdown || input.dataset.bookSearchAttached === 'true') return;
+    input.dataset.bookSearchAttached = 'true';
 
     let debounceTimer = null;
     let activeController = null;
@@ -86,12 +87,31 @@ function attachBookSearch(inputId, dropdownId) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const first = dropdown.querySelector('.search-dropdown__item');
-            if (first) window.location.href = first.getAttribute('href');
+            if (first) {
+                window.location.href = first.getAttribute('href');
+                return;
+            }
+            const term = input.value.trim();
+            window.location.href = term ? `/books?q=${encodeURIComponent(term)}` : '/books';
         });
     }
+}
+
+function attachFallbackBookSearch(input) {
+    if (!input || input.dataset.bookSearchAttached === 'true') return;
+    const form = input.closest('form');
+    if (!form) return;
+    input.dataset.bookSearchAttached = 'true';
+    form.setAttribute('role', 'search');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const term = input.value.trim();
+        window.location.href = term ? `/books?q=${encodeURIComponent(term)}` : '/books';
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     attachBookSearch('navbarSearchInput', 'navbarSearchDropdown');
     attachBookSearch('heroSearchInput', 'heroSearchDropdown');
+    document.querySelectorAll('form.search input[type="search"]').forEach(attachFallbackBookSearch);
 });

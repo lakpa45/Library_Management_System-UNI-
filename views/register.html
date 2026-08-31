@@ -45,20 +45,20 @@
                 
                 <div>
                     <label for="regName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input id="regName" name="name" type="text" required placeholder="John Doe"
+                    <input id="regName" name="name" type="text" required minlength="2" maxlength="100" autocomplete="name" placeholder="John Doe"
                         class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                 </div>
 
                 <div>
                     <label for="regEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input id="regEmail" name="email" type="email" required placeholder="you@example.com"
+                    <input id="regEmail" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com"
                         class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label for="regPhone" class="block text-sm font-medium text-gray-700">Phone</label>
-                        <input id="regPhone" name="phone" type="tel" required placeholder="10-digit number"
+                        <input id="regPhone" name="phone" type="tel" required inputmode="numeric" pattern="[0-9]{10}" minlength="10" maxlength="10" autocomplete="tel" placeholder="10-digit number"
                             class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                     </div>
                     <div>
@@ -75,29 +75,29 @@
 
                 <div>
                     <label for="regDept" class="block text-sm font-medium text-gray-700">Department</label>
-                    <input id="regDept" name="department" type="text" required placeholder="e.g. Computer Science"
+                    <input id="regDept" name="department" type="text" required minlength="2" maxlength="100" autocomplete="organization" placeholder="e.g. Computer Science"
                         class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label for="regPassword" class="block text-sm font-medium text-gray-700">Password</label>
-                        <input id="regPassword" name="password" type="password" required minlength="8" placeholder="Min. 8 chars"
+                        <input id="regPassword" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Min. 8 chars"
                             class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                     </div>
                     <div>
                         <label for="regConfirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                        <input id="regConfirmPassword" name="confirm_password" type="password" required minlength="8" placeholder="Re-enter"
+                        <input id="regConfirmPassword" name="confirm_password" type="password" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Re-enter"
                             class="mt-1.5 w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/20 transition">
                     </div>
                 </div>
 
                 <!-- Error / Success Messages -->
-                <p id="registerError" class="hidden text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100"></p>
-                <p id="registerSuccess" class="hidden text-sm font-medium text-green-700 bg-green-50 px-4 py-3 rounded-lg border border-green-200"></p>
+                <p id="registerError" role="alert" aria-live="assertive" class="hidden text-sm font-medium text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100"></p>
+                <p id="registerSuccess" role="status" aria-live="polite" class="hidden text-sm font-medium text-green-700 bg-green-50 px-4 py-3 rounded-lg border border-green-200"></p>
 
                 <div class="pt-2">
-                    <button type="submit" class="w-full flex justify-center py-3.5 px-4 rounded-[40px] shadow-sm text-[0.95rem] font-bold text-[#3a2a00] bg-amber-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-400/30 transition-all duration-200 heading-font tracking-wide">
+                    <button id="registerSubmit" type="submit" class="w-full flex justify-center py-3.5 px-4 rounded-[40px] shadow-sm text-[0.95rem] font-bold text-[#3a2a00] bg-amber-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-400/30 transition-all duration-200 heading-font tracking-wide disabled:cursor-not-allowed disabled:opacity-60">
                         CREATE ACCOUNT
                     </button>
                 </div>

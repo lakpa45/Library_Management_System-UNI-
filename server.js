@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
@@ -23,13 +24,13 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+    const directProtectedView = /^\/(?:admin|librarian)\/.*\.html$/i.test(req.path);
+    if (directProtectedView) return res.status(404).send('Not found');
+    next();
+});
 app.use(express.static(path.join(__dirname, 'views'), {
-    index: false,
-    setHeaders: (res, filePath) => {
-        if (filePath.includes(path.join('views', 'admin'))) {
-            res.status(404);
-        }
-    }
+    index: false
 }));
 
 app.use('/api/auth', authRoutes);
@@ -61,6 +62,10 @@ app.get('/categories', (req, res) => {
 app.get('/my-books', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'my_books.html'));
 });
+
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
+app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'views', 'forget_password.html')));
+app.get('/reset-password', (req, res) => res.sendFile(path.join(__dirname, 'views', 'reset_password.html')));
 
 // Map of clean admin pages
 const ADMIN_PAGES = {
@@ -102,6 +107,28 @@ app.get('/librarian/:page', requireAdminPage, (req, res) => {
     }
 
     res.sendFile(path.join(__dirname, 'views', 'librarian', filename));
+});
+
+app.use('/api', (req, res) => {
+    res.status(404).json({ message: 'API endpoint not found' });
+});
+
+app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ message: 'Invalid JSON request body' });
+    }
+    if (err instanceof multer.MulterError) {
+        const message = err.code === 'LIMIT_FILE_SIZE'
+            ? 'The uploaded file exceeds the 25 MB limit.'
+            : `Upload failed: ${err.message}`;
+        return res.status(400).json({ message });
+    }
+    if (err?.message === 'Only JPG, PNG, WebP images and PDF files are allowed.') {
+        return res.status(400).json({ message: err.message });
+    }
+    console.error('Unhandled request error:', err?.message || err);
+    res.status(500).json({ message: 'Server error' });
 });
 
 app.listen(PORT, () => {

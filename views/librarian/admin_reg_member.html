@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register Member</title>
 
-<script src="/js/admin-guard.js"></script>
+<script src="/js/admin_dashboard_guard.js"></script>
 <link href="/output.css" rel="stylesheet">
 
 <style>
@@ -16,6 +16,14 @@
   .field-err-msg { color:#B5533C; }
   .punch-hole { background: radial-gradient(circle at center, #F5EFE2 0 6px, transparent 6px); }
   .toast { transition: all .35s cubic-bezier(.4,0,.2,1); }
+  @media (max-width:640px) {
+    .max-w-5xl { padding:24px 14px; }
+    #member-form { padding:18px; }
+    #member-form > .flex { align-items:stretch; flex-direction:column; gap:14px; }
+    #member-form > .flex > .flex { width:100%; }
+    #member-form > .flex button { flex:1; }
+    #toast { right:14px; bottom:14px; left:14px; max-width:none; }
+  }
 </style>
 </head>
 <body class="font-body text-ink min-h-screen">

@@ -17,6 +17,15 @@
   tr.fade-row { animation: fadeIn .3s ease both; }
   @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
   .severity-bar { height:3px; border-radius:2px; }
+  .bg-paper-card:has(> table) { overflow-x:auto; }
+  table { min-width:720px; }
+  @media (max-width:640px) {
+    .max-w-6xl { padding:24px 14px; }
+    #severity-chips { width:100%; overflow-x:auto; padding-bottom:4px; }
+    #severity-chips .chip { flex:0 0 auto; }
+    #sort { width:100%; }
+    #toast { right:14px; bottom:14px; left:14px; max-width:none; }
+  }
 </style>
 </head>
 <body class="font-body text-ink min-h-screen">
@@ -143,7 +152,7 @@
   </div>
 </div>
 
-<script src="/js/overdue&fine.js"></script>
+<script src="/js/overdue_fine.js"></script>
 
 </body>
 </html>

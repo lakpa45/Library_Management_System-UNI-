@@ -10,6 +10,10 @@ function userAuthHeaders() {
     return { 'Authorization': 'Bearer ' + localStorage.getItem('token') };
 }
 
+function displayMemberId(memberId) {
+    return `APNA-${String(memberId).padStart(6, '0')}`;
+}
+
 function userAuthHeadersJson() {
     return { ...userAuthHeaders(), 'Content-Type': 'application/json' };
 }
@@ -48,15 +52,24 @@ async function handleRenewClick(issueId, btn) {
 async function loadMyLoans() {
     const grid = document.querySelector('.books__grid');
     if (!grid) return;
+    grid.innerHTML = '<p class="dashboard-empty">Loading your active loans...</p>';
 
     try {
         const response = await fetch('/api/loans/my-loans', { headers: userAuthHeaders() });
         if (!response.ok) throw new Error('Failed to load loans');
         const loans = await response.json();
 
-        document.querySelectorAll('.stat-card strong')[0].textContent = loans.length;
+        document.getElementById('borrowedCount').textContent = loans.length;
         const dueSoonCount = loans.filter((l) => daysUntil(l.due_date) <= 2).length;
-        document.querySelectorAll('.stat-card strong')[1].textContent = dueSoonCount;
+        document.getElementById('dueSoonCount').textContent = dueSoonCount;
+        const dueAlert = document.getElementById('dueAlert');
+        const nextDue = loans.find((loan) => daysUntil(loan.due_date) <= 2);
+        dueAlert.hidden = !nextDue;
+        if (nextDue) {
+            const days = daysUntil(nextDue.due_date);
+            document.getElementById('dueAlertTitle').textContent = days < 0 ? 'A book is overdue' : days === 0 ? 'A book is due today' : `A book is due in ${days} day${days === 1 ? '' : 's'}`;
+            document.getElementById('dueAlertMessage').textContent = `“${nextDue.title}” is due ${formatDueDate(nextDue.due_date)}.`;
+        }
 
         if (!loans.length) {
             grid.innerHTML = '<p style="padding:20px;color:#888;">You have no books currently borrowed.</p>';
@@ -108,11 +121,14 @@ async function loadMyLoans() {
 async function loadMyActivity() {
     const panel = document.querySelector('.split .panel:first-child');
     if (!panel) return;
+    panel.querySelectorAll('.activity-row').forEach(row => row.remove());
+    panel.insertAdjacentHTML('beforeend', '<p class="dashboard-empty dashboard-activity-loading">Loading recent activity...</p>');
 
     try {
         const response = await fetch('/api/loans/my-activity', { headers: userAuthHeaders() });
         if (!response.ok) throw new Error('Failed to load activity');
         const activity = await response.json();
+        panel.querySelector('.dashboard-activity-loading')?.remove();
 
         const rowsHtml = activity.length
             ? activity.map((a) => {
@@ -135,6 +151,8 @@ async function loadMyActivity() {
         panel.insertAdjacentHTML('beforeend', rowsHtml);
     } catch (err) {
         console.error('Failed to load activity:', err);
+        panel.querySelector('.dashboard-activity-loading')?.remove();
+        panel.insertAdjacentHTML('beforeend', '<p class="dashboard-empty">Couldn\'t load recent activity.</p>');
     }
 }
 
@@ -146,19 +164,87 @@ async function loadMyProfile() {
         const response = await fetch('/api/members/me', { headers: userAuthHeaders() });
         if (!response.ok) throw new Error('Failed to load profile');
         const member = await response.json();
+        const fullName = `${member.first_name || ''} ${member.last_name || ''}`.trim();
+        const uniqueId = displayMemberId(member.member_id);
 
         if (nameEl) nameEl.textContent = member.first_name || 'there';
+        document.getElementById('userMemberId').textContent = uniqueId;
+        document.getElementById('userMemberStatus').textContent = `${member.status || 'Member'} · ${member.member_type || 'Library member'}`;
+        document.getElementById('userDashboardAvatar').textContent = `${member.first_name?.[0] || ''}${member.last_name?.[0] || ''}`.toUpperCase() || 'U';
+        document.getElementById('profileMemberId').value = uniqueId;
 
         if (form) {
-            form.querySelector('input[type="text"]').value = `${member.first_name || ''} ${member.last_name || ''}`.trim();
-            form.querySelector('input[type="email"]').value = member.email || '';
-            form.querySelector('input[type="tel"]').value = member.phone || '';
-            const cardInput = form.querySelectorAll('input[type="text"]')[1];
-            if (cardInput) cardInput.value = member.card_no || 'Pending approval';
+            document.getElementById('profileFullName').value = fullName;
+            document.getElementById('profileEmail').value = member.email || '';
+            document.getElementById('profilePhone').value = member.phone || '';
+            document.getElementById('profileCardNumber').value = member.card_no || 'Pending approval';
         }
     } catch (err) {
         console.error('Failed to load profile:', err);
         if (nameEl) nameEl.textContent = 'there';
+    }
+}
+
+async function loadMyWishlist() {
+    const panel = document.getElementById('wishlist');
+    const count = document.getElementById('wishlistCount');
+    if (!panel || !count) return;
+
+    try {
+        const response = await fetch('/api/wishlist', { headers: userAuthHeaders() });
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem('token');
+                window.location.replace('/#login');
+                return;
+            }
+            throw new Error('Failed to load wishlist');
+        }
+
+        const wishlist = await response.json();
+        count.textContent = wishlist.length;
+        panel.querySelectorAll('.wish-item, .dashboard-empty').forEach(item => item.remove());
+
+        if (!wishlist.length) {
+            panel.insertAdjacentHTML('beforeend', '<p class="dashboard-empty">Your wishlist is empty. <a href="/books">Explore the catalog</a> to save books.</p>');
+            return;
+        }
+
+        panel.insertAdjacentHTML('beforeend', wishlist.map(book => `
+            <div class="wish-item" data-book-id="${book.book_id}">
+                <span class="wish-item__thumb">${book.cover_image ? `<img src="${libEscapeHtmlUser(book.cover_image)}" alt="">` : '<i class="fa-solid fa-book"></i>'}</span>
+                <a class="wish-item__body" href="/book.html?id=${book.book_id}"><strong>${libEscapeHtmlUser(book.title)}</strong><small>${libEscapeHtmlUser(book.category_name || 'Uncategorized')} · ${Number(book.available_copies) ? 'Available' : 'Unavailable'}</small></a>
+                <button type="button" class="wish-item__action" data-remove-wishlist="${book.book_id}" aria-label="Remove ${libEscapeHtmlUser(book.title)} from wishlist"><i class="fa-regular fa-trash-can" aria-hidden="true"></i></button>
+            </div>`).join(''));
+
+        panel.querySelectorAll('[data-remove-wishlist]').forEach(button => {
+            button.addEventListener('click', () => removeDashboardWishlistBook(button));
+        });
+    } catch (err) {
+        console.error('Failed to load wishlist:', err);
+        count.textContent = '—';
+        panel.querySelectorAll('.wish-item, .dashboard-empty').forEach(item => item.remove());
+        panel.insertAdjacentHTML('beforeend', '<p class="dashboard-empty">Couldn\'t load your wishlist. Please refresh and try again.</p>');
+    }
+}
+
+async function removeDashboardWishlistBook(button) {
+    const item = button.closest('.wish-item');
+    const title = item?.querySelector('strong')?.textContent || 'Book';
+    button.disabled = true;
+    try {
+        const response = await fetch(`/api/wishlist/${encodeURIComponent(button.dataset.removeWishlist)}`, {
+            method: 'DELETE',
+            headers: userAuthHeaders()
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Unable to remove book');
+        if (window.libToast) window.libToast(`"${title}" removed from wishlist`);
+        await loadMyWishlist();
+    } catch (err) {
+        console.error('Wishlist removal failed:', err);
+        button.disabled = false;
+        if (window.libToast) window.libToast(err.message || "Couldn't update your wishlist");
     }
 }
 
@@ -169,9 +255,9 @@ function initAccountForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const fullName = form.querySelector('input[type="text"]').value.trim();
-        const email = form.querySelector('input[type="email"]').value.trim();
-        const phone = form.querySelector('input[type="tel"]').value.trim();
+        const fullName = document.getElementById('profileFullName').value.trim();
+        const email = document.getElementById('profileEmail').value.trim();
+        const phone = document.getElementById('profilePhone').value.trim();
 
         const nameParts = fullName.split(' ');
         const first_name = nameParts[0];
@@ -204,8 +290,13 @@ function initAccountForm() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('token')) {
+        window.location.replace('/#login');
+        return;
+    }
     loadMyLoans();
     loadMyActivity();
     loadMyProfile();
+    loadMyWishlist();
     initAccountForm();
 });

@@ -7,49 +7,81 @@ function generateTempPassword(first_name, dob) {
     return `${namePart}${birthYear}`;
 }
 
-async function generateCardNo(memberType) {
+async function generateCardNo(client, memberType) {
     const prefixMap = { Student: 'STU', Faculty: 'FAC', Staff: 'STF' };
     const prefix = prefixMap[memberType] || 'STU';
     const year = new Date().getFullYear();
 
-    const countResult = await pool.query(
-        `SELECT COUNT(*)::int AS count FROM member WHERE card_no LIKE $1`,
-        [`${prefix}-${year}-%`]
+    const scope = `${prefix}-${year}`;
+    await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [scope]);
+    const numberResult = await client.query(
+        `SELECT COALESCE(MAX(SUBSTRING(card_no FROM '[0-9]+$')::int), 0)::int AS last_number
+         FROM member WHERE card_no LIKE $1`,
+        [`${scope}-%`]
     );
-    const nextNumber = countResult.rows[0].count + 1;
+    const nextNumber = numberResult.rows[0].last_number + 1;
     const padded = String(nextNumber).padStart(4, '0');
 
     return `${prefix}-${year}-${padded}`;
 }
 
 export const signup = async (req, res) => {
+    let client;
     try {
-        const {
+        let {
             first_name, last_name, email, phone, password,
             member_type, department, roll_id, dob, address, valid_till
         } = req.body;
 
-        const existingResult = await pool.query(
-            'SELECT * FROM member WHERE email = $1',
+        first_name = typeof first_name === 'string' ? first_name.trim() : '';
+        last_name = typeof last_name === 'string' ? last_name.trim() : '';
+        email = typeof email === 'string' ? email.trim().toLowerCase() : '';
+        phone = typeof phone === 'string' ? phone.replace(/\D/g, '') : '';
+        department = typeof department === 'string' ? department.trim() : '';
+        member_type = member_type || 'Student';
+
+        if (first_name.length < 1 || last_name.length < 1) {
+            return res.status(400).json({ message: 'First and last name are required.' });
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ message: 'A valid email address is required.' });
+        }
+        if (!/^\d{10}$/.test(phone)) {
+            return res.status(400).json({ message: 'Phone number must contain exactly 10 digits.' });
+        }
+        if (!['Student', 'Faculty', 'Staff'].includes(member_type)) {
+            return res.status(400).json({ message: 'Please select a valid member role.' });
+        }
+        if (password && (typeof password !== 'string' || password.length < 8 || password.length > 72)) {
+            return res.status(400).json({ message: 'Password must be between 8 and 72 characters.' });
+        }
+
+        client = await pool.connect();
+        await client.query('BEGIN');
+
+        const existingResult = await client.query(
+            'SELECT member_id FROM member WHERE LOWER(email) = $1',
             [email]
         );
 
         if (existingResult.rows.length > 0) {
+            await client.query('ROLLBACK');
             return res.status(409).json({ message: 'Email already registered' });
         }
 
         const finalPassword = password || generateTempPassword(first_name, dob);
         const hashedPassword = await bcrypt.hash(finalPassword, 10);
-        const cardNo = await generateCardNo(member_type);
+        const cardNo = await generateCardNo(client, member_type);
 
-        const insertResult = await pool.query(
-            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, roll_id, dob, address, valid_till, card_no, status)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'Approved')
+        const insertResult = await client.query(
+            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, roll_id, dob, address, valid_till, card_no)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
              RETURNING member_id, first_name, last_name, email, phone, member_type, department, card_no`,
             [first_name, last_name, email, hashedPassword, phone, member_type || 'Student', department, roll_id || null, dob || null, address || null, valid_till || null, cardNo]
         );
 
         const newMember = insertResult.rows[0];
+        await client.query('COMMIT');
 
         res.status(201).json({
             message: 'Sign up successful',
@@ -57,7 +89,13 @@ export const signup = async (req, res) => {
             temp_password: password ? undefined : finalPassword
         });
     } catch (err) {
+        if (client) await client.query('ROLLBACK').catch(() => {});
+        if (err.code === '23505' && (err.constraint === 'member_email_key' || err.constraint === 'member_email_lower_unique')) {
+            return res.status(409).json({ message: 'Email already registered' });
+        }
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client?.release();
     }
 };

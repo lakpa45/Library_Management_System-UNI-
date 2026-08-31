@@ -71,6 +71,58 @@
         object-fit: cover;
         background: #e4d9c4;
       }
+      .book-type-toggle {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: min(100%, 500px);
+        padding: 4px;
+        border: 1px solid #e4d9c4;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(27, 67, 50, 0.08);
+        isolation: isolate;
+      }
+      .book-type-toggle::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc((100% - 8px) / 2);
+        border-radius: 7px;
+        background: #1b4332;
+        box-shadow: 0 3px 8px rgba(27, 67, 50, 0.24);
+        transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .book-type-toggle[data-active="digital"]::before { transform: translateX(100%); }
+      .book-type-toggle button {
+        min-width: 0;
+        padding: 10px 14px;
+        border-radius: 7px;
+        color: #4a5a50;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: color 220ms ease;
+      }
+      .book-type-toggle button[aria-selected="true"] { color: #f5efe6; }
+      .book-type-toggle button:focus-visible {
+        outline: 3px solid rgba(201, 151, 47, 0.55);
+        outline-offset: 2px;
+      }
+      .book-grid-enter { animation: bookGridIn 260ms ease both; }
+      .book-grid-enter--left { animation-name: bookGridInLeft; }
+      @keyframes bookGridIn { from { opacity: 0; transform: translateX(14px); } }
+      @keyframes bookGridInLeft { from { opacity: 0; transform: translateX(-14px); } }
+      @media (max-width: 480px) {
+        .book-type-toggle { width: 100%; }
+        .book-type-toggle button { padding-inline: 8px; font-size: 0.8rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .book-type-toggle::before { transition: none; }
+        .book-grid-enter, .book-grid-enter--left { animation: none; }
+      }
     </style>
     <link href="/css/admin_dashboard_shared.css" rel="stylesheet" />
   </head>
@@ -182,13 +234,22 @@
         </button>
       </div>
 
+      <div class="book-type-toggle mb-8" id="bookTypeToggle" data-active="physical" role="tablist" aria-label="Book type">
+        <button type="button" id="physicalBooksTab" role="tab" aria-selected="true" aria-controls="bookGrid" data-book-type="physical">
+          <i class="fa-solid fa-book mr-1.5" aria-hidden="true"></i>Physical Books
+        </button>
+        <button type="button" id="digitalBooksTab" role="tab" aria-selected="false" aria-controls="bookGrid" tabindex="-1" data-book-type="digital">
+          <i class="fa-solid fa-tablet-screen-button mr-1.5" aria-hidden="true"></i>Digital Books
+        </button>
+      </div>
+
       <!-- Book Grid -->
-      <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" role="tabpanel" aria-labelledby="physicalBooksTab"></div>
 
       <!-- Empty State -->
       <div id="emptyState" class="hidden text-center py-20">
-        <p class="font-display text-xl text-[#4A5A50] mb-2">No books yet</p>
-        <p class="text-sm text-[#8A7B5C] mb-5">Add your first book to get started.</p>
+        <p id="emptyStateTitle" class="font-display text-xl text-[#4A5A50] mb-2">No physical books available</p>
+        <p id="emptyStateMessage" class="text-sm text-[#8A7B5C] mb-5">There are currently no physical books in the catalog.</p>
         <button
           id="emptyAddBtn"
           type="button"
@@ -274,6 +335,26 @@
             <label for="bookPdf" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">Book PDF</label>
             <input id="bookPdf" type="file" accept="application/pdf,.pdf" class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]" />
             <p id="pdfFileName" class="hidden mt-2 text-xs text-[#4A5A50]"></p>
+          </div>
+
+          <div>
+            <label for="bookType" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">Book Type</label>
+            <select id="bookType" required class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm">
+              <option value="physical">Physical Book</option>
+              <option value="digital">Digital Book</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bookIsbn" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">ISBN (optional)</label>
+            <input id="bookIsbn" type="text" maxlength="20" placeholder="e.g. 978-1-23456-789-0" class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm" />
+          </div>
+
+          <div>
+            <label for="bookCategory" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">Category</label>
+            <select id="bookCategory" required class="w-full px-3.5 py-2.5 rounded-md border border-[#E4D9C4] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9972F] text-sm">
+              <option value="">Select a category</option>
+            </select>
           </div>
 
           <div class="flex gap-3 pt-2">

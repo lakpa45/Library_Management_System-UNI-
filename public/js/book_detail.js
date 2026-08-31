@@ -36,12 +36,23 @@ async function loadBookDetail() {
 }
 
 function populateBookDetail(book) {
-  document.getElementById('bookCover').src = book.cover_image || '/images/placeholder-book.jpg';
-  document.getElementById('bookCover').alt = book.title;
+  const cover = document.getElementById('bookCover');
+  cover.src = book.cover_image || '/images/placeholder-book.svg';
+  cover.alt = `Cover of ${book.title}`;
+  cover.onerror = () => { cover.onerror = null; cover.src = '/images/placeholder-book.svg'; };
   document.getElementById('bookCategory').textContent = book.category_name || '';
   document.getElementById('bookTitle').textContent = book.title;
   document.getElementById('bookIsbn').textContent = book.isbn ? `ISBN: ${book.isbn}` : '';
   document.getElementById('bookDescription').textContent = book.description || '';
+
+  const readPdf = document.getElementById('bookReadPdf');
+  if (typeof book.pdf_file === 'string' && book.pdf_file.trim()) {
+    readPdf.href = book.pdf_file;
+    readPdf.hidden = false;
+  } else {
+    readPdf.removeAttribute('href');
+    readPdf.hidden = true;
+  }
 
   const availEl = document.getElementById('bookAvailability');
   const available = Number(book.available_copies) > 0;

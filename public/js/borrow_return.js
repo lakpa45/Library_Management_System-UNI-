@@ -1,286 +1,128 @@
 const FINE_PER_DAY = 5;
+let loans = [], books = [], selectedMember = null, returnMember = null;
+let filters = { text: '', status: 'all' };
+const el = (id) => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0, 10);
+const days = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+const dateText = (value) => value ? new Date(`${String(value).slice(0, 10)}T00:00:00`).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+const safe = (value) => String(value ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
 
-let members = [];
-let books = [];
-let loans = [];
+async function api(url, options) {
+    const response = await fetch(url, options);
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.message || 'Request failed.');
+    return body;
+}
 
-async function loadActiveLoans() {
+function errorFor(id, message = '') {
+    el(id)?.classList.toggle('field-err', Boolean(message));
+    const node = document.querySelector(`[data-err="${id}"]`);
+    if (node) { node.textContent = message; node.classList.toggle('hidden', !message); }
+}
+
+function toast(title, message, isError = false) {
+    el('toast-title').textContent = title; el('toast-body').textContent = message;
+    el('toast').classList.toggle('bg-clay', isError); el('toast').classList.toggle('bg-forest', !isError);
+    el('toast').classList.remove('translate-y-24', 'opacity-0');
+    setTimeout(() => el('toast').classList.add('translate-y-24', 'opacity-0'), 3500);
+}
+
+function memberHtml(m) {
+    const borrowing = m.active_borrowings ? `${m.active_borrowings} active borrowing${m.active_borrowings === 1 ? '' : 's'}` : 'No active borrowings';
+    return `<p class="font-semibold">${safe(m.first_name)} ${safe(m.last_name)}</p><p>Username: ${safe(m.username)}</p><p>Unique ID: ${safe(m.unique_id || 'Not assigned')}</p><p>Status: ${safe(m.status)} · ${borrowing}</p>`;
+}
+
+function enableBorrow() { el('borrow-button').disabled = !(selectedMember && el('i-book-id').value); }
+
+async function findMember(inputId, detailId, mode) {
+    const q = el(inputId).value.trim();
+    if (!q) return errorFor(inputId, 'Enter an exact member unique ID or username.');
+    const button = el(mode === 'borrow' ? 'i-member-find' : 'r-member-find');
+    button.disabled = true;
     try {
-        const response = await fetch('/api/loans/active');
-        loans = await response.json();
-        renderLoans();
+        const member = await api(`/api/loans/members/search?q=${encodeURIComponent(q)}`);
+        errorFor(inputId); el(detailId).innerHTML = memberHtml(member); el(detailId).classList.remove('hidden');
+        if (mode === 'borrow') { selectedMember = member; el('i-member-id').value = member.member_id; enableBorrow(); }
+        else { returnMember = member; await loadMemberLoans(member.member_id); }
     } catch (err) {
-        console.error(err);
-    }
+        errorFor(inputId, err.message); el(detailId).classList.add('hidden');
+        if (mode === 'borrow') { selectedMember = null; el('i-member-id').value = ''; enableBorrow(); }
+        else { returnMember = null; el('member-active-loans').innerHTML = ''; }
+    } finally { button.disabled = false; }
 }
 
-function todayISO() { return new Date().toISOString().slice(0,10); }
-function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 86400000); }
-function fmtDate(iso) { return iso ? new Date(iso).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—'; }
-
-const tabIssue = document.getElementById('tab-issue');
-const tabReturn = document.getElementById('tab-return');
-const issueForm = document.getElementById('issue-form');
-const returnForm = document.getElementById('return-form');
-
-tabIssue.addEventListener('click', () => {
-    tabIssue.classList.add('active'); tabReturn.classList.remove('active');
-    tabReturn.classList.add('text-ink-light'); tabIssue.classList.remove('text-ink-light');
-    issueForm.classList.remove('hidden'); returnForm.classList.add('hidden');
-});
-tabReturn.addEventListener('click', () => {
-    tabReturn.classList.add('active'); tabIssue.classList.remove('active');
-    tabIssue.classList.add('text-ink-light'); tabReturn.classList.remove('text-ink-light');
-    returnForm.classList.remove('hidden'); issueForm.classList.add('hidden');
-});
-
-function wireAutocomplete({ inputId, suggestId, hiddenId, fetchItems, renderItem, onSelect }) {
-    const input = document.getElementById(inputId);
-    const box = document.getElementById(suggestId);
-    const hidden = document.getElementById(hiddenId);
-
-    input.addEventListener('input', async () => {
-        hidden.value = '';
-        const q = input.value.trim();
-        if (!q) { box.classList.add('hidden'); box.innerHTML=''; return; }
-
-        const items = await fetchItems(q);
-        if (items.length === 0) {
-            box.innerHTML = `<div class="px-3.5 py-2.5 text-xs text-ink-light">No matches</div>`;
-        } else {
-            box.innerHTML = items.map((it, idx) => `<div class="suggest-item px-3.5 py-2.5 text-sm cursor-pointer" data-idx="${idx}">${renderItem(it)}</div>`).join('');
-        }
-        box.classList.remove('hidden');
-        box.dataset.items = JSON.stringify(items);
-    });
-
-    box.addEventListener('click', (e) => {
-        const row = e.target.closest('[data-idx]');
-        if (!row) return;
-        const items = JSON.parse(box.dataset.items || '[]');
-        const item = items[Number(row.dataset.idx)];
-        onSelect(item);
-        box.classList.add('hidden');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!box.contains(e.target) && e.target !== input) box.classList.add('hidden');
-    });
+async function loadBooks(q = '') {
+    try { books = await api(`/api/loans/books/search?q=${encodeURIComponent(q)}`); renderBooks(); }
+    catch (err) { errorFor('i-book-search', err.message); }
 }
 
-wireAutocomplete({
-    inputId: 'i-member-search', suggestId: 'i-member-suggest', hiddenId: 'i-member-id',
-    fetchItems: async (q) => {
-        const res = await fetch(`/api/loans/members/search?q=${encodeURIComponent(q)}`);
-        return res.json();
-    },
-    renderItem: (m) => `<span class="font-medium">${m.first_name} ${m.last_name}</span> <span class="text-ink-light text-xs">· ${m.email}</span>`,
-    onSelect: (m) => {
-        document.getElementById('i-member-search').value = `${m.first_name} ${m.last_name}`;
-        document.getElementById('i-member-id').value = m.member_id;
-        showError('i-member-search', false);
-    }
-});
-
-wireAutocomplete({
-    inputId: 'i-book-search', suggestId: 'i-book-suggest', hiddenId: 'i-book-id',
-    fetchItems: async (q) => {
-        const res = await fetch(`/api/loans/books/search?q=${encodeURIComponent(q)}`);
-        return res.json();
-    },
-    renderItem: (b) => `<span class="font-medium">${b.title}</span> <span class="text-xs text-sage">· ${b.available_copies} available</span>`,
-    onSelect: (b) => {
-        document.getElementById('i-book-search').value = b.title;
-        document.getElementById('i-book-id').value = b.book_id;
-        showError('i-book-search', false);
-    }
-});
-
-wireAutocomplete({
-    inputId: 'r-loan-search', suggestId: 'r-loan-suggest', hiddenId: 'r-loan-id',
-    fetchItems: async (q) => {
-        const lower = q.toLowerCase();
-        return loans.filter(l =>
-            `${l.first_name} ${l.last_name}`.toLowerCase().includes(lower) ||
-            l.title.toLowerCase().includes(lower)
-        );
-    },
-    renderItem: (l) => `<span class="font-medium">${l.title}</span> <span class="text-ink-light text-xs">· ${l.first_name} ${l.last_name}</span>`,
-    onSelect: (l) => {
-        document.getElementById('r-loan-search').value = `${l.title} — ${l.first_name} ${l.last_name}`;
-        document.getElementById('r-loan-id').value = l.issue_id;
-        showError('r-loan-search', false);
-        const detail = document.getElementById('r-loan-detail');
-        detail.classList.remove('hidden');
-        document.getElementById('r-d-title').textContent = l.title;
-        document.getElementById('r-d-member').textContent = `${l.first_name} ${l.last_name}`;
-        document.getElementById('r-d-due').textContent = fmtDate(l.due_date);
-        const overdueDays = Math.max(0, daysBetween(l.due_date, todayISO()));
-        const fine = overdueDays * FINE_PER_DAY;
-        const fineEl = document.getElementById('r-d-fine');
-        fineEl.textContent = `₹${fine}`;
-        fineEl.className = 'font-mono font-semibold ' + (fine > 0 ? 'text-clay' : 'text-sage');
-    }
-});
-
-const issueDate = document.getElementById('i-issue-date');
-const periodSel = document.getElementById('i-period');
-issueDate.value = todayISO();
-
-function updateDuePreview() {
-    const period = Number(periodSel.value);
-    const base = issueDate.value || todayISO();
-    const due = new Date(new Date(base).getTime() + period * 86400000);
-    document.getElementById('i-due-preview').textContent = fmtDate(due.toISOString().slice(0,10));
-}
-issueDate.addEventListener('change', updateDuePreview);
-periodSel.addEventListener('change', updateDuePreview);
-updateDuePreview();
-
-function showError(id, show) {
-    const input = document.getElementById(id);
-    const msg = document.querySelector(`[data-err="${id}"]`);
-    if (input) input.classList.toggle('field-err', show);
-    if (msg) msg.classList.toggle('hidden', !show);
+function renderBooks() {
+    el('i-book-suggest').innerHTML = books.length ? books.map((b, i) => `<button type="button" data-book="${i}" class="suggest-item block w-full text-left px-3.5 py-2.5 text-sm"><span class="font-medium">${safe(b.title)}</span><span class="text-xs text-sage"> · ID ${b.book_id} · ${b.available_quantity} available</span><span class="block text-xs text-ink-light">ISBN: ${safe(b.isbn || 'Not recorded')}</span></button>`).join('') : '<div class="px-3.5 py-2.5 text-xs text-ink-light">No available physical books match.</div>';
+    el('i-book-suggest').classList.remove('hidden');
 }
 
-function showToast(title, body) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toast-title').textContent = title;
-    document.getElementById('toast-body').textContent = body;
-    toast.classList.remove('translate-y-24', 'opacity-0');
-    setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3200);
+function selectBook(b) {
+    el('i-book-search').value = b.title; el('i-book-id').value = b.book_id; el('i-book-suggest').classList.add('hidden');
+    el('i-book-detail').innerHTML = `<p class="font-semibold">${safe(b.title)}</p><p>Author: ${safe(b.author || 'Not recorded')}</p><p>Unique ID: ${b.book_id}</p><p>Available quantity: ${b.available_quantity}</p>`;
+    el('i-book-detail').classList.remove('hidden'); errorFor('i-book-search'); enableBorrow();
 }
 
-issueForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const memberId = document.getElementById('i-member-id').value;
-    const bookId = document.getElementById('i-book-id').value;
-    let valid = true;
-    if (!memberId) { showError('i-member-search', true); valid = false; }
-    if (!bookId) { showError('i-book-search', true); valid = false; }
-    if (!valid) return;
+async function loadLoans() {
+    try { loans = await api('/api/loans/active'); renderLoans(); }
+    catch (err) { toast('Could not load borrowings', err.message, true); }
+}
 
-    const period = Number(periodSel.value);
-    const base = issueDate.value || todayISO();
-    const due = new Date(new Date(base).getTime() + period * 86400000).toISOString().slice(0,10);
+async function loadMemberLoans(memberId) {
+    const list = await api(`/api/loans/members/${memberId}/active`);
+    el('member-active-loans').innerHTML = list.length ? list.map((loan) => `<article class="bg-paper rounded-lg p-3 border border-ink/10"><p class="font-medium text-sm">${safe(loan.title)}</p><p class="text-xs text-ink-light mt-1">Book ID ${loan.book_id} · Due ${dateText(loan.due_date)}</p><button type="button" data-return="${loan.issue_id}" class="mt-3 w-full bg-forest hover:bg-forest-light disabled:opacity-50 text-paper font-semibold text-xs rounded-full py-2">Return</button></article>`).join('') : '<p class="text-sm text-ink-light bg-paper rounded-lg p-4 border border-ink/10">This member has no active borrowed books.</p>';
+}
 
+function updateDue() {
+    const value = el('i-issue-date').value || today(), due = new Date(`${value}T00:00:00`);
+    due.setDate(due.getDate() + Number(el('i-period').value)); el('i-due-preview').textContent = dateText(due.toISOString().slice(0, 10));
+}
+
+el('tab-issue').onclick = () => { el('tab-issue').classList.add('active'); el('tab-return').classList.remove('active'); el('issue-form').classList.remove('hidden'); el('return-form').classList.add('hidden'); };
+el('tab-return').onclick = () => { el('tab-return').classList.add('active'); el('tab-issue').classList.remove('active'); el('return-form').classList.remove('hidden'); el('issue-form').classList.add('hidden'); };
+el('i-member-find').onclick = () => findMember('i-member-search', 'i-member-detail', 'borrow');
+el('r-member-find').onclick = () => findMember('r-member-search', 'r-member-detail', 'return');
+['i-member-search', 'r-member-search'].forEach((id) => el(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); el(id === 'i-member-search' ? 'i-member-find' : 'r-member-find').click(); } }));
+el('i-member-search').oninput = () => { selectedMember = null; el('i-member-id').value = ''; el('i-member-detail').classList.add('hidden'); enableBorrow(); };
+
+let bookTimer;
+el('i-book-search').oninput = () => { el('i-book-id').value = ''; el('i-book-detail').classList.add('hidden'); enableBorrow(); clearTimeout(bookTimer); bookTimer = setTimeout(() => loadBooks(el('i-book-search').value.trim()), 200); };
+el('i-book-search').onfocus = () => loadBooks(el('i-book-search').value.trim());
+el('i-book-suggest').onclick = (e) => { const button = e.target.closest('[data-book]'); if (button) selectBook(books[Number(button.dataset.book)]); };
+document.addEventListener('click', (e) => { if (!el('i-book-suggest').contains(e.target) && e.target !== el('i-book-search')) el('i-book-suggest').classList.add('hidden'); });
+
+el('i-issue-date').value = today(); el('i-issue-date').onchange = updateDue; el('i-period').onchange = updateDue; updateDue();
+el('issue-form').onsubmit = async (e) => {
+    e.preventDefault(); if (!selectedMember || !el('i-book-id').value) return;
+    const button = el('borrow-button'), issueDate = el('i-issue-date').value || today(), due = new Date(`${issueDate}T00:00:00`);
+    due.setDate(due.getDate() + Number(el('i-period').value)); button.disabled = true;
     try {
-        const response = await fetch('/api/loans/issue', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                member_id: memberId,
-                book_id: bookId,
-                issue_date: base,
-                due_date: due
-            })
-        });
+        await api('/api/loans/issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: selectedMember.member_id, book_id: Number(el('i-book-id').value), issue_date: issueDate, due_date: due.toISOString().slice(0, 10) }) });
+        toast('Book borrowed', `Due ${dateText(due.toISOString().slice(0, 10))}`); el('i-book-id').value = ''; el('i-book-search').value = ''; el('i-book-detail').classList.add('hidden');
+        await Promise.all([loadBooks(), loadLoans(), findMember('i-member-search', 'i-member-detail', 'borrow')]);
+    } catch (err) { toast('Borrow failed', err.message, true); } finally { enableBorrow(); }
+};
 
-        const result = await response.json();
-
-        if (response.ok) {
-            showToast('Book issued', `Due ${fmtDate(due)}`);
-            issueForm.reset();
-            document.getElementById('i-member-id').value = '';
-            document.getElementById('i-book-id').value = '';
-            issueDate.value = todayISO();
-            periodSel.value = '14';
-            updateDuePreview();
-            await loadActiveLoans();
-        } else {
-            showError('i-book-search', true);
-            const msg = document.querySelector('[data-err="i-book-search"]');
-            msg.textContent = result.message;
-            msg.classList.remove('hidden');
-        }
-    } catch (err) {
-        console.error(err);
-    }
-});
-
-const returnDateInput = document.getElementById('r-return-date');
-returnDateInput.value = todayISO();
-
-returnForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const loanId = document.getElementById('r-loan-id').value;
-    if (!loanId) { showError('r-loan-search', true); return; }
-
-    const retDate = returnDateInput.value || todayISO();
-
-    try {
-        const response = await fetch(`/api/loans/return/${loanId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ return_date: retDate })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            showToast('Book returned', result.fine > 0 ? `Fine of ₹${result.fine} recorded` : 'Returned on time');
-            returnForm.reset();
-            document.getElementById('r-loan-id').value = '';
-            document.getElementById('r-loan-detail').classList.add('hidden');
-            returnDateInput.value = todayISO();
-            await loadActiveLoans();
-        }
-    } catch (err) {
-        console.error(err);
-    }
-});
-
-let loanFilterState = { text:'', status:'all' };
+el('member-active-loans').onclick = async (e) => {
+    const button = e.target.closest('[data-return]'); if (!button || !returnMember) return; button.disabled = true;
+    try { await api(`/api/loans/return/${button.dataset.return}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ return_date: today() }) }); toast('Book returned', 'The physical copy is available again.'); await Promise.all([loadMemberLoans(returnMember.member_id), loadBooks(), loadLoans()]); await findMember('r-member-search', 'r-member-detail', 'return'); }
+    catch (err) { button.disabled = false; toast('Return failed', err.message, true); }
+};
 
 function renderLoans() {
-    let list = loans;
-
-    if (loanFilterState.text.trim()) {
-        const q = loanFilterState.text.trim().toLowerCase();
-        list = list.filter(l => l.title.toLowerCase().includes(q) || `${l.first_name} ${l.last_name}`.toLowerCase().includes(q));
-    }
-    if (loanFilterState.status === 'overdue') list = list.filter(l => daysBetween(l.due_date, todayISO()) > 0);
-    if (loanFilterState.status === 'active') list = list.filter(l => daysBetween(l.due_date, todayISO()) <= 0);
-
-    list.sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
-
-    const body = document.getElementById('loans-body');
-    const empty = document.getElementById('loans-empty');
-
-    if (list.length === 0) {
-        body.innerHTML = '';
-        empty.classList.remove('hidden');
-    } else {
-        empty.classList.add('hidden');
-        body.innerHTML = list.map(l => {
-            const overdueDays = daysBetween(l.due_date, todayISO());
-            const isOverdue = overdueDays > 0;
-            const isDueToday = overdueDays === 0;
-            const statusLabel = isOverdue ? `Overdue · ₹${overdueDays * FINE_PER_DAY}` : (isDueToday ? 'Due today' : 'On time');
-            const statusClass = isOverdue ? 'bg-clay/10 text-clay' : (isDueToday ? 'bg-brass/15 text-brass-dark' : 'bg-forest/10 text-forest');
-            return `
-            <tr class="fade-row hover:bg-paper/60 transition">
-                <td class="px-5 py-3 font-medium">${l.title}</td>
-                <td class="px-5 py-3 text-ink-light">${l.first_name} ${l.last_name}</td>
-                <td class="px-5 py-3 font-mono text-xs text-ink-light">${fmtDate(l.issue_date)}</td>
-                <td class="px-5 py-3 font-mono text-xs">${fmtDate(l.due_date)}</td>
-                <td class="px-5 py-3">
-                    <span class="inline-block px-2.5 py-1 rounded-full text-[11px] font-semibold stamp ${statusClass}">${statusLabel}</span>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    document.getElementById('stat-out').textContent = loans.length;
-    document.getElementById('stat-today').textContent = loans.filter(l => daysBetween(l.due_date, todayISO()) === 0).length;
-    const overdueLoans = loans.filter(l => daysBetween(l.due_date, todayISO()) > 0);
-    document.getElementById('stat-overdue').textContent = overdueLoans.length;
-    const pendingFines = overdueLoans.reduce((sum, l) => sum + daysBetween(l.due_date, todayISO()) * FINE_PER_DAY, 0);
-    document.getElementById('stat-fines').textContent = `₹${pendingFines}`;
+    let list = loans.slice(), q = filters.text.trim().toLowerCase();
+    if (q) list = list.filter((l) => l.title.toLowerCase().includes(q) || `${l.first_name} ${l.last_name}`.toLowerCase().includes(q));
+    if (filters.status === 'overdue') list = list.filter((l) => days(l.due_date, today()) > 0);
+    if (filters.status === 'active') list = list.filter((l) => days(l.due_date, today()) <= 0);
+    el('loans-empty').classList.toggle('hidden', list.length > 0);
+    el('loans-body').innerHTML = list.map((l) => { const overdue = days(l.due_date, today()), status = overdue > 0 ? `Overdue · ₹${overdue * FINE_PER_DAY}` : overdue === 0 ? 'Due today' : 'On time'; return `<tr><td class="px-5 py-3 font-medium">${safe(l.title)}</td><td class="px-5 py-3 text-ink-light">${safe(l.first_name)} ${safe(l.last_name)}</td><td class="px-5 py-3 font-mono text-xs">${dateText(l.issue_date)}</td><td class="px-5 py-3 font-mono text-xs">${dateText(l.due_date)}</td><td class="px-5 py-3 text-xs">${status}</td></tr>`; }).join('');
+    el('stat-out').textContent = loans.length; el('stat-today').textContent = loans.filter((l) => days(l.due_date, today()) === 0).length;
+    const overdue = loans.filter((l) => days(l.due_date, today()) > 0); el('stat-overdue').textContent = overdue.length; el('stat-fines').textContent = `₹${overdue.reduce((sum, l) => sum + days(l.due_date, today()) * FINE_PER_DAY, 0)}`;
 }
-
-document.getElementById('loan-filter').addEventListener('input', (e) => { loanFilterState.text = e.target.value; renderLoans(); });
-document.getElementById('loan-status-filter').addEventListener('change', (e) => { loanFilterState.status = e.target.value; renderLoans(); });
-
-loadActiveLoans();
+el('loan-filter').oninput = (e) => { filters.text = e.target.value; renderLoans(); };
+el('loan-status-filter').onchange = (e) => { filters.status = e.target.value; renderLoans(); };
+Promise.all([loadBooks(), loadLoans()]);

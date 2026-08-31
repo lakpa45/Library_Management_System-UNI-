@@ -29,9 +29,9 @@ form.addEventListener('submit', async (event) => {
         return;
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword.length < 8 || newPassword.length > 72) {
         showMessage(
-            'Your password must contain at least 6 characters.',
+            'Your password must contain between 8 and 72 characters.',
             'error'
         );
         return;

@@ -27,8 +27,11 @@ function toggleAdminMenu() {
     document.getElementById("adminMenu").classList.toggle("hidden");
 }
 
-function logout() {
+async function logout() {
     if (confirm("Are you sure you want to logout?")) {
+        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (error) { console.error('Server sign-out failed:', error); }
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('librarianToken');
         window.location.href = "/";
     }
 }
@@ -45,7 +48,7 @@ function closePasswordModal() {
     document.getElementById("passwordMessage").textContent = "";
 }
 
-function changePassword(event) {
+async function changePassword(event) {
     event.preventDefault();
 
     const currentPassword =
@@ -60,18 +63,9 @@ function changePassword(event) {
     const message =
         document.getElementById("passwordMessage");
 
-    const storedPassword =
-        localStorage.getItem("adminPassword") || "admin123";
-
-    if (currentPassword !== storedPassword) {
-        message.textContent = "Current password is incorrect.";
-        message.className = "text-sm mb-4 text-red-600";
-        return;
-    }
-
-    if (newPassword.length < 6) {
+    if (newPassword.length < 8 || newPassword.length > 72) {
         message.textContent =
-            "New password must be at least 6 characters.";
+            "New password must be between 8 and 72 characters.";
         message.className = "text-sm mb-4 text-red-600";
         return;
     }
@@ -83,15 +77,19 @@ function changePassword(event) {
         return;
     }
 
-    localStorage.setItem("adminPassword", newPassword);
-
-    message.textContent =
-        "Password changed successfully!";
-    message.className = "text-sm mb-4 text-green-600";
-
-    setTimeout(() => {
-        closePasswordModal();
-    }, 1500);
+    try {
+        const response = await fetch('/api/auth/change-password', {
+            method: 'POST', headers: { ...adminAuthHeaders(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const result = await response.json().catch(() => ({}));
+        message.textContent = result.message || (response.ok ? 'Password changed successfully.' : 'Unable to change password.');
+        message.className = `text-sm mb-4 ${response.ok ? 'text-green-600' : 'text-red-600'}`;
+        if (response.ok) setTimeout(closePasswordModal, 1500);
+    } catch (error) {
+        message.textContent = 'Unable to change password. Please try again.';
+        message.className = 'text-sm mb-4 text-red-600';
+    }
 }
 
 function animateCount(

@@ -150,7 +150,7 @@ async function loadFeaturedBooks() {
         if (grid) {
             grid.replaceChildren(...books.slice(0, 4).map((book, index) => {
                 const link = document.createElement('a');
-                link.href = `/book_detail.html?id=${encodeURIComponent(book.book_id)}`;
+                link.href = `/book.html?id=${encodeURIComponent(book.book_id)}`;
                 link.className = `style-card ${colorClasses[index] || ''}`;
                 const media = document.createElement('div');
                 media.className = 'style-card__media';
@@ -338,7 +338,7 @@ function initAuth() {
                 body: JSON.stringify({ email, password, role })
             });
 
-            const result = await response.json();
+            const result = await response.json().catch(() => ({}));
 
             if (response.ok) {
                 localStorage.setItem(loginOption.tokenKey, result.token);
@@ -375,7 +375,8 @@ function initAuth() {
 
     /* --- logout --- */
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
+            try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (err) { console.error('Server sign-out failed:', err); }
             clearSession();
             renderAuthState();
         });
@@ -383,6 +384,10 @@ function initAuth() {
 
     /* --- init state on load --- */
     renderAuthState();
+    if (window.location.hash === '#login' && !getSession()) {
+        openModal();
+        history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
 }
 
 // For testimonials (star ratings + reviews)//

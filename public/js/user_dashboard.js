@@ -45,31 +45,22 @@
   // expose toast globally so user-dashboard-data.js can use it too
   window.libToast = toast;
 
-  /* wishlist: move an item into "borrowed" */
-  const stat = {
-    wishlist: document.querySelectorAll(".stat-card strong")[2],
-  };
+  const menuToggle = document.getElementById("dashboardMenuToggle");
+  const menuClose = document.getElementById("dashboardMenuClose");
+  const menuOverlay = document.getElementById("dashboardMenuOverlay");
+  const dashboardNav = document.getElementById("dashboardNavigation");
 
-  function bumpStat(el, delta) {
-    if (!el) return;
-    const val = parseInt(el.textContent, 10) || 0;
-    el.textContent = Math.max(0, val + delta);
+  function setDashboardMenu(open) {
+    document.body.classList.toggle("dashboard-menu-open", open);
+    menuToggle?.setAttribute("aria-expanded", String(open));
+    menuToggle?.setAttribute("aria-label", open ? "Close dashboard menu" : "Open dashboard menu");
   }
 
-  document.querySelectorAll(".wish-item__action").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const item = btn.closest(".wish-item");
-      const title = item?.querySelector("strong")?.textContent ?? "Book";
-
-      item.style.transition = "opacity .25s ease, transform .25s ease";
-      item.style.opacity = "0";
-      item.style.transform = "translateX(8px)";
-      setTimeout(() => {
-        item.remove();
-        bumpStat(stat.wishlist, -1);
-        toast(`"${title}" — wishlist checkout isn't connected yet`);
-      }, 250);
-    });
+  menuToggle?.addEventListener("click", () => setDashboardMenu(!document.body.classList.contains("dashboard-menu-open")));
+  menuClose?.addEventListener("click", () => setDashboardMenu(false));
+  menuOverlay?.addEventListener("click", () => setDashboardMenu(false));
+  dashboardNav?.addEventListener("click", (event) => {
+    if (event.target.closest("a")) setDashboardMenu(false);
   });
 
   /* account settings form */
@@ -109,4 +100,10 @@
   }
 
   window.addEventListener("scroll", updateActiveLink, { passive: true });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && document.body.classList.contains("dashboard-menu-open")) {
+      setDashboardMenu(false);
+      menuToggle?.focus();
+    }
+  });
 })();

@@ -120,9 +120,11 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-document.querySelector('[data-admin-logout]').addEventListener('click', (event) => {
+document.querySelector('[data-admin-logout]').addEventListener('click', async (event) => {
     event.preventDefault();
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (error) { console.error('Server sign-out failed:', error); }
     localStorage.removeItem('adminToken');
+    localStorage.removeItem('librarianToken');
     window.location.href = '/';
 });
 

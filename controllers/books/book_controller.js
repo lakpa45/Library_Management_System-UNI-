@@ -1,13 +1,23 @@
 import pool from '../../db/connection.js';
+import crypto from 'crypto';
+import { removeUploadedFiles } from '../../middleware/upload.js';
 
 // GET all books
 export const getBooks = async (req, res) => {
     try {
-        const usePublicListing = ['q', 'category', 'availability', 'page', 'limit', 'sort', 'public']
+        const usePublicListing = ['q', 'category', 'availability', 'type', 'page', 'limit', 'sort', 'public']
             .some(key => req.query[key] !== undefined);
 
         if (!usePublicListing) {
-            const result = await pool.query('SELECT * FROM book ORDER BY book_id DESC');
+            const result = await pool.query(
+                `SELECT b.*,
+                        COUNT(bc.copy_id)::int AS total_copies,
+                        COUNT(bc.copy_id) FILTER (WHERE LOWER(bc.status) = 'available')::int AS available_copies
+                 FROM book b
+                 LEFT JOIN book_copy bc ON bc.book_id = b.book_id
+                 GROUP BY b.book_id
+                 ORDER BY b.book_id DESC`
+            );
             return res.status(200).json(result.rows);
         }
 
@@ -15,6 +25,9 @@ export const getBooks = async (req, res) => {
         const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 12, 1), 48);
         const category = req.query.category ? Number.parseInt(req.query.category, 10) : null;
         const availability = ['available', 'unavailable'].includes(req.query.availability) ? req.query.availability : 'all';
+        const bookType = ['physical', 'digital'].includes(String(req.query.type || '').toLowerCase())
+            ? String(req.query.type).toLowerCase()
+            : null;
         const sortMap = {
             newest: 'b.book_id DESC', title_asc: 'b.title ASC',
             title_desc: 'b.title DESC', most_available: 'available_copies DESC, b.title ASC'
@@ -33,6 +46,10 @@ export const getBooks = async (req, res) => {
             values.push(category);
             where.push(`b.category_id = $${values.length}`);
         }
+        if (bookType) {
+            values.push(bookType);
+            where.push(`LOWER(b.book_type) = $${values.length}`);
+        }
         if (availability === 'available') where.push(`EXISTS (SELECT 1 FROM book_copy ac WHERE ac.book_id = b.book_id AND LOWER(ac.status) = 'available')`);
         if (availability === 'unavailable') where.push(`NOT EXISTS (SELECT 1 FROM book_copy ac WHERE ac.book_id = b.book_id AND LOWER(ac.status) = 'available')`);
 
@@ -46,7 +63,8 @@ export const getBooks = async (req, res) => {
         );
         const queryValues = [...values, limit, (page - 1) * limit];
         const result = await pool.query(
-            `SELECT b.book_id, b.title, b.isbn, b.description, b.cover_image, b.category_id,
+            `SELECT b.book_id, b.title, b.isbn, b.description, b.cover_image, b.pdf_file,
+                    b.book_type, b.category_id,
                     c.category_name, COUNT(bc.copy_id)::int AS total_copies,
                     COUNT(bc.copy_id) FILTER (WHERE LOWER(bc.status) = 'available')::int AS available_copies,
                     EXISTS (SELECT 1 FROM wishlist w WHERE w.book_id = b.book_id AND w.member_id = $1) AS wishlisted
@@ -70,31 +88,58 @@ export const getBooks = async (req, res) => {
 export const createBook = async (req, res) => {
     const client = await pool.connect();
     try {
-        const { title, description, category_id, copies } = req.body;
-        const numCopies = parseInt(copies) || 1;
+        const title = String(req.body.title || '').trim();
+        const description = String(req.body.description || '').trim();
+        const isbn = String(req.body.isbn || '').trim() || null;
+        const categoryId = Number.parseInt(req.body.category_id, 10);
+        const numCopies = Number.parseInt(req.body.copies, 10);
+        const bookType = String(req.body.book_type || 'physical').trim().toLowerCase();
 
         if (!title) {
+            await removeUploadedFiles(req);
             return res.status(400).json({ message: 'Title is required' });
+        }
+        if (isbn && isbn.length > 20) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'ISBN must be 20 characters or fewer' });
+        }
+        if (!Number.isInteger(categoryId) || categoryId < 1) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'A valid category is required' });
+        }
+        if (!Number.isInteger(numCopies) || numCopies < 1 || numCopies > 100) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'Copies must be between 1 and 100' });
+        }
+        if (!['physical', 'digital'].includes(bookType)) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'Book type must be physical or digital' });
         }
 
         const coverFile = req.files?.cover_image?.[0];
         const pdfFile = req.files?.book_pdf?.[0];
         const cover_image = coverFile ? `/images/books/${coverFile.filename}` : null;
         const pdf_file = pdfFile ? `/pdfs/books/${pdfFile.filename}` : null;
+        const savedBookType = pdfFile ? 'digital' : bookType;
 
         await client.query('BEGIN');
-        await client.query('ALTER TABLE book ADD COLUMN IF NOT EXISTS pdf_file TEXT');
+        const category = await client.query('SELECT category_id FROM category WHERE category_id = $1', [categoryId]);
+        if (!category.rowCount) {
+            await client.query('ROLLBACK');
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'Category not found' });
+        }
 
         const bookResult = await client.query(
-            `INSERT INTO book (title, description, cover_image, category_id, pdf_file)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO book (title, isbn, description, cover_image, category_id, pdf_file, book_type)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
              RETURNING *`,
-            [title, description, cover_image, category_id || null, pdf_file]
+            [title, isbn, description, cover_image, categoryId, pdf_file, savedBookType]
         );
         const book = bookResult.rows[0];
 
         for (let i = 0; i < numCopies; i++) {
-            const barcode = `BK${book.book_id}-${Date.now()}-${i}`;
+            const barcode = `BK-${book.book_id}-${crypto.randomUUID()}`;
             await client.query(
                 `INSERT INTO book_copy (barcode, status, book_id) VALUES ($1, 'Available', $2)`,
                 [barcode, book.book_id]
@@ -105,6 +150,10 @@ export const createBook = async (req, res) => {
         res.status(201).json(book);
     } catch (err) {
         await client.query('ROLLBACK');
+        await removeUploadedFiles(req);
+        if (err.code === '23505' && err.constraint === 'book_isbn_key') {
+            return res.status(409).json({ message: 'A book with this ISBN already exists' });
+        }
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     } finally {
@@ -116,10 +165,33 @@ export const createBook = async (req, res) => {
 export const updateBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, category_id } = req.body;
+        const title = String(req.body.title || '').trim();
+        const description = String(req.body.description || '').trim();
+        const isbn = String(req.body.isbn || '').trim() || null;
+        const categoryId = Number.parseInt(req.body.category_id, 10);
+        const bookType = String(req.body.book_type || 'physical').trim().toLowerCase();
 
         if (!title) {
+            await removeUploadedFiles(req);
             return res.status(400).json({ message: 'Title is required' });
+        }
+        if (isbn && isbn.length > 20) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'ISBN must be 20 characters or fewer' });
+        }
+        if (!Number.isInteger(categoryId) || categoryId < 1) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'A valid category is required' });
+        }
+        if (!['physical', 'digital'].includes(bookType)) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'Book type must be physical or digital' });
+        }
+
+        const category = await pool.query('SELECT category_id FROM category WHERE category_id = $1', [categoryId]);
+        if (!category.rowCount) {
+            await removeUploadedFiles(req);
+            return res.status(400).json({ message: 'Category not found' });
         }
 
         const coverFile = req.files?.cover_image?.[0];
@@ -127,22 +199,30 @@ export const updateBook = async (req, res) => {
         const cover_image = coverFile ? `/images/books/${coverFile.filename}` : null;
         const pdf_file = pdfFile ? `/pdfs/books/${pdfFile.filename}` : null;
 
-        await pool.query('ALTER TABLE book ADD COLUMN IF NOT EXISTS pdf_file TEXT');
         const query = `UPDATE book
-                       SET title = $1, description = $2, category_id = $3,
-                           cover_image = COALESCE($4, cover_image),
-                           pdf_file = COALESCE($5, pdf_file)
-                       WHERE book_id = $6 RETURNING *`;
-        const values = [title, description, category_id || null, cover_image, pdf_file, id];
+                       SET title = $1, isbn = $2, description = $3, category_id = $4,
+                           cover_image = COALESCE($5, cover_image),
+                           pdf_file = COALESCE($6, pdf_file),
+                           book_type = CASE
+                               WHEN COALESCE($6, pdf_file) IS NOT NULL THEN 'digital'
+                               ELSE $7
+                           END
+                       WHERE book_id = $8 RETURNING *`;
+        const values = [title, isbn, description, categoryId, cover_image, pdf_file, bookType, id];
 
         const result = await pool.query(query, values);
 
         if (result.rows.length === 0) {
+            await removeUploadedFiles(req);
             return res.status(404).json({ message: 'Book not found' });
         }
 
         res.status(200).json(result.rows[0]);
     } catch (err) {
+        await removeUploadedFiles(req);
+        if (err.code === '23505' && err.constraint === 'book_isbn_key') {
+            return res.status(409).json({ message: 'A book with this ISBN already exists' });
+        }
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
@@ -193,7 +273,15 @@ export const deleteBook = async (req, res) => {
         await client.query('COMMIT');
         res.status(200).json({ message: 'Book deleted' });
     } catch (err) {
+        await removeUploadedFiles(req);
+        if (err.code === '23505' && err.constraint === 'book_isbn_key') {
+            return res.status(409).json({ message: 'A book with this ISBN already exists' });
+        }
         await client.query('ROLLBACK');
+        await removeUploadedFiles(req);
+        if (err.code === '23505' && err.constraint === 'book_isbn_key') {
+            return res.status(409).json({ message: 'A book with this ISBN already exists' });
+        }
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     } finally {
@@ -231,8 +319,8 @@ export const getBookById = async (req, res) => {
         const { id } = req.params;
         const result = await pool.query(
             `SELECT book.*, category.category_name,
-                    COUNT(*) FILTER (WHERE book_copy.status = 'Available') AS available_copies,
-                    COUNT(*) AS total_copies
+                    COUNT(book_copy.copy_id) FILTER (WHERE LOWER(book_copy.status) = 'available') AS available_copies,
+                    COUNT(book_copy.copy_id) AS total_copies
              FROM book
              LEFT JOIN category ON book.category_id = category.category_id
              LEFT JOIN book_copy ON book_copy.book_id = book.book_id

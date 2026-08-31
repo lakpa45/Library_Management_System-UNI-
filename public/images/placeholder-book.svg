@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="title description">
+  <title id="title">Book cover unavailable</title>
+  <desc id="description">Generic APNA Library book cover placeholder</desc>
+  <rect width="600" height="800" fill="#1b4332"/>
+  <rect x="42" y="42" width="516" height="716" rx="18" fill="none" stroke="#f5b301" stroke-width="6"/>
+  <path d="M190 250h150c39 0 70 31 70 70v230H260c-39 0-70-31-70-70V250Z" fill="#f7f4ed" opacity=".96"/>
+  <path d="M410 320H260c-39 0-70 31-70 70" fill="none" stroke="#f5b301" stroke-width="12"/>
+  <text x="300" y="655" fill="#f7f4ed" font-family="Arial, sans-serif" font-size="38" text-anchor="middle">APNA LIBRARY</text>
+</svg>

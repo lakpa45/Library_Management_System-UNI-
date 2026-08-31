@@ -152,10 +152,6 @@
                 <p>Discover a world of knowledge, stories, and ideas. Explore our collection and find the perfect book for your next journey.</p>
                 <form action="#products" class="hero__search" id="heroSearchForm" autocomplete="off">
                     <input type="text" id="heroSearchInput" placeholder="Find your books" aria-label="find your books">
-                    <button type="submit">
-                        Go
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
                     <div class="search-dropdown" id="heroSearchDropdown"></div>
                 </form>
                 <div class="hero__meta">
@@ -180,21 +176,12 @@
             <!--hero-cards-->
             <div class="hero__cards">
                 <a href="#products" class="cat-card cat-card--g1">
-                    <span class="cat-card__go">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </span>
                     <img src="/images/1stbook.jpg" alt="Books Collection">
                 </a>
                 <a href="#products" class="cat-card cat-card--g2">
-                    <span class="cat-card__go">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </span>
                     <img src="/images/2ndbook.jpg" alt="Novel collection">
                 </a>
                 <a href="#products" class="cat-card cat-card--g3">
-                    <span class="cat-card__go">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </span>
                     <img src="/images/3rdbook.jpg" alt="Books Available">
                 </a>
                 <div class="hero__badge">
@@ -544,7 +531,10 @@
                 </label>
                 <label class="auth-field">
                     Password
-                    <input type="password" name="password" required placeholder="••••••••">
+                    <span style="position:relative;display:block">
+                        <input type="password" name="password" required placeholder="••••••••" style="padding-right:2.75rem">
+                        <button type="button" aria-label="Show password" title="Show password" style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;color:inherit;padding:.25rem" onclick="const input=this.previousElementSibling;const showing=input.type==='text';input.type=showing?'password':'text';this.setAttribute('aria-label',showing?'Show password':'Hide password');this.title=showing?'Show password':'Hide password';this.firstElementChild.className=showing?'fa-regular fa-eye':'fa-regular fa-eye-slash'"><i class="fa-regular fa-eye" aria-hidden="true"></i></button>
+                    </span>
                 </label>
                 <label class="auth-field">
                     Role
@@ -614,7 +604,7 @@
                 </p>
             </div>
             <div class="cta-buttons">
-                <a href="#" class="btn btn--accent">
+                <a href="/books" class="btn btn--accent">
                     Search Library
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </a>

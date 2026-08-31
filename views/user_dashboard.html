@@ -13,14 +13,17 @@
 <body>
 <header class="header">
   <div class="navbar">
-    <a href="/index.html" class="brand">APNA LIBRARY</a>
-    <nav class="menu">
+    <a href="/" class="brand">APNA LIBRARY</a>
+    <button type="button" class="dashboard-menu-toggle" id="dashboardMenuToggle" aria-label="Open dashboard menu" aria-controls="dashboardNavigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+    <nav class="menu" id="dashboardNavigation" aria-label="Dashboard navigation">
+      <button type="button" class="dashboard-menu-close" id="dashboardMenuClose" aria-label="Close dashboard menu"><i class="fa-solid fa-xmark"></i></button>
       <a href="#" class="is-active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
       <a href="#books"><i class="fa-solid fa-book"></i> My Books</a>
       <a href="#wishlist"><i class="fa-regular fa-heart"></i> Wishlist</a>
       <a href="#account"><i class="fa-regular fa-id-badge"></i> Settings</a>
     </nav>
   </div>
+  <button type="button" class="dashboard-menu-overlay" id="dashboardMenuOverlay" aria-label="Close dashboard menu" tabindex="-1"></button>
 </header>
 
 <section class="page-head">
@@ -30,7 +33,11 @@
       <h1>Welcome back, <span id="userDashboardName"></span></h1>
       <p>Here's what's happening with your books, holds, and wishlist this week.</p>
     </div>
-    <a href="/index.html#products" class="btn btn--dark"><i class="fa-solid fa-magnifying-glass"></i> Find a book</a>
+    <div class="member-identity" aria-label="Library membership">
+      <span class="member-identity__avatar" id="userDashboardAvatar" aria-hidden="true">U</span>
+      <div><small>MEMBER UNIQUE ID</small><strong id="userMemberId">Loading...</strong><span id="userMemberStatus">Checking membership</span></div>
+      <a href="/books" class="btn btn--dark"><i class="fa-solid fa-magnifying-glass"></i> Find a book</a>
+    </div>
   </div>
 </section>
 
@@ -38,26 +45,26 @@
   <div class="container stats__grid">
     <div class="stat-card">
       <span class="stat-card__ic"><i class="fa-solid fa-book-open"></i></span>
-      <div><strong>4</strong><small>Books Borrowed</small></div>
+      <div><strong id="borrowedCount">0</strong><small>Books Borrowed</small></div>
     </div>
     <div class="stat-card">
       <span class="stat-card__ic stat-card__ic--warn"><i class="fa-solid fa-clock"></i></span>
-      <div><strong>1</strong><small>Due Soon</small></div>
+      <div><strong id="dueSoonCount">0</strong><small>Due Soon</small></div>
     </div>
     <div class="stat-card">
       <span class="stat-card__ic"><i class="fa-regular fa-heart"></i></span>
-      <div><strong>7</strong><small>Wishlist Items</small></div>
+      <div><strong id="wishlistCount">0</strong><small>Wishlist Items</small></div>
     </div>
   </div>
 </section>
 
-<div class="alert">
+<div class="alert" id="dueAlert" hidden>
   <i class="fa-solid fa-triangle-exclamation"></i>
   <div>
-    <strong>1 book due in 2 days</strong>
-    <p>"The Rain When You Were Mine" is due back on Aug 26. Renew now to avoid a late fee.</p>
+    <strong id="dueAlertTitle">Book due soon</strong>
+    <p id="dueAlertMessage"></p>
   </div>
-  <a href="#books" class="btn btn--accent btn--sm" style="margin-left:auto;padding:9px 18px;font-size:.78rem;">Renew</a>
+  <a href="#books" class="btn btn--accent btn--sm" style="margin-left:auto;padding:9px 18px;font-size:.78rem;">View loan</a>
 </div>
 
 <section id="books" class="books">
@@ -161,26 +168,7 @@
 
   <div id="wishlist" class="panel">
     <h2>Wishlist</h2>
-    <div class="wish-item">
-      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
-      <div class="wish-item__body"><strong>Into The Woods</strong><small>Novels · Available</small></div>
-      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
-    </div>
-    <div class="wish-item">
-      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
-      <div class="wish-item__body"><strong>The Girl With A Dream</strong><small>Novels · Available</small></div>
-      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
-    </div>
-    <div class="wish-item">
-      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
-      <div class="wish-item__body"><strong>Utopia</strong><small>Novels · Available</small></div>
-      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
-    </div>
-    <div class="wish-item">
-      <span class="wish-item__thumb"><i class="fa-solid fa-book"></i></span>
-      <div class="wish-item__body"><strong>Again But Better</strong><small>Novels · Available</small></div>
-      <button class="wish-item__action"><i class="fa-solid fa-bag-shopping"></i></button>
-    </div>
+    <p class="dashboard-empty" id="wishlistStatus">Loading your wishlist...</p>
   </div>
 </section>
 
@@ -192,10 +180,11 @@
       <p>Your library card number, email, and contact details are used for due date reminders and hold notifications.</p>
     </div>
     <form class="account__fields">
-      <label class="account__field">Full name <input type="text" value="Lakpa Tshering"></label>
-      <label class="account__field">Email <input type="email" value="Lakpatshering@example.com"></label>
-      <label class="account__field">Phone <input type="tel" value="+91-98765-43210"></label>
-      <label class="account__field">Library card no. <input type="text" value="APL-2026-0417" disabled></label>
+      <label class="account__field">Full name <input id="profileFullName" type="text" autocomplete="name"></label>
+      <label class="account__field">Email <input id="profileEmail" type="email" autocomplete="email"></label>
+      <label class="account__field">Phone <input id="profilePhone" type="tel" autocomplete="tel"></label>
+      <label class="account__field">Library card no. <input id="profileCardNumber" type="text" disabled></label>
+      <label class="account__field account__field--wide">Database member ID <input id="profileMemberId" type="text" disabled></label>
       <div class="account__actions">
         <button type="submit" class="btn btn--accent">Save changes</button>
         <button type="button" class="btn btn--ghost">Change password</button>
@@ -223,7 +212,7 @@
         </div>
 
         <div class="cta-buttons">
-            <a href="#" class="btn btn--accent">
+            <a href="/books" class="btn btn--accent">
                 Search Library
                 <i class="fa-solid fa-magnifying-glass"></i>
             </a>

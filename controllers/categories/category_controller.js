@@ -19,17 +19,20 @@ export const getCategories = async (req, res) => {
 
 export const createCategory = async (req, res) => {
     try {
-        const { category_name, description, color } = req.body;
+        const category_name = String(req.body.category_name || '').trim();
+        const description = String(req.body.description || '').trim();
+        const color = /^#[0-9a-f]{6}$/i.test(req.body.color || '') ? req.body.color : '#1B4332';
         if (!category_name) {
             return res.status(400).json({ message: 'Category name is required' });
         }
         const result = await pool.query(
             `INSERT INTO category (category_name, description, color)
              VALUES ($1, $2, $3) RETURNING *`,
-            [category_name, description, color || '#1B4332']
+            [category_name, description, color]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
+        if (err.code === '23505') return res.status(409).json({ message: 'A category with this name already exists' });
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
@@ -38,7 +41,10 @@ export const createCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
     try {
         const { id } = req.params;
-        const { category_name, description, color } = req.body;
+        const category_name = String(req.body.category_name || '').trim();
+        const description = String(req.body.description || '').trim();
+        const color = /^#[0-9a-f]{6}$/i.test(req.body.color || '') ? req.body.color : '#1B4332';
+        if (!category_name) return res.status(400).json({ message: 'Category name is required' });
         const result = await pool.query(
             `UPDATE category SET category_name = $1, description = $2, color = $3
              WHERE category_id = $4 RETURNING *`,
@@ -47,6 +53,7 @@ export const updateCategory = async (req, res) => {
         if (result.rows.length === 0) return res.status(404).json({ message: 'Category not found' });
         res.status(200).json(result.rows[0]);
     } catch (err) {
+        if (err.code === '23505') return res.status(409).json({ message: 'A category with this name already exists' });
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
@@ -62,6 +69,9 @@ export const deleteCategory = async (req, res) => {
         if (result.rows.length === 0) return res.status(404).json({ message: 'Category not found' });
         res.status(200).json({ message: 'Category deleted' });
     } catch (err) {
+        if (err.code === '23503') {
+            return res.status(409).json({ message: 'This category cannot be deleted while books are assigned to it.' });
+        }
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }

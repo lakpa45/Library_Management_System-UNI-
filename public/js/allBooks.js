@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let requestController;
   let debounceTimer;
 
+  const initialQuery = new URLSearchParams(window.location.search).get('q');
+  if (initialQuery) search.value = initialQuery;
+
   const token = () => localStorage.getItem('token');
   const authHeaders = () => token() ? { Authorization: `Bearer ${token()}` } : {};
   const element = (tag, className, text) => {

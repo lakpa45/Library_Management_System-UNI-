@@ -1,8 +1,8 @@
 import express from 'express';
-import upload from '../middleware/upload.js';
+import upload, { validateUploadedSignatures } from '../middleware/upload.js';
 import { getBooks, createBook, updateBook, deleteBook, searchBooks, getBookById, getAvailableBooks } from '../controllers/books/book_controller.js';
 import { getFreeBooks } from '../controllers/books/free_books_controller.js';
-import { optionalMemberAuth } from '../middleware/auth.js';
+import { optionalMemberAuth, verifyToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -16,8 +16,8 @@ const bookUploads = upload.fields([
     { name: 'book_pdf', maxCount: 1 }
 ]);
 
-router.post('/', bookUploads, createBook);
-router.put('/:id', bookUploads, updateBook);
-router.delete('/:id', deleteBook);
+router.post('/', verifyToken, requireAdmin, bookUploads, validateUploadedSignatures, createBook);
+router.put('/:id', verifyToken, requireAdmin, bookUploads, validateUploadedSignatures, updateBook);
+router.delete('/:id', verifyToken, requireAdmin, deleteBook);
 
 export default router;

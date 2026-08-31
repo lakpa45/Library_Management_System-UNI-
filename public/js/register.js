@@ -1,6 +1,13 @@
 const form = document.getElementById('registerForm');
 const errorEl = document.getElementById('registerError');
 const successEl = document.getElementById('registerSuccess');
+const submitButton = document.getElementById('registerSubmit');
+
+function showError(message) {
+    errorEl.textContent = message;
+    errorEl.classList.remove('hidden');
+    successEl.classList.add('hidden');
+}
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -9,42 +16,48 @@ form.addEventListener('submit', async (e) => {
 
     const fullName = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
-    const phone = document.getElementById('regPhone').value.trim();
+    const phone = document.getElementById('regPhone').value.replace(/\D/g, '');
     const member_type = document.getElementById('regType').value;
     const department = document.getElementById('regDept').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
 
-    if (password !== confirmPassword) {
-        errorEl.textContent = 'Passwords do not match.';
-        errorEl.classList.remove('hidden');
-        return;
-    }
+    if (fullName.length < 2) return showError('Please enter your full name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
+    if (!/^\d{10}$/.test(phone)) return showError('Phone number must contain exactly 10 digits.');
+    if (!member_type) return showError('Please select a member role.');
+    if (department.length < 2) return showError('Please enter your department.');
+    if (password.length < 8 || password.length > 72) return showError('Password must be between 8 and 72 characters.');
+    if (password !== confirmPassword) return showError('Passwords do not match.');
 
     const nameParts = fullName.split(' ');
     const first_name = nameParts[0];
     const last_name = nameParts.slice(1).join(' ') || first_name;
 
     try {
+        submitButton.disabled = true;
+        submitButton.textContent = 'CREATING ACCOUNT…';
         const response = await fetch('/api/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ first_name, last_name, email, phone, member_type, department, password })
         });
 
-        const result = await response.json();
+        const result = await response.json().catch(() => ({}));
 
         if (response.ok) {
-            successEl.textContent = 'Registration successful! You can now log in.';
+            successEl.textContent = 'Registration successful! Redirecting to sign in…';
             successEl.classList.remove('hidden');
             form.reset();
+            window.setTimeout(() => { window.location.href = '/#login'; }, 1500);
         } else {
-            errorEl.textContent = result.message;
-            errorEl.classList.remove('hidden');
+            showError(result.message || 'Registration failed. Please check your details.');
         }
     } catch (err) {
         console.error(err);
-        errorEl.textContent = 'Something went wrong. Please try again.';
-        errorEl.classList.remove('hidden');
+        showError('Unable to connect to the server. Please try again.');
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'CREATE ACCOUNT';
     }
 });
