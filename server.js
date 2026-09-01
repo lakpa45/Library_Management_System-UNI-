@@ -3,6 +3,7 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
+import { removeUploadedFiles } from './middleware/upload.js';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
@@ -71,7 +72,6 @@ app.get('/reset-password', (req, res) => res.sendFile(path.join(__dirname, 'view
 const ADMIN_PAGES = {
     'dashboard': 'admin_dashboard.html',
     'librarians': 'admin_librarians.html',
-    'audit-logs': 'admin_audit_logs.html',
 };
 
 const LIBRARIAN_PAGES = {
@@ -92,7 +92,7 @@ app.get('/admin/:page', requireAdminPage, (req, res) => {
         return res.status(404).send('Not found');
     }
 
-    if (['librarians', 'audit-logs'].includes(req.params.page) && req.admin.role !== 'admin') {
+    if (req.params.page === 'librarians' && req.admin.role !== 'admin') {
         return res.status(403).send('Administrator access required');
     }
 
@@ -113,19 +113,24 @@ app.use('/api', (req, res) => {
     res.status(404).json({ message: 'API endpoint not found' });
 });
 
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
     if (res.headersSent) return next(err);
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
         return res.status(400).json({ message: 'Invalid JSON request body' });
     }
     if (err instanceof multer.MulterError) {
-        const message = err.code === 'LIMIT_FILE_SIZE'
-            ? 'The uploaded file exceeds the 25 MB limit.'
-            : `Upload failed: ${err.message}`;
-        return res.status(400).json({ message });
+        await removeUploadedFiles(req);
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(413).json({
+                success: false,
+                message: 'File size must not exceed 35 MB.'
+            });
+        }
+        return res.status(400).json({ success: false, message: `Upload failed: ${err.message}` });
     }
     if (err?.message === 'Only JPG, PNG, WebP images and PDF files are allowed.') {
-        return res.status(400).json({ message: err.message });
+        await removeUploadedFiles(req);
+        return res.status(400).json({ success: false, message: err.message });
     }
     console.error('Unhandled request error:', err?.message || err);
     res.status(500).json({ message: 'Server error' });

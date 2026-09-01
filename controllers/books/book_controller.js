@@ -316,7 +316,10 @@ export const searchBooks = async (req, res) => {
 // GET single book by id (with availability info)
 export const getBookById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({ message: 'Invalid book ID.' });
+        }
         const result = await pool.query(
             `SELECT book.*, category.category_name,
                     COUNT(book_copy.copy_id) FILTER (WHERE LOWER(book_copy.status) = 'available') AS available_copies,

@@ -4,6 +4,8 @@ let selectedFile = null;
 let selectedPdf = null;
 let categories = [];
 let activeBookType = "physical";
+const MAX_UPLOAD_SIZE = 35 * 1024 * 1024;
+const FILE_SIZE_MESSAGE = "File size must not exceed 35 MB.";
 
 const grid = document.getElementById("bookGrid");
 const emptyState = document.getElementById("emptyState");
@@ -209,6 +211,14 @@ bookModal.addEventListener("click", event => {
 
 coverInput.addEventListener("change", () => {
     const file = coverInput.files[0];
+    if (file && file.size > MAX_UPLOAD_SIZE) {
+        coverInput.value = "";
+        selectedFile = null;
+        coverPreview.removeAttribute("src");
+        coverPreview.classList.add("hidden");
+        alert(FILE_SIZE_MESSAGE);
+        return;
+    }
     if (file) {
         selectedFile = file;
         coverPreview.src = URL.createObjectURL(file);
@@ -218,6 +228,14 @@ coverInput.addEventListener("change", () => {
 
 pdfInput.addEventListener("change", () => {
     const file = pdfInput.files[0];
+    if (file && file.size > MAX_UPLOAD_SIZE) {
+        pdfInput.value = "";
+        selectedPdf = null;
+        pdfFileName.textContent = "";
+        pdfFileName.classList.add("hidden");
+        alert(FILE_SIZE_MESSAGE);
+        return;
+    }
     selectedPdf = file || null;
     pdfFileName.textContent = file ? `Selected PDF: ${file.name}` : "";
     pdfFileName.classList.toggle("hidden", !file);
@@ -226,6 +244,12 @@ pdfInput.addEventListener("change", () => {
 
 bookForm.addEventListener("submit", async event => {
     event.preventDefault();
+
+    if ((selectedFile && selectedFile.size > MAX_UPLOAD_SIZE) ||
+        (selectedPdf && selectedPdf.size > MAX_UPLOAD_SIZE)) {
+        alert(FILE_SIZE_MESSAGE);
+        return;
+    }
 
     const id = document.getElementById("bookID").value;
     const title = document.getElementById("bookTitle").value.trim();

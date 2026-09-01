@@ -7,7 +7,7 @@ export const getWishlist = async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT w.book_id, w.created_at, b.title, b.isbn, b.description, b.cover_image,
-                    b.category_id, c.category_name,
+                    b.category_id, b.book_type, b.pdf_file, NULL::text AS author, c.category_name,
                     COUNT(bc.copy_id)::int AS total_copies,
                     COUNT(bc.copy_id) FILTER (WHERE LOWER(bc.status) = 'available')::int AS available_copies
              FROM wishlist w JOIN book b ON b.book_id = w.book_id
@@ -24,16 +24,36 @@ export const getWishlist = async (req, res) => {
     }
 };
 
+export const getWishlistStatus = async (req, res) => {
+    if (!validBookId(req.params.bookId)) return res.status(400).json({ message: 'Invalid book ID' });
+    try {
+        const book = await pool.query('SELECT book_id FROM book WHERE book_id = $1', [req.params.bookId]);
+        if (!book.rowCount) return res.status(404).json({ message: 'Book not found' });
+        const result = await pool.query(
+            'SELECT 1 FROM wishlist WHERE member_id = $1 AND book_id = $2',
+            [memberId(req), req.params.bookId]
+        );
+        res.json({ wishlisted: result.rowCount > 0 });
+    } catch (error) {
+        console.error('Wishlist status failed:', error.message);
+        res.status(500).json({ message: 'Unable to check wishlist' });
+    }
+};
+
 export const addWishlistBook = async (req, res) => {
     if (!validBookId(req.params.bookId)) return res.status(400).json({ message: 'Invalid book ID' });
     try {
         const book = await pool.query('SELECT book_id FROM book WHERE book_id = $1', [req.params.bookId]);
         if (!book.rowCount) return res.status(404).json({ message: 'Book not found' });
-        await pool.query(
+        const result = await pool.query(
             `INSERT INTO wishlist (member_id, book_id) VALUES ($1, $2)
-             ON CONFLICT (member_id, book_id) DO NOTHING`, [memberId(req), req.params.bookId]
+             ON CONFLICT (member_id, book_id) DO NOTHING
+             RETURNING wishlist_id`, [memberId(req), req.params.bookId]
         );
-        res.status(201).json({ message: 'Book added to wishlist', wishlisted: true });
+        if (!result.rowCount) {
+            return res.status(409).json({ message: 'Book is already in My Wishlist.', wishlisted: true });
+        }
+        res.status(201).json({ message: 'Book added to My Wishlist.', wishlisted: true });
     } catch (error) {
         console.error('Wishlist add failed:', error.message);
         res.status(500).json({ message: 'Unable to update wishlist' });
@@ -43,8 +63,12 @@ export const addWishlistBook = async (req, res) => {
 export const removeWishlistBook = async (req, res) => {
     if (!validBookId(req.params.bookId)) return res.status(400).json({ message: 'Invalid book ID' });
     try {
-        await pool.query('DELETE FROM wishlist WHERE member_id = $1 AND book_id = $2', [memberId(req), req.params.bookId]);
-        res.json({ message: 'Book removed from wishlist', wishlisted: false });
+        const result = await pool.query(
+            'DELETE FROM wishlist WHERE member_id = $1 AND book_id = $2 RETURNING wishlist_id',
+            [memberId(req), req.params.bookId]
+        );
+        if (!result.rowCount) return res.status(404).json({ message: 'Book is not in My Wishlist.', wishlisted: false });
+        res.json({ message: 'Book removed from My Wishlist.', wishlisted: false });
     } catch (error) {
         console.error('Wishlist removal failed:', error.message);
         res.status(500).json({ message: 'Unable to update wishlist' });

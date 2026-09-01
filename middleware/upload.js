@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+export const MAX_UPLOAD_SIZE = 35 * 1024 * 1024;
 
 // Set up storage configuration for multer
 const storage = multer.diskStorage({
@@ -24,7 +25,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 25 * 1024 * 1024 },
+    // Busboy marks a file as truncated when it reaches (not only exceeds) its
+    // transport limit. One extra byte lets the validator below accept exactly
+    // 35 MB while still detecting the first byte over the application limit.
+    limits: { fileSize: MAX_UPLOAD_SIZE + 1 },
     fileFilter: (req, file, cb) => {
         const extension = path.extname(file.originalname).toLowerCase();
         const coverTypes = new Map([
@@ -44,6 +48,17 @@ const uploadedFiles = req => Object.values(req.files || {}).flat();
 
 export const removeUploadedFiles = async req => {
     await Promise.all(uploadedFiles(req).map(file => fs.promises.unlink(file.path).catch(() => {})));
+};
+
+export const validateUploadedSizes = async (req, res, next) => {
+    if (uploadedFiles(req).some(file => file.size > MAX_UPLOAD_SIZE)) {
+        await removeUploadedFiles(req);
+        return res.status(413).json({
+            success: false,
+            message: 'File size must not exceed 35 MB.'
+        });
+    }
+    next();
 };
 
 export const validateUploadedSignatures = async (req, res, next) => {

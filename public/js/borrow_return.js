@@ -10,7 +10,11 @@ const safe = (value) => String(value ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '
 async function api(url, options) {
     const response = await fetch(url, options);
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.message || 'Request failed.');
+    if (!response.ok) {
+        const error = new Error(body.message || 'Request failed.');
+        error.status = response.status;
+        throw error;
+    }
     return body;
 }
 
@@ -23,24 +27,25 @@ function errorFor(id, message = '') {
 function toast(title, message, isError = false) {
     el('toast-title').textContent = title; el('toast-body').textContent = message;
     el('toast').classList.toggle('bg-clay', isError); el('toast').classList.toggle('bg-forest', !isError);
-    el('toast').classList.remove('translate-y-24', 'opacity-0');
-    setTimeout(() => el('toast').classList.add('translate-y-24', 'opacity-0'), 3500);
+    el('toast').classList.remove('translate-y-2', 'opacity-0');
+    setTimeout(() => el('toast').classList.add('translate-y-2', 'opacity-0'), 3500);
 }
 
 function memberHtml(m) {
     const borrowing = m.active_borrowings ? `${m.active_borrowings} active borrowing${m.active_borrowings === 1 ? '' : 's'}` : 'No active borrowings';
-    return `<p class="font-semibold">${safe(m.first_name)} ${safe(m.last_name)}</p><p>Username: ${safe(m.username)}</p><p>Unique ID: ${safe(m.unique_id || 'Not assigned')}</p><p>Status: ${safe(m.status)} · ${borrowing}</p>`;
+    return `<p class="font-semibold">${safe(m.display_name)}</p><p>Username: ${safe(m.username)}</p><p>Card ID: ${safe(m.unique_id || 'Not assigned')}</p><p>Status: ${safe(m.status)} · ${borrowing}</p>`;
 }
 
 function enableBorrow() { el('borrow-button').disabled = !(selectedMember && el('i-book-id').value); }
 
 async function findMember(inputId, detailId, mode) {
     const q = el(inputId).value.trim();
-    if (!q) return errorFor(inputId, 'Enter an exact member unique ID or username.');
+    if (!q) return errorFor(inputId, 'Enter an exact Card ID or username.');
     const button = el(mode === 'borrow' ? 'i-member-find' : 'r-member-find');
     button.disabled = true;
     try {
-        const member = await api(`/api/loans/members/search?q=${encodeURIComponent(q)}`);
+        const result = await api(`/api/loans/members/search?q=${encodeURIComponent(q)}`);
+        const member = result.member;
         errorFor(inputId); el(detailId).innerHTML = memberHtml(member); el(detailId).classList.remove('hidden');
         if (mode === 'borrow') { selectedMember = member; el('i-member-id').value = member.member_id; enableBorrow(); }
         else { returnMember = member; await loadMemberLoans(member.member_id); }
@@ -49,6 +54,84 @@ async function findMember(inputId, detailId, mode) {
         if (mode === 'borrow') { selectedMember = null; el('i-member-id').value = ''; enableBorrow(); }
         else { returnMember = null; el('member-active-loans').innerHTML = ''; }
     } finally { button.disabled = false; }
+}
+
+let memberValidationTimer = null;
+let memberValidationRequest = null;
+let memberValidationVersion = 0;
+
+function setMemberValidation(state, message = '') {
+    const input = el('i-member-search');
+    const icon = el('i-member-validation-icon');
+    const status = el('i-member-validation-status');
+    input.classList.remove('border-green-600', 'border-red-500');
+    icon.className = 'hidden pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 items-center justify-center text-sm';
+    icon.innerHTML = '';
+    status.className = 'mt-1 text-xs text-ink-light';
+    status.textContent = message;
+
+    if (state === 'checking') {
+        icon.className = 'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-sm text-ink-light';
+        icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>';
+    } else if (state === 'valid') {
+        input.classList.add('border-green-600');
+        icon.className = 'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-sm text-green-600';
+        icon.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>';
+        status.className = 'mt-1 text-xs text-green-700';
+    } else if (state === 'invalid') {
+        input.classList.add('border-red-500');
+        icon.className = 'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-sm text-red-500';
+        icon.innerHTML = '<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>';
+        status.className = 'mt-1 text-xs text-red-600';
+    } else if (state === 'error') {
+        icon.className = 'pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 flex items-center justify-center text-sm text-red-500';
+        icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>';
+        status.className = 'mt-1 text-xs text-red-600';
+    }
+}
+
+async function verifyBorrowMember(value, version) {
+    memberValidationRequest?.abort();
+    memberValidationRequest = new AbortController();
+    try {
+        const result = await api(`/api/loans/members/search?q=${encodeURIComponent(value.trim())}`, {
+            signal: memberValidationRequest.signal
+        });
+        if (version !== memberValidationVersion || el('i-member-search').value.trim() !== value.trim()) return;
+        selectedMember = result.member;
+        el('i-member-id').value = result.member.member_id;
+        el('i-member-detail').innerHTML = memberHtml(result.member);
+        el('i-member-detail').classList.remove('hidden');
+        setMemberValidation('valid', 'Member verified.');
+        enableBorrow();
+    } catch (error) {
+        if (error.name === 'AbortError' || version !== memberValidationVersion) return;
+        selectedMember = null;
+        el('i-member-id').value = '';
+        el('i-member-detail').classList.add('hidden');
+        if (error.status === 404) setMemberValidation('invalid', 'Member not found.');
+        else setMemberValidation('error', 'Unable to verify member. Please try again.');
+        enableBorrow();
+    }
+}
+
+function scheduleMemberValidation() {
+    const value = el('i-member-search').value;
+    memberValidationVersion += 1;
+    const version = memberValidationVersion;
+    clearTimeout(memberValidationTimer);
+    memberValidationRequest?.abort();
+    selectedMember = null;
+    el('i-member-id').value = '';
+    el('i-member-detail').classList.add('hidden');
+    enableBorrow();
+
+    if (!value.trim()) {
+        setMemberValidation('empty');
+        return;
+    }
+    setMemberValidation('checking', 'Checking member…');
+    memberValidationTimer = setTimeout(() => verifyBorrowMember(value, version), 450);
 }
 
 async function loadBooks(q = '') {
@@ -63,7 +146,7 @@ function renderBooks() {
 
 function selectBook(b) {
     el('i-book-search').value = b.title; el('i-book-id').value = b.book_id; el('i-book-suggest').classList.add('hidden');
-    el('i-book-detail').innerHTML = `<p class="font-semibold">${safe(b.title)}</p><p>Author: ${safe(b.author || 'Not recorded')}</p><p>Unique ID: ${b.book_id}</p><p>Available quantity: ${b.available_quantity}</p>`;
+    el('i-book-detail').innerHTML = `<div class="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div class="min-w-0"><p class="font-semibold break-words">${safe(b.title)}</p><p class="mt-1 text-ink-light break-words">Author: ${safe(b.author || 'Not recorded')}</p><p class="mt-1 text-ink-light">Unique ID: ${b.book_id}</p></div><span class="shrink-0 self-start rounded-full bg-forest/10 px-2.5 py-1 font-semibold text-forest">${b.available_quantity} available</span></div>`;
     el('i-book-detail').classList.remove('hidden'); errorFor('i-book-search'); enableBorrow();
 }
 
@@ -74,7 +157,7 @@ async function loadLoans() {
 
 async function loadMemberLoans(memberId) {
     const list = await api(`/api/loans/members/${memberId}/active`);
-    el('member-active-loans').innerHTML = list.length ? list.map((loan) => `<article class="bg-paper rounded-lg p-3 border border-ink/10"><p class="font-medium text-sm">${safe(loan.title)}</p><p class="text-xs text-ink-light mt-1">Book ID ${loan.book_id} · Due ${dateText(loan.due_date)}</p><button type="button" data-return="${loan.issue_id}" class="mt-3 w-full bg-forest hover:bg-forest-light disabled:opacity-50 text-paper font-semibold text-xs rounded-full py-2">Return</button></article>`).join('') : '<p class="text-sm text-ink-light bg-paper rounded-lg p-4 border border-ink/10">This member has no active borrowed books.</p>';
+    el('member-active-loans').innerHTML = list.length ? list.map((loan) => `<article class="flex min-w-0 flex-col gap-3 bg-paper rounded-lg p-4 border border-ink/10 sm:flex-row sm:items-center sm:justify-between"><div class="min-w-0"><p class="font-medium text-sm break-words">${safe(loan.title)}</p><p class="text-xs text-ink-light mt-1 break-words">Book ID ${loan.book_id} · Due ${dateText(loan.due_date)}</p></div><button type="button" data-return="${loan.issue_id}" class="w-full min-h-10 shrink-0 bg-forest hover:bg-forest-light disabled:opacity-50 text-paper font-semibold text-xs rounded-full px-5 py-2 sm:w-auto focus:outline-none focus:ring-2 focus:ring-brass/50">Return</button></article>`).join('') : '<p class="text-sm text-ink-light bg-paper rounded-lg p-4 border border-ink/10">This member has no active borrowed books.</p>';
 }
 
 function updateDue() {
@@ -84,10 +167,17 @@ function updateDue() {
 
 el('tab-issue').onclick = () => { el('tab-issue').classList.add('active'); el('tab-return').classList.remove('active'); el('issue-form').classList.remove('hidden'); el('return-form').classList.add('hidden'); };
 el('tab-return').onclick = () => { el('tab-return').classList.add('active'); el('tab-issue').classList.remove('active'); el('return-form').classList.remove('hidden'); el('issue-form').classList.add('hidden'); };
-el('i-member-find').onclick = () => findMember('i-member-search', 'i-member-detail', 'borrow');
+el('i-member-find').onclick = () => {
+    clearTimeout(memberValidationTimer);
+    const value = el('i-member-search').value;
+    if (!value.trim()) return setMemberValidation('empty');
+    memberValidationVersion += 1;
+    setMemberValidation('checking', 'Checking member…');
+    verifyBorrowMember(value, memberValidationVersion);
+};
 el('r-member-find').onclick = () => findMember('r-member-search', 'r-member-detail', 'return');
 ['i-member-search', 'r-member-search'].forEach((id) => el(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); el(id === 'i-member-search' ? 'i-member-find' : 'r-member-find').click(); } }));
-el('i-member-search').oninput = () => { selectedMember = null; el('i-member-id').value = ''; el('i-member-detail').classList.add('hidden'); enableBorrow(); };
+el('i-member-search').oninput = scheduleMemberValidation;
 
 let bookTimer;
 el('i-book-search').oninput = () => { el('i-book-id').value = ''; el('i-book-detail').classList.add('hidden'); enableBorrow(); clearTimeout(bookTimer); bookTimer = setTimeout(() => loadBooks(el('i-book-search').value.trim()), 200); };
@@ -101,10 +191,12 @@ el('issue-form').onsubmit = async (e) => {
     const button = el('borrow-button'), issueDate = el('i-issue-date').value || today(), due = new Date(`${issueDate}T00:00:00`);
     due.setDate(due.getDate() + Number(el('i-period').value)); button.disabled = true;
     try {
-        await api('/api/loans/issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: selectedMember.member_id, book_id: Number(el('i-book-id').value), issue_date: issueDate, due_date: due.toISOString().slice(0, 10) }) });
-        toast('Book borrowed', `Due ${dateText(due.toISOString().slice(0, 10))}`); el('i-book-id').value = ''; el('i-book-search').value = ''; el('i-book-detail').classList.add('hidden');
-        await Promise.all([loadBooks(), loadLoans(), findMember('i-member-search', 'i-member-detail', 'borrow')]);
-    } catch (err) { toast('Borrow failed', err.message, true); } finally { enableBorrow(); }
+        const result = await api('/api/loans/issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: selectedMember.member_id, book_id: Number(el('i-book-id').value), issue_date: issueDate, due_date: due.toISOString().slice(0, 10) }) });
+        toast(result.message || 'Book borrowed successfully.', `Due ${dateText(due.toISOString().slice(0, 10))}`); el('i-book-id').value = ''; el('i-book-search').value = ''; el('i-book-detail').classList.add('hidden');
+        const refreshes = [loadBooks(), loadLoans(), findMember('i-member-search', 'i-member-detail', 'borrow')];
+        if (returnMember?.member_id === selectedMember.member_id) refreshes.push(loadMemberLoans(selectedMember.member_id));
+        await Promise.all(refreshes);
+    } catch (err) { console.error('Borrow request failed:', err.message); toast('Borrow failed', err.message, true); } finally { enableBorrow(); }
 };
 
 el('member-active-loans').onclick = async (e) => {

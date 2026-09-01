@@ -45,7 +45,7 @@
   <main class="main-area">
     <header class="top-header"><button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div class="top-search"><a class="action-btn" href="/librarian/dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div><div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></span><span>Borrow &amp; Return</span></div><span class="today">Librarian Workspace</span></div></header>
     <div class="dashboard-content">
-<div class="max-w-6xl mx-auto px-6 py-10">
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
   <!-- Header -->
   <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div>
@@ -76,42 +76,46 @@
       <p class="font-display text-2xl text-clay mt-1" id="stat-fines">₹0</p>
     </div>
   </div>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     <!-- LEFT: Issue / Return tabs -->
-    <div class="lg:col-span-1 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+    <div class="lg:col-span-5 min-w-0 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-visible">
       <div class="flex p-1.5 gap-1.5 m-4 mb-0 bg-paper rounded-full border border-ink/10">
         <button id="tab-issue" class="tab active flex-1 rounded-full py-2 text-sm font-semibold transition">Issue Book</button>
         <button id="tab-return" class="tab flex-1 rounded-full py-2 text-sm font-semibold transition text-ink-light">Return Book</button>
       </div>
 
       <!-- ISSUE PANEL -->
-      <form id="issue-form" class="p-5 space-y-4" novalidate>
-        <div class="relative">
-          <label class="block text-xs font-medium text-ink-light mb-1.5">Member unique ID or username *</label>
-          <input type="text" id="i-member-search" autocomplete="off" placeholder="Exact card number or email username"
-            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+      <form id="issue-form" class="p-4 sm:p-5 space-y-5" novalidate>
+        <div>
+          <label for="i-member-search" class="block text-xs font-medium text-ink-light mb-1.5">Card ID or username *</label>
+          <div class="relative w-full">
+            <input type="text" id="i-member-search" autocomplete="off" placeholder="Exact Card ID or email username"
+              class="w-full min-h-11 bg-paper border border-ink/15 rounded-lg pl-3.5 pr-11 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+            <span id="i-member-validation-icon" class="hidden pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 items-center justify-center text-sm" aria-hidden="true"></span>
+          </div>
           <input type="hidden" id="i-member-id">
-          <button type="button" id="i-member-find" class="mt-2 text-xs font-semibold text-forest hover:text-forest-light">Find member</button>
+          <button type="button" id="i-member-find" class="mt-2 min-h-10 inline-flex items-center justify-center px-2 text-xs font-semibold text-forest hover:text-forest-light rounded-md focus:outline-none focus:ring-2 focus:ring-brass/50">Find member</button>
           <p class="field-err-msg text-xs mt-1 hidden" data-err="i-member-search">Find a valid member.</p>
+          <p id="i-member-validation-status" class="mt-1 min-h-5 text-xs text-ink-light" aria-live="polite"></p>
         </div>
-        <div id="i-member-detail" class="hidden bg-paper rounded-lg px-4 py-3 text-xs border border-ink/10"></div>
+        <div id="i-member-detail" class="hidden min-w-0 bg-paper rounded-lg px-4 py-3 text-xs border border-ink/10 break-words"></div>
         <div class="relative">
-          <label class="block text-xs font-medium text-ink-light mb-1.5">Available physical book *</label>
+          <label for="i-book-search" class="block text-xs font-medium text-ink-light mb-1.5">Available physical book *</label>
           <input type="text" id="i-book-search" autocomplete="off" placeholder="Title, ISBN, or book ID"
-            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+            class="w-full min-h-11 bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
           <div id="i-book-suggest" class="hidden absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-ink/15 rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
           <input type="hidden" id="i-book-id">
           <p class="field-err-msg text-xs mt-1 hidden" data-err="i-book-search">Select an available book.</p>
         </div>
-        <div id="i-book-detail" class="hidden bg-paper rounded-lg px-4 py-3 text-xs border border-ink/10"></div>
-        <div class="grid grid-cols-2 gap-4">
+        <div id="i-book-detail" class="hidden min-w-0 bg-paper rounded-lg px-4 py-3 text-xs border border-ink/10"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-medium text-ink-light mb-1.5">Issue Date</label>
-            <input type="date" id="i-issue-date" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+            <label for="i-issue-date" class="block text-xs font-medium text-ink-light mb-1.5">Issue Date</label>
+            <input type="date" id="i-issue-date" class="w-full min-h-11 bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
           </div>
           <div>
-            <label class="block text-xs font-medium text-ink-light mb-1.5">Loan Period</label>
-            <select id="i-period" class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+            <label for="i-period" class="block text-xs font-medium text-ink-light mb-1.5">Loan Period</label>
+            <select id="i-period" class="w-full min-h-11 bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
               <option value="7">7 days</option>
               <option value="14" selected>14 days</option>
               <option value="21">21 days</option>
@@ -122,15 +126,15 @@
         <div class="bg-paper rounded-lg px-4 py-3 text-xs text-ink-light border border-ink/10">
           Due date: <span id="i-due-preview" class="font-mono text-ink font-medium">—</span>
         </div>
-        <button type="submit" id="borrow-button" disabled class="w-full bg-forest hover:bg-forest-light disabled:opacity-50 disabled:cursor-not-allowed text-paper font-semibold text-sm rounded-full py-2.5 transition">Borrow Book</button>
+        <button type="submit" id="borrow-button" disabled class="w-full min-h-11 inline-flex items-center justify-center bg-forest hover:bg-forest-light disabled:opacity-50 disabled:cursor-not-allowed text-paper font-semibold text-sm rounded-full px-5 py-2.5 transition focus:outline-none focus:ring-2 focus:ring-brass/50">Borrow Book</button>
     </form>
       <!-- RETURN PANEL -->
-      <section id="return-form" class="p-5 space-y-4 hidden">
+      <section id="return-form" class="p-4 sm:p-5 space-y-4 hidden">
         <div class="relative">
-          <label class="block text-xs font-medium text-ink-light mb-1.5">Member unique ID or username</label>
-          <input type="text" id="r-member-search" autocomplete="off" placeholder="Exact card number or email username"
-            class="w-full bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
-          <button type="button" id="r-member-find" class="mt-2 text-xs font-semibold text-forest hover:text-forest-light">Find borrowed books</button>
+          <label for="r-member-search" class="block text-xs font-medium text-ink-light mb-1.5">Card ID or username</label>
+          <input type="text" id="r-member-search" autocomplete="off" placeholder="Exact Card ID or email username"
+            class="w-full min-h-11 bg-paper border border-ink/15 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <button type="button" id="r-member-find" class="mt-2 min-h-10 w-full sm:w-auto inline-flex items-center justify-center px-3 text-xs font-semibold text-forest hover:text-forest-light rounded-md focus:outline-none focus:ring-2 focus:ring-brass/50">Find borrowed books</button>
           <p class="field-err-msg text-xs mt-1 hidden" data-err="r-member-search">Find a valid member.</p>
         </div>
         <div id="r-member-detail" class="hidden bg-paper rounded-lg px-4 py-3 text-xs border border-ink/10"></div>
@@ -138,20 +142,21 @@
       </section>
     </div>
     <!-- RIGHT: Active loans table -->
-    <div class="lg:col-span-2 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+    <div class="lg:col-span-7 min-w-0 bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
       <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-ink/10">
         <h2 class="font-display text-lg text-forest">Active Fines</h2>
-        <div class="flex items-center gap-2">
+        <div class="w-full sm:w-auto flex flex-col sm:flex-row sm:items-center gap-2">
           <input type="text" id="loan-filter" placeholder="Filter loans…"
-            class="bg-paper border border-ink/15 rounded-full px-3.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition w-40">
-          <select id="loan-status-filter" class="bg-paper border border-ink/15 rounded-full px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50">
+            class="w-full sm:w-40 min-h-10 bg-paper border border-ink/15 rounded-full px-3.5 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50 focus:border-brass transition">
+          <select id="loan-status-filter" class="w-full sm:w-auto min-h-10 bg-paper border border-ink/15 rounded-full px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-brass/50">
             <option value="all">All</option>
             <option value="active">On time</option>
             <option value="overdue">Overdue</option>
           </select>
         </div>
       </div>
-      <table class="w-full text-sm">
+      <div class="w-full overflow-x-auto">
+      <table class="w-full min-w-[680px] text-sm">
         <thead>
           <tr class="text-left text-[11px] uppercase tracking-wider text-ink-light border-b border-ink/10">
             <th class="px-5 py-3 font-medium">Book</th>
@@ -163,6 +168,7 @@
         </thead>
         <tbody id="loans-body" class="divide-y divide-ink/5"></tbody>
       </table>
+      </div>
       <div id="loans-empty" class="hidden px-5 py-16 text-center">
         <p class="font-display text-lg text-forest mb-1">No active fines</p>
         <p class="text-sm text-ink-light">Issue a book from the panel on the left to see it here.</p>
@@ -171,11 +177,11 @@
   </div>
 </div>
 <!-- Toast -->
-<div id="toast" class="toast fixed bottom-6 right-6 translate-y-24 opacity-0 bg-forest text-paper rounded-xl px-5 py-4 card-edge flex items-center gap-3 max-w-sm">
+<div id="toast" class="toast max-w-7xl mx-4 sm:mx-6 lg:mx-auto mt-5 translate-y-2 opacity-0 bg-forest text-paper rounded-xl px-4 sm:px-5 py-4 card-edge flex items-center gap-3 transition-all">
   <svg class="w-5 h-5 text-brass-light shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-  <div class="text-sm">
+  <div class="min-w-0 text-sm">
     <p class="font-semibold" id="toast-title">Done</p>
-    <p class="text-paper/70 text-xs" id="toast-body"></p>
+    <p class="text-paper/70 text-xs break-words" id="toast-body"></p>
   </div>
 </div>
     </div>

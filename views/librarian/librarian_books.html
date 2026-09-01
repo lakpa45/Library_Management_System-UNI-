@@ -277,7 +277,7 @@
           </button>
         </div>
 
-        <form id="bookForm" class="px-6 py-6 space-y-4">
+        <form id="bookForm" method="POST" enctype="multipart/form-data" class="px-6 py-6 space-y-4">
           <input type="hidden" id="bookID" />
 
           <div>
@@ -324,16 +324,19 @@
             </label>
             <input
               id="bookCover"
+              name="cover_image"
               type="file"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
               class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]"
             />
+            <p class="mt-2 text-xs text-[#4A5A50]">Maximum file size: 35 MB.</p>
             <img id="coverPreview" class="hidden mt-3 h-32 rounded-md border border-[#E4D9C4] object-cover" />
           </div>
 
           <div>
             <label for="bookPdf" class="block text-xs font-semibold uppercase tracking-wide text-[#4A5A50] mb-1.5">Book PDF</label>
-            <input id="bookPdf" type="file" accept="application/pdf,.pdf" class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]" />
+            <input id="bookPdf" name="book_pdf" type="file" accept=".pdf,application/pdf" class="w-full text-sm text-[#4A5A50] file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-[#C9972F] file:text-[#1B2A22] file:font-semibold file:text-sm hover:file:bg-[#B6862A]" />
+            <p class="mt-2 text-xs text-[#4A5A50]">Maximum file size: 35 MB.</p>
             <p id="pdfFileName" class="hidden mt-2 text-xs text-[#4A5A50]"></p>
           </div>
 

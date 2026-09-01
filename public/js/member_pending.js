@@ -62,7 +62,7 @@ document.getElementById('pending-body').addEventListener('click', async (e) => {
         const result = await response.json();
 
         if (response.ok) {
-            showToast(action === 'approve' ? `Approved — card ${result.member.card_no}` : 'Registration rejected');
+            showToast(action === 'approve' ? `Approved — Card ID ${result.member.card_no}` : 'Registration rejected');
             await loadPending();
         }
     } catch (err) {

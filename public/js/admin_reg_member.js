@@ -80,8 +80,8 @@ form.addEventListener('submit', async (e) => {
       document.getElementById('prev-id').textContent = result.member.card_no;
       document.getElementById('toast-title').textContent = 'Member registered';
       document.getElementById('toast-body').textContent = result.temp_password
-        ? `${result.member.first_name} — card ${result.member.card_no} — temp password: ${result.temp_password}`
-        : `${result.member.first_name} — card ${result.member.card_no}`;
+        ? `${result.member.first_name} — Card ID ${result.member.card_no} — temp password: ${result.temp_password}`
+        : `${result.member.first_name} — Card ID ${result.member.card_no}`;
       toast.classList.remove('translate-y-24', 'opacity-0');
       setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 6000);
       form.reset();

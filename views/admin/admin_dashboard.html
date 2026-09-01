@@ -15,11 +15,10 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand"><span class="brand-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span><span>APNA</span></div>
             <p class="quick-label">Admin Console</p>
-            <div class="quick-icons"><a href="/admin/dashboard" class="active" title="Dashboard"><i class="fa-solid fa-chart-column"></i></a><a href="/admin/librarians" title="Librarians"><i class="fa-solid fa-user-tie"></i></a><a href="/admin/audit-logs" title="Audit Logs"><i class="fa-solid fa-clock-rotate-left"></i></a></div>
+            <div class="quick-icons"><a href="/admin/dashboard" class="active" title="Dashboard"><i class="fa-solid fa-chart-column"></i></a><a href="/admin/librarians" title="Librarians"><i class="fa-solid fa-user-tie"></i></a></div>
             <nav class="side-nav" aria-label="Admin navigation">
                 <a href="/admin/dashboard" class="active" aria-current="page"><i class="fa-solid fa-chart-column"></i> Dashboard</a>
                 <a href="/admin/librarians"><i class="fa-solid fa-user-tie"></i> Librarians</a>
-                <a href="/admin/audit-logs"><i class="fa-solid fa-clock-rotate-left"></i> Audit Logs</a>
                 <a href="#" onclick="logout();return false"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
             </nav>
             <div class="sidebar-footer">Secure Administration Portal<br>APNA Library · 2026</div>
@@ -43,7 +42,7 @@
                         <section class="panel"><div class="panel-head"><h2>Recent Circulation Activity</h2><span>Latest issues and returns</span></div><div class="activity-wrap"><table><thead><tr><th>Member</th><th>Title</th><th>Action</th><th>Date</th><th>Status</th></tr></thead><tbody id="activity-body"></tbody></table></div></section>
                         <section class="panel"><div class="panel-head"><h2>Due for Return</h2><span>Sorted by urgency</span></div><ul id="due-list"></ul></section>
                     </div>
-                    <div class="quick-actions"><strong>Admin Actions</strong><a class="action-btn" href="/admin/librarians">Manage Librarians</a><a class="action-btn" href="/admin/audit-logs">View Audit Logs</a></div>
+                    <div class="quick-actions"><strong>Admin Actions</strong><a class="action-btn" href="/admin/librarians">Manage Librarians</a></div>
                 </section>
             </div>
         </main>

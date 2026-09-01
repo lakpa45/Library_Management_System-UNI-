@@ -27,7 +27,7 @@ export const getActiveLoans = async (req, res) => {
 export const searchMembers = async (req, res) => {
     try {
         const q = String(req.query.q || '').trim();
-        if (!q) return res.status(400).json({ message: 'Enter a member card number or username.' });
+        if (!q) return res.status(400).json({ valid: false, message: 'Enter a Card ID or username.' });
 
         const result = await pool.query(
             `SELECT m.member_id, m.first_name, m.last_name, m.email AS username,
@@ -40,8 +40,20 @@ export const searchMembers = async (req, res) => {
              LIMIT 1`,
             [q]
         );
-        if (!result.rows.length) return res.status(404).json({ message: 'No member matches that unique ID or username.' });
-        res.status(200).json(result.rows[0]);
+        if (!result.rows.length) return res.status(404).json({ valid: false, message: 'Member not found.' });
+
+        const member = result.rows[0];
+        res.status(200).json({
+            valid: true,
+            member: {
+                member_id: member.member_id,
+                username: member.username,
+                unique_id: member.unique_id,
+                display_name: `${member.first_name} ${member.last_name}`.trim(),
+                status: member.status,
+                active_borrowings: member.active_borrowings
+            }
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
@@ -133,6 +145,19 @@ export const issueBook = async (req, res) => {
         // the no-active-borrowing check before either inserts its issue row.
         await client.query('SELECT pg_advisory_xact_lock($1, $2)', [memberId, bookId]);
 
+        const bookResult = await client.query(
+            'SELECT book_id, book_type FROM book WHERE book_id = $1 FOR SHARE',
+            [bookId]
+        );
+        if (!bookResult.rows.length) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Book not found.' });
+        }
+        if (String(bookResult.rows[0].book_type).toLowerCase() !== 'physical') {
+            await client.query('ROLLBACK');
+            return res.status(409).json({ message: 'Only physical books can be borrowed.' });
+        }
+
         const duplicate = await client.query(
             `SELECT i.issue_id FROM issue i
              JOIN book_copy bc ON bc.copy_id = i.copy_id
@@ -155,7 +180,7 @@ export const issueBook = async (req, res) => {
 
         if (copyResult.rows.length === 0) {
             await client.query('ROLLBACK');
-            return res.status(400).json({ message: 'No available copies for this book' });
+            return res.status(409).json({ message: 'No physical copies are currently available for this book.' });
         }
 
         const copyId = copyResult.rows[0].copy_id;
@@ -173,7 +198,10 @@ export const issueBook = async (req, res) => {
         );
 
         await client.query('COMMIT');
-        res.status(201).json(issueResult.rows[0]);
+        res.status(201).json({
+            message: 'Book borrowed successfully.',
+            borrowing: issueResult.rows[0]
+        });
     } catch (err) {
         await client.query('ROLLBACK');
         console.error(err);

@@ -1,5 +1,5 @@
 import express from 'express';
-import upload, { validateUploadedSignatures } from '../middleware/upload.js';
+import upload, { validateUploadedSignatures, validateUploadedSizes } from '../middleware/upload.js';
 import { getBooks, createBook, updateBook, deleteBook, searchBooks, getBookById, getAvailableBooks } from '../controllers/books/book_controller.js';
 import { getFreeBooks } from '../controllers/books/free_books_controller.js';
 import { optionalMemberAuth, verifyToken, requireAdmin } from '../middleware/auth.js';
@@ -16,8 +16,8 @@ const bookUploads = upload.fields([
     { name: 'book_pdf', maxCount: 1 }
 ]);
 
-router.post('/', verifyToken, requireAdmin, bookUploads, validateUploadedSignatures, createBook);
-router.put('/:id', verifyToken, requireAdmin, bookUploads, validateUploadedSignatures, updateBook);
+router.post('/', verifyToken, requireAdmin, bookUploads, validateUploadedSizes, validateUploadedSignatures, createBook);
+router.put('/:id', verifyToken, requireAdmin, bookUploads, validateUploadedSizes, validateUploadedSignatures, updateBook);
 router.delete('/:id', verifyToken, requireAdmin, deleteBook);
 
 export default router;

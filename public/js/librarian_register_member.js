@@ -78,7 +78,7 @@
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'Unable to add member.');
       document.getElementById('previewCard').textContent = result.member.card_no;
-      message.textContent = `Member added. Card: ${result.member.card_no}${result.temp_password ? ` · Temporary password: ${result.temp_password}` : ''}`;
+      message.textContent = `Member added. Card ID: ${result.member.card_no}${result.temp_password ? ` · Temporary password: ${result.temp_password}` : ''}`;
       message.classList.add('success');
     } catch (error) {
       message.textContent = error.message || 'Unable to add member. Please try again.';

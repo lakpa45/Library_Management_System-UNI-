@@ -10,10 +10,6 @@ function userAuthHeaders() {
     return { 'Authorization': 'Bearer ' + localStorage.getItem('token') };
 }
 
-function displayMemberId(memberId) {
-    return `APNA-${String(memberId).padStart(6, '0')}`;
-}
-
 function userAuthHeadersJson() {
     return { ...userAuthHeaders(), 'Content-Type': 'application/json' };
 }
@@ -165,13 +161,13 @@ async function loadMyProfile() {
         if (!response.ok) throw new Error('Failed to load profile');
         const member = await response.json();
         const fullName = `${member.first_name || ''} ${member.last_name || ''}`.trim();
-        const uniqueId = displayMemberId(member.member_id);
+        const uniqueId = member.card_no || 'Pending approval';
 
         if (nameEl) nameEl.textContent = member.first_name || 'there';
         document.getElementById('userMemberId').textContent = uniqueId;
         document.getElementById('userMemberStatus').textContent = `${member.status || 'Member'} · ${member.member_type || 'Library member'}`;
         document.getElementById('userDashboardAvatar').textContent = `${member.first_name?.[0] || ''}${member.last_name?.[0] || ''}`.toUpperCase() || 'U';
-        document.getElementById('profileMemberId').value = uniqueId;
+        document.getElementById('profileMemberId').value = member.member_id;
 
         if (form) {
             document.getElementById('profileFullName').value = fullName;

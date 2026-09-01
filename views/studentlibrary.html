@@ -400,7 +400,7 @@ select:focus-visible{
         <button class="icon-btn"id="logout-btn"aria-label="Logout"title="Logout"> ⇥</button>
         <div class="text-right hidden sm:block ml-2">
           <p class="text-white font-display text-base font-medium"id="student-name">Lakpa Tsering</p>
-          <p class="font-mono text-[9px]text-white/50tracking-wider"id="student-id">CARD NO. 20481-B</p>
+          <p class="font-mono text-[9px]text-white/50tracking-wider"id="student-id">CARD ID 20481-B</p>
         </div>
         <button id="header-card-btn" class="w-10 h-10 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-white font-display text-sm font-medium transition hover:bg-white/20"aria-label="Open library card">LT</button>
       </div>
@@ -610,7 +610,7 @@ select:focus-visible{
     <div class="library-card rounded-xl p-6 cursor-default">
       <p class="font-mono text-[8px] uppercase tracking-[.25em] text-[var(--brass-2)]"> ICFAI Campus Library </p>
       <p class="font-display text-2xl mt-6" id="modal-card-name"> Lakpa Tsering </p>
-      <p class="font-mono text-xs text-white/55 mt-1" id="modal-card-id"> CARD NO. 20481-B </p>
+      <p class="font-mono text-xs text-white/55 mt-1" id="modal-card-id"> CARD ID 20481-B </p>
       <div class="mt-7 pt-4 border-t border-white/10 flex justify-between">
         <span
           class="text-xs text-white/55"> Student · Active </span>
@@ -912,7 +912,7 @@ document.getElementById(
 document.getElementById(
   "student-id"
 ).textContent =
-  "CARD NO. " +
+  "CARD ID " +
   student.id;
 document.getElementById(
   "greet-name"
@@ -2037,7 +2037,7 @@ document.getElementById(
 document.getElementById(
   "modal-card-id"
 ).textContent =
-  "CARD NO. " +
+  "CARD ID " +
   student.id;
 renderStats();
 renderBorrowed();

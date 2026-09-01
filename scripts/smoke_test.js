@@ -68,6 +68,8 @@ try {
   check('member auth cookie', (result.response.headers.get('set-cookie') || '').includes('userSession='));
   const memberToken = result.body.token;
   const memberHeaders = { Authorization: `Bearer ${memberToken}` };
+  result = await request('/api/members/me', { headers: memberHeaders });
+  check('dashboard profile returns existing Card ID', result.response.status === 200 && result.body.card_no === member.card_no);
 
   result = await request('/api/auth/change-password', {
     method: 'POST', headers: { ...memberHeaders, 'Content-Type': 'application/json' },
@@ -81,13 +83,20 @@ try {
   const adminToken = jwt.sign({ id: 0, email: 'smoke@example.test', role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '5m' });
   const adminHeaders = { Authorization: `Bearer ${adminToken}` };
   result = await request(`/api/loans/members/search?q=${encodeURIComponent(member.card_no)}`, { headers: adminHeaders });
-  check('member exact unique-ID search', result.response.status === 200 && result.body.member_id === created.memberId);
+  check('member exact unique-ID search', result.response.status === 200 && result.body.valid === true && result.body.member.member_id === created.memberId);
   result = await request(`/api/loans/members/search?q=${encodeURIComponent(email.toUpperCase())}`, { headers: adminHeaders });
-  check('member exact username search', result.response.status === 200 && result.body.member_id === created.memberId);
+  check('member exact username search', result.response.status === 200 && result.body.valid === true && result.body.member.member_id === created.memberId);
+  result = await request(`/api/loans/members/search?q=${encodeURIComponent(`  ${email}  `)}`, { headers: adminHeaders });
+  check('member verification trims spaces', result.response.status === 200 && result.body.member.member_id === created.memberId);
+  check('member verification returns safe fields', !['password', 'reset_token', 'reset_token_expiry'].some(key => key in result.body.member));
   result = await request('/api/loans/members/search?q=definitely-missing-member', { headers: adminHeaders });
   check('missing member search', result.response.status === 404);
+  result = await request('/api/loans/members/search?q=', { headers: adminHeaders });
+  check('empty member verification rejected', result.response.status === 400);
   result = await request('/api/loans/issue', { method: 'POST', headers: { ...memberHeaders, 'Content-Type': 'application/json' }, body: '{}' });
   check('member denied librarian borrow endpoint', result.response.status === 403);
+  result = await request('/api/loans/issue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+  check('unauthenticated borrow rejected', result.response.status === 401);
   result = await request('/api/loans/return/1', { method: 'PUT', headers: { ...memberHeaders, 'Content-Type': 'application/json' }, body: '{}' });
   check('member denied librarian return endpoint', result.response.status === 403);
   result = await request('/api/categories', {
@@ -128,15 +137,23 @@ try {
   check('available physical book search by ID', result.response.status === 200 && result.body.some(book => book.book_id === created.bookId && book.available_quantity === 2));
   const issueDate = new Date().toISOString().slice(0, 10);
   const dueDate = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
-  result = await request('/api/loans/issue', { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: created.memberId, book_id: created.bookId, issue_date: issueDate, due_date: dueDate }) });
-  check('librarian borrow', result.response.status === 201, JSON.stringify(result.body));
-  const librarianIssueId = result.body.issue_id;
+  result = await request('/api/loans/issue', { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: 'invalid', book_id: created.bookId, issue_date: issueDate, due_date: dueDate }) });
+  check('invalid borrow identifiers rejected', result.response.status === 400);
+  const concurrentBorrowOptions = { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: created.memberId, book_id: created.bookId, issue_date: issueDate, due_date: dueDate }) };
+  const concurrentResults = await Promise.all([
+    request('/api/loans/issue', concurrentBorrowOptions),
+    request('/api/loans/issue', concurrentBorrowOptions)
+  ]);
+  const successfulBorrow = concurrentResults.find(item => item.response.status === 201);
+  check('concurrent double-click creates one borrowing', concurrentResults.filter(item => item.response.status === 201).length === 1 && concurrentResults.filter(item => item.response.status === 409).length === 1, concurrentResults.map(item => item.response.status).join(','));
+  check('librarian borrow success message', successfulBorrow?.body.message === 'Book borrowed successfully.', JSON.stringify(successfulBorrow?.body));
+  const librarianIssueId = successfulBorrow.body.borrowing.issue_id;
   const afterBorrow = await pool.query("SELECT COUNT(*)::int available FROM book_copy WHERE book_id = $1 AND LOWER(status) = 'available'", [created.bookId]);
   check('borrow record created and quantity decreased', afterBorrow.rows[0].available === 1);
   result = await request('/api/loans/issue', { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: created.memberId, book_id: created.bookId, issue_date: issueDate, due_date: dueDate }) });
   check('duplicate active borrowing rejected', result.response.status === 409);
   result = await request('/api/loans/issue', { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: created.memberId, book_id: 2147483647, issue_date: issueDate, due_date: dueDate }) });
-  check('unavailable book rejected', result.response.status === 400);
+  check('missing book rejected', result.response.status === 404);
   result = await request(`/api/loans/members/${created.memberId}/active`, { headers: adminHeaders });
   check('member active borrowings listed', result.response.status === 200 && result.body.some(loan => loan.issue_id === librarianIssueId));
   result = await request(`/api/loans/return/${librarianIssueId}`, { method: 'PUT', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: '{}' });
@@ -145,13 +162,25 @@ try {
   check('return date saved and quantity increased', afterReturn.rows[0].available === 2);
   result = await request(`/api/loans/return/${librarianIssueId}`, { method: 'PUT', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: '{}' });
   check('same librarian borrowing cannot return twice', result.response.status === 404);
+  await pool.query("UPDATE book_copy SET status = 'Issued' WHERE book_id = $1", [created.bookId]);
+  result = await request('/api/loans/issue', { method: 'POST', headers: { ...adminHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ member_id: created.memberId, book_id: created.bookId, issue_date: issueDate, due_date: dueDate }) });
+  check('zero-availability book rejected', result.response.status === 409);
+  await pool.query("UPDATE book_copy SET status = 'Available' WHERE book_id = $1", [created.bookId]);
 
   result = await request(`/api/wishlist/${created.bookId}`, { method: 'POST', headers: memberHeaders });
   check('wishlist add', result.response.status === 201);
   result = await request(`/api/wishlist/${created.bookId}`, { method: 'POST', headers: memberHeaders });
-  check('wishlist duplicate is idempotent', result.response.status === 201);
+  check('wishlist duplicate rejected', result.response.status === 409);
+  result = await request(`/api/wishlist/${created.bookId}/status`, { headers: memberHeaders });
+  check('wishlist status survives detail refresh', result.response.status === 200 && result.body.wishlisted === true);
   result = await request('/api/wishlist', { headers: memberHeaders });
   check('wishlist isolation/read', result.response.status === 200 && result.body.some(book => book.book_id === created.bookId));
+  result = await request(`/api/wishlist/${created.bookId}`, { method: 'DELETE', headers: memberHeaders });
+  check('wishlist remove', result.response.status === 200 && result.body.wishlisted === false);
+  result = await request(`/api/wishlist/${created.bookId}`, { method: 'DELETE', headers: memberHeaders });
+  check('wishlist repeat remove rejected', result.response.status === 404);
+  result = await request(`/api/wishlist/${created.bookId}/status`, { headers: memberHeaders });
+  check('wishlist status reflects removal', result.response.status === 200 && result.body.wishlisted === false);
 
   result = await request('/api/loans/borrow', {
     method: 'POST', headers: { ...memberHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify({ book_id: created.bookId })

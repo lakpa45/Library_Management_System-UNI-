@@ -15,7 +15,7 @@ function createProductCard(book) {
 function wireWishlistButtons(scope = document) {
   scope.querySelectorAll('.wishlist-toggle').forEach(button => button.addEventListener('click', async () => {
     const token = localStorage.getItem('token');
-    if (!token) { document.getElementById('loginBtn')?.click(); return; }
+    if (!token) { window.alert('Please log in to add books to your wishlist.'); document.getElementById('loginBtn')?.click(); return; }
     button.disabled = true;
     const active = button.getAttribute('aria-pressed') === 'true';
     try {
