@@ -54,6 +54,9 @@
     document.body.classList.toggle("dashboard-menu-open", open);
     menuToggle?.setAttribute("aria-expanded", String(open));
     menuToggle?.setAttribute("aria-label", open ? "Close dashboard menu" : "Open dashboard menu");
+    const icon = menuToggle?.querySelector("i");
+    icon?.classList.toggle("fa-bars", !open);
+    icon?.classList.toggle("fa-xmark", open);
   }
 
   menuToggle?.addEventListener("click", () => setDashboardMenu(!document.body.classList.contains("dashboard-menu-open")));
@@ -105,5 +108,8 @@
       setDashboardMenu(false);
       menuToggle?.focus();
     }
+  });
+  window.matchMedia("(min-width: 901px)").addEventListener("change", (event) => {
+    if (event.matches) setDashboardMenu(false);
   });
 })();
