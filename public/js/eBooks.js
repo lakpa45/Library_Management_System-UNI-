@@ -280,31 +280,4 @@ previousButton.addEventListener('click', () => {
     renderBooks();
 });
 
-function initializeHeader() {
-    const header = document.querySelector('.header');
-    const menuCheckbox = document.getElementById('menu-btn');
-    const menuToggle = document.getElementById('menuToggle');
-    const menuClose = document.getElementById('menuClose');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const setMenuOpen = (open) => {
-        menuCheckbox.checked = open;
-        menuToggle.setAttribute('aria-expanded', String(open));
-    };
-
-    const updateHeader = () => header.classList.toggle('is-stuck', window.scrollY > 10);
-    window.addEventListener('scroll', updateHeader, { passive: true });
-    updateHeader();
-    menuToggle.addEventListener('click', () => setMenuOpen(!menuCheckbox.checked));
-    menuClose.addEventListener('click', () => setMenuOpen(false));
-    menuOverlay.addEventListener('click', () => setMenuOpen(false));
-    document.querySelectorAll('.menu a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && menuCheckbox.checked) {
-            setMenuOpen(false);
-            menuToggle.focus();
-        }
-    });
-}
-
-initializeHeader();
 fetchBooks(1);

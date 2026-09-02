@@ -7,48 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', onScroll);
     onScroll();
 
-    /* ---- mobile navigation ---- */
-    const menuBtn = document.getElementById('menu-btn');
-    const menuToggle = document.getElementById('menuToggle');
-    const menuClose = document.getElementById('menuClose');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const primaryNavigation = document.getElementById('primaryNavigation');
-
-    const setMenuOpen = (isOpen) => {
-        if (menuBtn) menuBtn.checked = isOpen;
-        if (primaryNavigation) primaryNavigation.classList.toggle('is-open', isOpen);
-        if (menuOverlay) menuOverlay.classList.toggle('is-open', isOpen);
-        document.body.classList.toggle('menu-open', isOpen);
-        if (menuToggle) {
-            menuToggle.setAttribute('aria-expanded', String(isOpen));
-            menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-        }
-    };
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-            const isOpen = primaryNavigation?.classList.contains('is-open') || Boolean(menuBtn?.checked);
-            setMenuOpen(!isOpen);
-        });
-    }
-    if (menuClose) menuClose.addEventListener('click', () => setMenuOpen(false));
-    if (menuOverlay) menuOverlay.addEventListener('click', () => setMenuOpen(false));
-
-    document.querySelectorAll('.menu a').forEach((link) => {
-        link.addEventListener('click', () => {
-            // Keep normal anchors untouched so browsers can follow their links.
-            // Close the sidebar first so it cannot remain over the destination.
-            setMenuOpen(false);
-        });
-    });
-    window.addEventListener('hashchange', () => setMenuOpen(false));
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && menuBtn?.checked) {
-            setMenuOpen(false);
-            menuToggle?.focus();
-        }
-    });
-
     /* ---- animated stat counters ---- */
     const counters = document.querySelectorAll('.hero__stat .count');
     const animateCounter = (el) => {
