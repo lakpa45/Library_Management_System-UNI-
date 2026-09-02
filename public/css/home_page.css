@@ -1596,6 +1596,10 @@ section {
         transform: translateX(0);
     }
 
+    .nav.is-open {
+        transform: translateX(0);
+    }
+
     .nav-close {
         display: grid;
         place-items: center;
@@ -1644,12 +1648,21 @@ section {
         visibility: visible;
     }
 
+    .nav-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+
     #menu-btn:checked ~ .navbar-bar .navbar {
         position: relative;
     }
 
     /* prevent background scroll while drawer is open */
     body:has(#menu-btn:checked) {
+        overflow: hidden;
+    }
+
+    body.menu-open {
         overflow: hidden;
     }
 

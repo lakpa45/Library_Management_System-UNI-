@@ -12,10 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menuToggle');
     const menuClose = document.getElementById('menuClose');
     const menuOverlay = document.getElementById('menuOverlay');
+    const primaryNavigation = document.getElementById('primaryNavigation');
 
     const setMenuOpen = (isOpen) => {
-        if (!menuBtn) return;
-        menuBtn.checked = isOpen;
+        if (menuBtn) menuBtn.checked = isOpen;
+        if (primaryNavigation) primaryNavigation.classList.toggle('is-open', isOpen);
+        if (menuOverlay) menuOverlay.classList.toggle('is-open', isOpen);
+        document.body.classList.toggle('menu-open', isOpen);
         if (menuToggle) {
             menuToggle.setAttribute('aria-expanded', String(isOpen));
             menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
@@ -23,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (menuToggle) {
-        menuToggle.addEventListener('click', () => setMenuOpen(!menuBtn?.checked));
+        menuToggle.addEventListener('click', () => {
+            const isOpen = primaryNavigation?.classList.contains('is-open') || Boolean(menuBtn?.checked);
+            setMenuOpen(!isOpen);
+        });
     }
     if (menuClose) menuClose.addEventListener('click', () => setMenuOpen(false));
     if (menuOverlay) menuOverlay.addEventListener('click', () => setMenuOpen(false));
