@@ -28,6 +28,9 @@ async function generateCardNo(client, memberType) {
 export const signup = async (req, res) => {
     let client;
     try {
+        // Public sign-up creates member accounts only. Never derive this from req.body.
+        const accountRole = 'member';
+        const memberStatus = 'Pending';
         let {
             first_name, last_name, email, phone, password,
             member_type, department, roll_id, dob, address, valid_till
@@ -74,10 +77,10 @@ export const signup = async (req, res) => {
         const cardNo = await generateCardNo(client, member_type);
 
         const insertResult = await client.query(
-            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, roll_id, dob, address, valid_till, card_no)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-             RETURNING member_id, first_name, last_name, email, phone, member_type, department, card_no`,
-            [first_name, last_name, email, hashedPassword, phone, member_type || 'Student', department, roll_id || null, dob || null, address || null, valid_till || null, cardNo]
+            `INSERT INTO member (first_name, last_name, email, password, phone, member_type, department, roll_id, dob, address, valid_till, card_no, status, role)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+             RETURNING member_id, first_name, last_name, email, phone, member_type, department, card_no, status, role`,
+            [first_name, last_name, email, hashedPassword, phone, member_type, department, roll_id || null, dob || null, address || null, valid_till || null, cardNo, memberStatus, accountRole]
         );
 
         const newMember = insertResult.rows[0];

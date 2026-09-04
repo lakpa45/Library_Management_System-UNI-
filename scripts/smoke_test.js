@@ -38,15 +38,18 @@ try {
 
   result = await request('/api/auth/signup', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ first_name: 'Codex', last_name: 'Test', email, phone: '9876543210', member_type: 'Student', department: 'Testing', password })
+    body: JSON.stringify({ first_name: 'Codex', last_name: 'Test', email, phone: '9876543210', department: 'Testing', password, role: 'admin' })
   });
-  check('valid registration', result.response.status === 201, JSON.stringify(result.body));
+  check('registration without member type', result.response.status === 201, JSON.stringify(result.body));
+  check('tampered role ignored in response', result.body.member.role === 'member', JSON.stringify(result.body));
   check('password not returned', !JSON.stringify(result.body).includes(password));
   created.memberId = result.body.member.member_id;
 
-  const member = (await pool.query('SELECT password, status, card_no FROM member WHERE member_id = $1', [created.memberId])).rows[0];
+  const member = (await pool.query('SELECT password, status, role, member_type, card_no FROM member WHERE member_id = $1', [created.memberId])).rows[0];
   check('password hashed', member.password !== password && await bcrypt.compare(password, member.password));
   check('registration uses pending default', member.status === 'Pending', member.status);
+  check('tampered role saved as member', member.role === 'member', member.role);
+  check('homepage registration uses default member type', member.member_type === 'Student', member.member_type);
 
   result = await request('/api/auth/signup', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },

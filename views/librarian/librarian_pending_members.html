@@ -15,6 +15,29 @@
   .toast { transition: all .35s cubic-bezier(.4,0,.2,1); }
   tr.fade-row { animation: fadeIn .3s ease both; }
   @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to {opacity:1; transform:translateY(0);} }
+  .pending-mobile-list { display:none; }
+  .pending-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .pending-action-button { min-width:96px; min-height:44px; padding:10px 14px; display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:8px; font-size:14px; line-height:1.25; font-weight:600; white-space:nowrap; cursor:pointer; }
+  .pending-action-button--approve { background:#15803d; color:#fff; }
+  .pending-action-button--approve:hover { background:#166534; }
+  .pending-action-button--reject { background:#dc2626; color:#fff; }
+  .pending-action-button--reject:hover { background:#b91c1c; }
+  .pending-action-button:focus-visible { outline:3px solid rgba(22,163,74,.38); outline-offset:2px; }
+  .pending-action-button--reject:focus-visible { outline-color:rgba(220,38,38,.38); }
+  .pending-action-button:disabled { opacity:.6; cursor:wait; }
+  @media (max-width:640px) {
+    .pending-page { padding-top:24px; padding-bottom:24px; }
+    .pending-desktop-table { display:none; }
+    .pending-mobile-list { display:grid; gap:12px; background:#f5efe2; }
+    .pending-member-card { min-width:0; padding:16px; border:1px solid rgba(27,42,34,.1); border-radius:12px; background:#fffdf8; box-shadow:0 1px 3px rgba(27,67,50,.08); }
+    .pending-member-card h2 { margin:0; color:#1b4332; font-size:16px; line-height:1.35; }
+    .pending-member-card__email { margin:4px 0 14px; overflow-wrap:anywhere; color:#647068; font-size:12px; }
+    .pending-member-card dl { margin:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+    .pending-member-card dt { margin-bottom:3px; color:#7a827c; font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+    .pending-member-card dd { margin:0; overflow-wrap:anywhere; color:#29372f; font-size:13px; }
+    .pending-member-card .pending-actions { padding-top:16px; }
+    .pending-action-button { width:100%; min-width:0; }
+  }
 </style>
 <link href="/css/admin_dashboard_shared.css" rel="stylesheet">
 </head>
@@ -26,7 +49,7 @@
   <button type="button" class="sidebar-overlay" id="sidebarOverlay" aria-label="Close navigation"></button>
   <main class="main-area"><header class="top-header"><button type="button" class="mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><div class="top-search"><a class="action-btn" href="/librarian/dashboard"><i class="fa-solid fa-arrow-left"></i> Dashboard</a></div><div class="welcome"><div class="welcome-title"><span class="home-icon"><i class="fa-solid fa-user-clock"></i></span><span>Pending Members</span></div><span class="today">Librarian Workspace</span></div></header><div class="dashboard-content">
 
-<div class="max-w-6xl mx-auto px-6 py-10">
+<div class="pending-page max-w-6xl mx-auto px-6 py-10">
   <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div>
       <p class="text-[11px] uppercase tracking-[0.2em] text-brass-dark mb-1">Circulation · Approvals</p>
@@ -38,7 +61,8 @@
     </a>
   </div>
 
-  <div class="bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+  <div id="pending-lists" class="bg-paper-card rounded-xl card-edge border border-ink/5 overflow-hidden">
+    <div class="pending-desktop-table">
     <table class="w-full text-sm">
       <thead>
         <tr class="text-left text-[11px] uppercase tracking-wider text-ink-light border-b border-ink/10">
@@ -53,6 +77,8 @@
       </thead>
       <tbody id="pending-body" class="divide-y divide-ink/5"></tbody>
     </table>
+    </div>
+    <div id="pending-cards" class="pending-mobile-list" aria-label="Pending registrations"></div>
     <div id="empty-state" class="hidden px-5 py-16 text-center">
       <p class="font-display text-lg text-forest mb-1">No pending registrations</p>
       <p class="text-sm text-ink-light">New sign-ups will appear here for review.</p>

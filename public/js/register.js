@@ -17,7 +17,6 @@ form.addEventListener('submit', async (e) => {
     const fullName = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim().toLowerCase();
     const phone = document.getElementById('regPhone').value.replace(/\D/g, '');
-    const member_type = document.getElementById('regType').value;
     const department = document.getElementById('regDept').value.trim();
     const password = document.getElementById('regPassword').value;
     const confirmPassword = document.getElementById('regConfirmPassword').value;
@@ -25,7 +24,6 @@ form.addEventListener('submit', async (e) => {
     if (fullName.length < 2) return showError('Please enter your full name.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
     if (!/^\d{10}$/.test(phone)) return showError('Phone number must contain exactly 10 digits.');
-    if (!member_type) return showError('Please select a member role.');
     if (department.length < 2) return showError('Please enter your department.');
     if (password.length < 8 || password.length > 72) return showError('Password must be between 8 and 72 characters.');
     if (password !== confirmPassword) return showError('Passwords do not match.');
@@ -40,7 +38,7 @@ form.addEventListener('submit', async (e) => {
         const response = await fetch('/api/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ first_name, last_name, email, phone, member_type, department, password })
+            body: JSON.stringify({ first_name, last_name, email, phone, department, password })
         });
 
         const result = await response.json().catch(() => ({}));
