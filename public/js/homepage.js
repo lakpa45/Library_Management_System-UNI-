@@ -280,7 +280,7 @@ function initAuth() {
         const role = formData.get('role');
 
         const loginOptions = {
-            user: { endpoint: '/api/auth/signin', tokenKey: 'token' },
+            member: { endpoint: '/api/auth/signin', tokenKey: 'token' },
             admin: { endpoint: '/api/auth/librarian/signin', tokenKey: 'adminToken' },
             librarian: {
                 endpoint: '/api/auth/librarian-staff/signin',

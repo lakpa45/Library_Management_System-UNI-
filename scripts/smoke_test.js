@@ -65,7 +65,7 @@ try {
   await pool.query("UPDATE member SET status = 'Approved' WHERE member_id = $1", [created.memberId]);
   result = await request('/api/auth/signin', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.toUpperCase(), password, role: 'user' })
+    body: JSON.stringify({ email: email.toUpperCase(), password, role: 'member' })
   });
   check('member sign-in', result.response.status === 200);
   check('member auth cookie', (result.response.headers.get('set-cookie') || '').includes('userSession='));

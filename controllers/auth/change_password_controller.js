@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import pool from '../../db/connection.js';
 
 const accountMap = {
-  user: { table: 'member', idColumn: 'member_id' },
+  member: { table: 'member', idColumn: 'member_id' },
   librarian: { table: 'librarian', idColumn: 'librarian_id' },
   admin: { table: 'admins', idColumn: 'id' }
 };

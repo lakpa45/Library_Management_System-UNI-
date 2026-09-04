@@ -34,7 +34,7 @@ export const getBooks = async (req, res) => {
         };
         const orderBy = sortMap[req.query.sort] || sortMap.newest;
         const search = String(req.query.q || '').trim();
-        const memberId = req.user?.role === 'user' ? req.user.id : null;
+        const memberId = req.user?.role === 'member' ? req.user.id : null;
         const values = [memberId];
         const where = [];
 
