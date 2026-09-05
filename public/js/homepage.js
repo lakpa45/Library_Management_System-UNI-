@@ -182,8 +182,53 @@ function libGetInitials(name) {
     return initials.toUpperCase();
 }
 // For auth (login / user menu)
+function ensurePublicLoginModal() {
+    let overlay = document.getElementById('authOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'authOverlay';
+        overlay.className = 'auth-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+        <div class="auth-modal">
+            <button type="button" class="auth-modal__close" id="authClose" aria-label="Close">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+            <form class="auth-form is-active" id="loginForm" novalidate>
+                <h2>Welcome back</h2>
+                <p class="auth-sub">Login to your account</p>
+                <label class="auth-field">
+                    Email
+                    <input type="email" name="email" required placeholder="you@example.com" autocomplete="email">
+                </label>
+                <label class="auth-field">
+                    Password
+                    <span style="position:relative;display:block">
+                        <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password" style="padding-right:2.75rem">
+                        <button type="button" data-password-toggle aria-label="Show password" title="Show password" style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;color:inherit;padding:.25rem"><i class="fa-regular fa-eye" aria-hidden="true"></i></button>
+                    </span>
+                </label>
+                <label class="auth-field">
+                    Role
+                    <select id="loginRole" name="role" required>
+                        <option value="" selected disabled>Select a role</option>
+                        <option value="member">Member</option>
+                        <option value="librarian">Librarian</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </label>
+                <p class="auth-error" id="loginError" role="alert" aria-live="polite"></p>
+                <button type="submit" class="btn btn--accent auth-submit">Login</button>
+                <p class="auth-switch">New here? <a href="/register.html" class="auth-switch__link">Register now</a></p>
+            </form>
+        </div>`;
+    return overlay;
+}
+
 function initAuth() {
-    const overlay = document.getElementById('authOverlay');
+    const overlay = ensurePublicLoginModal();
     const modal = overlay ? overlay.querySelector('.auth-modal') : null;
     const closeBtn = document.getElementById('authClose');
     const loginButtons = document.querySelectorAll('[data-login-trigger], #loginBtn');
@@ -200,8 +245,7 @@ function initAuth() {
     const userMenuName = document.getElementById('userMenuName');
     const userMenuEmail = document.getElementById('userMenuEmail');
 
-    // Safety check: only abort if the overlay or login form is missing
-    if (!overlay || !loginForm) return;
+    if (!loginForm) return;
 
     /* --- real session helpers (based on JWT) --- */
     const getSession = () => {
@@ -269,6 +313,16 @@ function initAuth() {
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeModal(); });
 
+    const passwordToggle = loginForm.querySelector('[data-password-toggle]');
+    passwordToggle?.addEventListener('click', () => {
+        const input = loginForm.elements.password;
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        passwordToggle.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+        passwordToggle.title = showing ? 'Show password' : 'Hide password';
+        passwordToggle.querySelector('i').className = showing ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+    });
+
     /* --- login (real backend) --- */
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -280,18 +334,31 @@ function initAuth() {
         const role = formData.get('role');
 
         const loginOptions = {
-            member: { endpoint: '/api/auth/signin', tokenKey: 'token' },
-            admin: { endpoint: '/api/auth/librarian/signin', tokenKey: 'adminToken' },
+            member: {
+                endpoint: '/api/auth/signin',
+                tokenKey: 'token',
+                redirect: '/user_dashboard.html'
+            },
             librarian: {
                 endpoint: '/api/auth/librarian-staff/signin',
                 tokenKey: 'librarianToken',
                 redirect: '/librarian/dashboard'
+            },
+            admin: {
+                endpoint: '/api/auth/librarian/signin',
+                tokenKey: 'adminToken',
+                redirect: '/admin/dashboard'
             }
         };
         const loginOption = loginOptions[role];
 
         if (!loginOption) {
             loginError.textContent = 'Please select a role.';
+            return;
+        }
+
+        if (!email || !password) {
+            loginError.textContent = 'Please enter your email address and password.';
             return;
         }
 
@@ -304,21 +371,21 @@ function initAuth() {
 
             const result = await response.json().catch(() => ({}));
 
-            if (response.ok) {
+            if (response.ok && result.token) {
                 localStorage.setItem(loginOption.tokenKey, result.token);
                 closeModal();
-                if (role === 'admin' || role === 'librarian') {
-                    window.location.href = loginOption.redirect || '/admin/dashboard';
-                    return;
-                }
-                renderAuthState();
-                window.location.href = '/user_dashboard.html';
+                if (role === 'member') renderAuthState();
+                window.location.href = loginOption.redirect;
+            } else if (response.status === 401) {
+                loginError.textContent = 'The email or password is incorrect, or the selected role does not match this account.';
+            } else if (response.status >= 500) {
+                loginError.textContent = 'The server cannot process the login right now. Please try again.';
             } else {
-                loginError.textContent = result.message || 'Invalid credentials';
+                loginError.textContent = result.message || 'Unable to sign in with the selected role.';
             }
         } catch (err) {
             console.error(err);
-            loginError.textContent = 'Something went wrong. Please try again.';
+            loginError.textContent = 'Unable to connect to the server. Please try again.';
         }
     });
 

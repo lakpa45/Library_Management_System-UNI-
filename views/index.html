@@ -540,9 +540,10 @@
                 <label class="auth-field">
                     Role
                     <select id="loginRole" name="role" required>
-                        <option value="admin">Admin</option>
-                        <option value="member" selected>Member</option>
+                        <option value="" selected disabled>Select a role</option>
+                        <option value="member">Member</option>
                         <option value="librarian">Librarian</option>
+                        <option value="admin">Admin</option>
                     </select>
                 </label>
                 <p class="auth-error" id="loginError"></p>
