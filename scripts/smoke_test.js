@@ -71,6 +71,16 @@ try {
   check('member auth cookie', (result.response.headers.get('set-cookie') || '').includes('userSession='));
   const memberToken = result.body.token;
   const memberHeaders = { Authorization: `Bearer ${memberToken}` };
+  check('member token uses renamed role', jwt.decode(memberToken)?.role === 'member');
+  const legacyMemberToken = jwt.sign(
+    { id: created.memberId, email, role: 'user' },
+    process.env.JWT_SECRET,
+    { expiresIn: '5m' }
+  );
+  result = await request('/api/wishlist', {
+    headers: { Authorization: `Bearer ${legacyMemberToken}` }
+  });
+  check('existing user-role token can open My Books', result.response.status === 200, JSON.stringify(result.body));
   result = await request('/api/members/me', { headers: memberHeaders });
   check('dashboard profile returns existing Card ID', result.response.status === 200 && result.body.card_no === member.card_no);
 

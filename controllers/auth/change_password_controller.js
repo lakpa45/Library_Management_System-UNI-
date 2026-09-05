@@ -3,6 +3,8 @@ import pool from '../../db/connection.js';
 
 const accountMap = {
   member: { table: 'member', idColumn: 'member_id' },
+  // Keep already-issued member tokens working until their one-hour expiry.
+  user: { table: 'member', idColumn: 'member_id' },
   librarian: { table: 'librarian', idColumn: 'librarian_id' },
   admin: { table: 'admins', idColumn: 'id' }
 };

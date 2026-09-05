@@ -35,7 +35,7 @@ export const optionalMemberAuth = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role === 'member') req.user = decoded;
+        if (decoded.role === 'member' || decoded.role === 'user') req.user = decoded;
     } catch (err) {
         // Public book browsing remains available when a stale token is supplied.
     }
@@ -43,7 +43,7 @@ export const optionalMemberAuth = (req, res, next) => {
 };
 
 export const requireMember = (req, res, next) => {
-    if (req.user?.role !== 'member') {
+    if (req.user?.role !== 'member' && req.user?.role !== 'user') {
         return res.status(403).json({ message: 'Member access required' });
     }
     next();
